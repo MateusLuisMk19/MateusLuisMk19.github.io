@@ -111,3 +111,33 @@ div#right h3, h1{
         background-color: #335384;
         border-radius: 6px;
     }
+
+/*
+	Wallpage
+*/
+
+#bodyW {
+  background-color: #000;
+font-family: 'assistant-regular', sans-serif;
+    padding-top: 15%;
+
+}
+
+/*main{
+border: 2px solid white;
+}*/
+
+#ulW{
+	text-align: center;
+}
+
+.liW{
+	text-decoration: none;
+	font-size: 32px;
+}
+
+.aW{
+	text-decoration: none;
+	color: aqua;
+	
+}
