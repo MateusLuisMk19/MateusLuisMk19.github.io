@@ -17,7 +17,7 @@
       preload: true,
       speed: [0.004, 0.008],
       debug: false,
-      fps: false,
+      fps: true,
     });
 
     Waves.waves = [];
