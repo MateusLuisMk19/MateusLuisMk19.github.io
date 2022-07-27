@@ -9,15 +9,15 @@
     Waves.options = extend(options || {}, {
       resize: false,
       rotation: 10,
-      waves: 8,
+      waves: 10,
       width: 100,
-      hue: [11, 14],
+      hue: [11, 24],
       amplitude: 0.5,
       background: true,
       preload: true,
       speed: [0.004, 0.008],
       debug: false,
-      fps: true,
+      fps: false,
     });
 
     Waves.waves = [];
@@ -335,7 +335,7 @@
 })();
 
 var waves = new Waves('#holder', {
-  fps: true,
+  fps: false,
   waves: 3,
   width: 200,
 });
