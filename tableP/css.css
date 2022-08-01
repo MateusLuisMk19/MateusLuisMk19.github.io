@@ -3952,7 +3952,7 @@ body {
 
 .gap {
   position: relative;
-  padding-bottom: 80%;
+  padding-bottom: 70%;
   transition: 500ms;
 }
 .gap::before {
@@ -3961,7 +3961,7 @@ body {
   left: 50%;
   top: 0;
   width: 50%;
-  height: calc(200% + 5px * 2 - 4px);
+  height: calc(200% + 3px * 2 - 4px);
   border-width: 0 0 2px 2px;
   border-style: solid;
   margin-left: -1px;
