@@ -97,7 +97,7 @@
       Waves.stats.log();
       Waves.ctx.font = '12px Arial';
       Waves.ctx.fillStyle = '#fff';
-      Waves.ctx.fillText(Waves.stats.fps() + ' FPS', 10, 22);
+      //Waves.ctx.fillText(Waves.stats.fps() + ' FPS', 10, 22);
     }
 
     window.requestAnimationFrame(Waves.animate.bind(Waves));
@@ -124,13 +124,14 @@
     var Waves = this;
     var width = Waves.holder.offsetWidth;
     var height = Waves.holder.offsetHeight;
+    
     Waves.scale = window.devicePixelRatio || 1;
     Waves.width = width * Waves.scale;
     Waves.height = height * Waves.scale;
     Waves.canvas.width = Waves.width;
     Waves.canvas.height = Waves.height;
     Waves.canvas.style.width = width + 'px';
-    Waves.canvas.style.height = height + 'px';
+    //Waves.canvas.style.height = height + 'px';
     Waves.radius = Math.sqrt(Math.pow(Waves.width, 2) + Math.pow(Waves.height, 2)) / 2;
     Waves.centerX = Waves.width / 2;
     Waves.centerY = Waves.height / 2;
@@ -213,10 +214,12 @@
 
       var angle = line.angle;
 
-      var x1 = x - radius * Math.cos(angle[0] * amplitude + rotation);
+      var x1 = x - radius * Math.cos(angle[2] * amplitude + rotation);
       var y1 = y - radius * Math.sin(angle[0] * amplitude + rotation);
+
       var x2 = x + radius * Math.cos(angle[3] * amplitude + rotation);
       var y2 = y + radius * Math.sin(angle[3] * amplitude + rotation);
+
       var cpx1 = x - radius3 * Math.cos(angle[1] * amplitude * 2);
       var cpy1 = y - radius3 * Math.sin(angle[1] * amplitude * 2);
       var cpx2 = x + radius3 * Math.cos(angle[2] * amplitude * 2);
@@ -231,7 +234,7 @@
 
       if (debug) {
         ctx.strokeStyle = '#fff';
-        ctx.globalAlpha = 0.3;
+        ctx.globalAlpha = 0.2;
 
         ctx.beginPath();
         ctx.moveTo(x1, y1);
@@ -335,7 +338,7 @@
 })();
 
 var waves = new Waves('#holder', {
-  fps: false,
+  fps: true,
   waves: 3,
   width: 200,
 });
