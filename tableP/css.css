@@ -1,3 +1,8 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
 body {
   background: #101318;
   text-shadow: 0 0 0.4vw currentColor;
@@ -3947,7 +3952,7 @@ body {
 
 .gap {
   position: relative;
-  padding-bottom: 100%;
+  padding-bottom: 80%;
   transition: 500ms;
 }
 .gap::before {
