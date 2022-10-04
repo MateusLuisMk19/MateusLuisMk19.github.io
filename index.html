@@ -4,177 +4,41 @@
 <head>
     <meta charset="utf-8">
     <title>Mateus Luis</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Assistant&family=Source+Sans+Pro:wght@700&display=swap"
+        rel="stylesheet">
+
     <link type="text/css" rel="stylesheet" href="site.css">
-    <link
-        href="https://www.dafontfree.net/embed/YXNzaXN0YW50LXJlZ3VsYXImZGF0YS84MDIvYS8xODE3NDIvQXNzaXN0YW50LVJlZ3VsYXIudHRm"
-        rel="stylesheet" type="text/css" />
+
+    <script src="JS/index.js" defer></script>
 </head>
 
 <body>
-    <a href="wallpage.html">Wallpage<a />
-        <main>
-            <div id="left">
-                <div id="imagem">
-                    <img src="" alt="">
-                </div>
 
-                <div id="pessoal">
-                    <h3>Dados Pessoais</h3>
-                </div>
+    <div id="nav">
+        <a href="wallpage.html">
+            <div id="secret"></div>
+        </a>
+        <div class="text-nav" id="salut"></div>
+        <p class="text-nav">Eu sou Mateus Luis, agradeço por estar aqui, por favor esteja a vontade.</p>
 
-                <div id="sobre">
-                    <h3>Sobre Mim</h3>
+    </div>
 
-                </div>
+    <div id="colection">
 
-                <div id="contatos">
-                    <h3>Contatos</h3>
+        <a href="Cv/cvfront.html">
+            <img class="imagens" src="imagens/1.png" title="Cv-Mateus Luis 1">
+        </a>
 
-                </div>
+        <a href="Cv/cvback.html">
+            <img class="imagens" src="imagens/2.png" title="Cv-Mateus Luis 2">
+        </a>
+    </div>
 
-                <div id="interesses">
-                    <h3>Interesses</h3>
-
-                </div>
-
-            </div>
-
-            <div id="right">
-                <h1>Mateus Luis</h1>
-                <hr>
-
-                <div id="forma">
-                    <h3>Formação e qualificações</h3>
-
-                    <div class="sep">
-
-                        <div>
-                            <h4><span class="dot">. </span> Licenciatura Engenharia Informática (Incompleto Out 2020 -
-                                Abr 2021)</h4>
-                            <p>IPCB, Castelo Branco, Portugal</p>
-                        </div>
-
-                        <div>
-                            <h4><span class="dot">. </span> Licenciatura Engenharia Eletrotécnica e de Computadores
-                                (Incompleto Set 2018 - Jul 2020)</h4>
-                            <p>UBI, Covilhã, Portugal</p>
-                        </div>
-
-                        <div>
-                            <h4><span class="dot">. </span> 12º Concluído no curso de Informática (Fev 2014 - Dez 2016)
-                            </h4>
-                            <p>Instituto Médio Politécnico Alda Lara, Luanda,Angola</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="apt">
-                    <h3>A p t i d õ e s</h3>
-                    <div class="sep">
-                        <div class="container">
-
-                            <h4 onClick="addApt(1)">C Sharp (C#) / Java</h4>
-
-                            <div class="barra" id="barra1">
-                                <div class="plus" id="plus1"></div>
-                            </div>
-
-                            <p>Conhecimento intermediário em C# e Java</p>
-
-                        </div>
-                        <hr>
-
-                        <div class="container">
-
-                            <h4 onClick="addApt(2)">HTML5 / CSS3 / JavaScript</h4>
-
-                            <div class="barra" id="barra2">
-                                <div class="plus" id="plus2"></div>
-                            </div>
-
-                            <p>Desenvolvimento Web classico. Conhecimento intermediário/avançado</p>
-
-                        </div>
-                        <hr>
-
-                        <div class="container">
-
-                            <h4 onClick="addApt(5)">ASP .NET5</h4>
-
-                            <div class="barra" id="barra5">
-                                <div class="plus" id="plus5"></div>
-                            </div>
-
-                            <p>Desenvolvimento Web com estrutura MVC. Conhecimento intermediário</p>
-
-                        </div>
-                        <hr>
-
-                        <div class="container">
-
-                            <h4 onClick="addApt(3)">C</h4>
-
-                            <div class="barra" id="barra3">
-                                <div class="plus" id="plus3"></div>
-                            </div>
-
-                            <p>Conhecimento intermediário/avançado na linguagem de programação C.</p>
-
-                        </div>
-                        <hr>
-
-                        <div class="container">
-
-                            <h4 onClick="addApt(4)">Python</h4>
-
-                            <div class="barra" id="barra4">
-                                <div class="plus" id="plus4"></div>
-                            </div>
-
-                            <p>Conhecimento básico em Python. Atualmente aprendendo.</p>
-
-                        </div>
-                        <hr>
-
-                        <div class="container">
-
-                            <h4 onClick="addApt(6)">SQL Server / SQLite</h4>
-
-                            <div class="barra" id="barra6">
-                                <div class="plus" id="plus6"></div>
-                            </div>
-
-                            <p>Criação e gestão de base de dados com SQL Server e SQLite. Conhecimento
-                                básico/intermediário.</p>
-
-                        </div>
-
-                    </div>
-                </div>
-
-                <div id="edcomp">
-                    <h3>Educação Complementar</h3>
-
-                    <div class="sep">
-                        <div>
-                            <h4>Hardware <span>(X horas)</span></h4>
-                            <h5>Colégio Eritlândia Magna/ Luanda/ Angola</h5>
-                        </div>
-
-                        <div>
-                            <h4>Introdução a criação de websits com HTML5 e CSS3 <span>(X horas)</span></h4>
-                            <h5>Digital Innovation One Inc.</h5>
-                        </div>
-
-                        <div>
-                            <h4>Nome do curso <span>(X horas)</span></h4>
-                            <h5>Digital Innovation One Inc.</h5>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </main>
 </body>
 
 </html>
