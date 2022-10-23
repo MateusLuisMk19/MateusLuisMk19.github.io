@@ -61,3 +61,12 @@ function isWin(nVez) {
     return true;
   }
 }
+
+function replay() {
+  for (let num = 1; num < 10; num++) {
+    document.getElementById("ps-" + num).innerHTML = "";
+  }
+  vez = "X";
+  lastJogada = "";
+  psVez.innerHTML = vez;
+}
