@@ -11,6 +11,10 @@ var vez = "X";
 var lastJogada = "";
 var psVez = document.getElementById("ps-vez");
 
+var check_O = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
+var check_X = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
+var jog_Count = 0;
+
 psVez.innerHTML = vez;
 
 function jogada(num) {
@@ -20,6 +24,9 @@ function jogada(num) {
   ) {
   } else {
     document.getElementById("ps-" + num).innerHTML = vez;
+    vez == "X" ? (check_X[num] = vez) : (check_O[num] = vez);
+    jog_Count++;
+
     whatIs(vez);
     lastJogada = vez;
     mudarVez();
@@ -43,21 +50,21 @@ function whatIs(v) {
 }
 
 function isWin(nVez) {
-  if (ps1 == nVez && ps4 == nVez && ps7 == nVez) {
+  if (check_O[(1, 4, 7)] == nVez || check_X[(1, 4, 7)] == nVez) {
     return true;
-  } else if (ps2 == nVez && ps5 == nVez && ps8 == nVez) {
+  } else if (check_O[(2, 5, 8)] == nVez || check_X[(2, 5, 8)] == nVez) {
     return true;
-  } else if (ps3 == nVez && ps6 == nVez && ps9 == nVez) {
+  } else if (check_O[(3, 6, 9)] == nVez || check_X[(3, 6, 9)] == nVez) {
     return true;
-  } else if (ps1 == nVez && ps2 == nVez && ps3 == nVez) {
+  } else if (check_O[(1, 2, 3)] == nVez || check_X[(1, 2, 3)] == nVez) {
     return true;
-  } else if (ps4 == nVez && ps5 == nVez && ps6 == nVez) {
+  } else if (check_O[(4, 5, 6)] == nVez || check_X[(4, 5, 6)] == nVez) {
     return true;
-  } else if (ps7 == nVez && ps8 == nVez && ps9 == nVez) {
+  } else if (check_O[(7, 8, 9)] == nVez || check_X[(7, 8, 9)] == nVez) {
     return true;
-  } else if (ps3 == nVez && ps5 == nVez && ps7 == nVez) {
+  } else if (check_O[(3, 5, 7)] == nVez || check_X[(3, 5, 7)] == nVez) {
     return true;
-  } else if (ps1 == nVez && ps5 == nVez && ps9 == nVez) {
+  } else if (check_O[(1, 5, 9)] == nVez || check_X[(1, 5, 9)] == nVez) {
     return true;
   }
 }

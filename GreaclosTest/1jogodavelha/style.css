@@ -14,3 +14,17 @@
   font-size: 30px;
   min-width: 50px;
 }
+
+
+/*
+ tudo - *
+ tag - nome da tag
+
+ id  - #nome do id 
+ class - .nome da class
+
+ px - pixel
+  % - de acordo com o elemento pai
+  vh / vw - de acordo com o tamanho do browser 
+*/
+
