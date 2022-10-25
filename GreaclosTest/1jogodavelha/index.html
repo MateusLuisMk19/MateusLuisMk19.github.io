@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
+    <script type="text/javascript" src="../../Utilities/jQuery.js"></script>
     <script src="brain.js" defer></script>
 </head>
 
@@ -24,7 +25,7 @@
     <div class="d-flex justify-content-center">
         <div class="btn btn-secondary vez" id="ps-vez" onclick="mudarVez();">O</div>
     </div>
-    <div class="justify-content-center">
+    <div class="justify-content-center " id="Jogo">
         <div class="p-2">
             <div class="container w-50 d-flex flex-row align-items-stretch seila">
                 <div class="box-jdv border" id="ps-1" onclick="jogada(1);">1</div>
@@ -41,6 +42,30 @@
                 <div class=" box-jdv border" id="ps-8" onclick="jogada(8);">8</div>
                 <div class=" box-jdv border" id="ps-9" onclick="jogada(9);">9</div>
             </div>
+        </div>
+    </div>
+    <div class="justify-content-center pt-5 visible" id="Intro">
+        <div class="p-2 pt-5 container w-50">
+            <h2 class="h2">Sejam Bem-Vindos ao Jogo da Velha</h2>
+            <form>
+                <div class="d-flex flex-row align-items-stretch mt-5">
+                    <div class="">
+                        <label for="name_x" class="form-label">Quem pretende jogar com "X"?</label><br />
+                        <input class="w-100 form-control" type="text" id="name_x" name="name_x"
+                            placeholder="Por favor digite seu nome" /><br /><br />
+
+                    </div>
+                    <div class="mt-0 mb-0 m-5"></div>
+                    <div class="">
+                        <label for="name_o" class="form-label">Quem pretende jogar com "O"?</label><br />
+                        <input class="w-100 form-control" type="text" id="name_o" name="name_o"
+                            placeholder="Por favor digite seu nome" /><br /><br />
+                    </div>
+                </div>
+                <div class="p-2 w-100">
+                    <button class="btn btn-primary w-100" onclick="começarJogo()">Começar Jogo</button>
+                </div>
+            </form>
         </div>
     </div>
 </body>

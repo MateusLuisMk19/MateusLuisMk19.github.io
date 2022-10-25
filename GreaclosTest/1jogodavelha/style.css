@@ -1,20 +1,23 @@
 .box-jdv {
-  width: 35%;
+  width: 20vw;
   text-align: center;
-  font-size: 120px;
+  font-size: 600%;
   background-color: aliceblue;
   color: chocolate;
+  border-radius: 8%;
+  margin: 1px;
 }
 
 .seila {
-  height: 180px;
+  height: 20vh;
 }
 
 .vez {
   font-size: 30px;
   min-width: 50px;
+  /* color: #97f5a4;
+  transform: scale(2); */
 }
-
 
 /*
  tudo - *
@@ -27,4 +30,3 @@
   % - de acordo com o elemento pai
   vh / vw - de acordo com o tamanho do browser 
 */
-
