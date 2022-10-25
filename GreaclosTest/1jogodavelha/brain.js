@@ -12,7 +12,7 @@ var ps8 = $("#ps-8").html("80");
 var ps9 = $(`#ps-9`).css("color", "blue");*/
 
 //Funções
-function replay() {
+function replay(arg) {
   for (let num = 1; num < 10; num++) {
     $(`#ps-${num}`).html("");
   }
@@ -21,6 +21,19 @@ function replay() {
   lastJogada = "";
   psVez.html(vez);
   jog_Count = 0;
+  for (let n = 1; n < 10; n++) {
+    $(`#ps-${n}`).css({
+      backgroundColor: "aliceblue",
+    });
+  }
+  line_Win = [0, 0, 0];
+  check_O = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
+  check_X = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
+  jog_Count = 0;
+
+  if (arg) {
+    $("#Modal-fecho").click();
+  }
 }
 
 function mudarVez() {
@@ -99,25 +112,33 @@ function whatIs(v) {
     line_Win.forEach((position) => {
       $(`#ps-${position}`).css({
         backgroundColor: "#97f5a4",
-        transform: "scale(1.15)",
       });
     });
+    $("#text-win").html(`Jogador ${v} é o vencedor!`);
+    setTimeout(() => {
+      $("#Modal-win").click();
+    }, [300]);
   } else if (jog_Count >= 9) {
-    alert("Ninguém venceu");
-    replay();
+    $("#text-win").html(`Ninguém venceu!`);
+    setTimeout(() => {
+      $("#Modal-win").click();
+    }, [300]);
   }
 }
 
 function jogada(num) {
-  if ($(`#ps-${num}`).html == "O" || $(`#ps-${num}`).html == "X") {
+  if ($(`#ps-${num}`).html() == "O" || $(`#ps-${num}`).html() == "X") {
   } else {
-    $(`#ps-${num}`).html(vez);
-    vez == "X" ? (check_X[num] = vez) : (check_O[num] = vez);
-    jog_Count++;
+    if (line_Win[0] != 0 && line_Win[1] != 0 && line_Win[2] != 0) {
+    } else {
+      $(`#ps-${num}`).html(vez);
+      vez == "X" ? (check_X[num] = vez) : (check_O[num] = vez);
+      jog_Count++;
 
-    whatIs(vez);
-    lastJogada = vez;
-    mudarVez();
+      whatIs(vez);
+      lastJogada = vez;
+      mudarVez();
+    }
   }
 }
 
@@ -128,7 +149,6 @@ var check_X = ["-", "-", "-", "-", "-", "-", "-", "-", "-", "-"];
 var jog_Count = 0;
 var line_Win = [0, 0, 0];
 var lastJogada = "";
-const on = false;
 
 var psVez = $("#ps-vez").html(vez);
 
@@ -141,4 +161,6 @@ function começarJogo() {
 
 $(document).ready(function () {
   // $("#Jogo").hide();
+  $("#Intro").hide();
+  $("#Modal-win").hide();
 });
