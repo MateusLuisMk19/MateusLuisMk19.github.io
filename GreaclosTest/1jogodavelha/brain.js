@@ -140,5 +140,5 @@ function começarJogo() {
 }
 
 $(document).ready(function () {
-  $("#Jogo").hide();
+  // $("#Jogo").hide();
 });
