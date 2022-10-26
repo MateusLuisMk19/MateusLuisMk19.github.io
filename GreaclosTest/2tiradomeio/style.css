@@ -1,0 +1,19 @@
+#canvas {
+  border: 2px solid white;
+  padding: 0;
+  /*   background-image: url("./media/field.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-position-x: center; */
+}
+
+.mapa {
+  border: 2px solid white;
+  opacity: 0.5;
+  height: 13vh;
+  background-color: aqua;
+}
+
+#Caixa_mappa {
+  position: absolute;
+}
