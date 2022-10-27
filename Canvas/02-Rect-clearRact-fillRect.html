@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 2</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500">
+        Seu Browser não suporta o canvas
+    </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext('2d')
+
+        //define a cor do elemento seguinte
+        //  "name color"/"HEX color", "rgb(numRed,numGreen,numBlue)"
+        //      "rgba(numRed,numGreen,numBlue,opacity)"
+        //          num => 0 - 255, opacity => 0 - 1
+        ctx.fillStyle = "rgba(0,200,255,0.8)"
+        //Cria um Quadrado/ Retângulo mas sem preenchimento
+        //  (x_ini, y_ini, width, heigth)
+        ctx.rect(0, 0, 200, 200)
+        //preenche(pinta) tudo criado a cima, com a ultima cor a cima dele
+        ctx.fill()
+
+        //limpa determinada area do canvas
+        //  (x_ini, y_ini, width, heigth)
+        ctx.clearRect(75,75,50,50)
+
+
+    </script>
+</body>
+
+</html>

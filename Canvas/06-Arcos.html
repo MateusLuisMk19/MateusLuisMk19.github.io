@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 6</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500">
+        Seu Browser não suporta o canvas
+    </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext('2d')
+        var angIni = 0
+        var angFin = 0
+
+        desenha()
+        function desenha() {
+            ctx.clearRect(0, 0, 500, 500)
+            ctx.fillStyle = "black"
+            // (posX,posY, raio, angIni, angFin, sentido)
+            // sentido: true => horario, false => anti-horario
+            // (PI/180)*ang_grau
+            ctx.arc(250, 250, 200, angRad(angFin), angRad(280), false)
+            ctx.fill()
+
+            // para começãr um novo desenho
+            ctx.beginPath()
+            ctx.fillStyle = "red"
+            ctx.arc(250, 250, 180, angRad(angIni), angRad(280), true)
+            ctx.fill()
+
+
+            update()
+            anima = requestAnimationFrame(desenha)
+        }
+
+        function update() {
+            angIni <= 360 ? angIni++ : angIni = 0
+            angFin <= 360 ? angFin++ : angFin = 0
+
+        }
+
+        function angRad(ang_grau) {
+            return (Math.PI / 180) * ang_grau
+        }
+    </script>
+</body>
+
+</html>

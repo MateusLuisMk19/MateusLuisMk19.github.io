@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 5</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500">
+        Seu Browser não suporta o canvas
+    </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext('2d')
+        var px = 450
+        var py = 450
+        var anima
+        var dir_x = 1
+        var dir_x1 = 1
+        var dir_y1 = 0
+        var px1 = 0
+        var py1 = 0
+        var corAux = "ffa"
+        var cor1 = "faa"
+        var cor2 = "14f"
+        var cor3 = "fe1"
+        var cor = corAux
+
+        var vel = 5
+
+        desenha()
+        function desenha() {
+            /* 
+            0,0         500,0
+
+            500.0       500.500
+            */
+            ctx.clearRect(0, 0, 500, 500)
+
+            ctx.fillStyle = `#${cor}`
+            ctx.fillRect(px1, py1, 50, 50)
+
+            ctx.fillStyle = `#${cor1}`
+            //tamanho da borda
+            ctx.lineWidth = 3
+            //cor da borda
+            ctx.stokeStyle = "#000"
+            ctx.fillRect(440, 0, 60, 50)
+            //renderiza a borda
+            ctx.strokeRect(440, 0, 60, 50)
+
+
+            ctx.fillStyle = `#${cor2}`
+            ctx.fillRect(450, 440, 50, 60)
+            ctx.lineWidth = 3
+            ctx.stokeStyle = "#000"
+            ctx.strokeRect(450, 440, 50, 60)
+
+
+            ctx.fillStyle = `#${cor3}`
+            ctx.fillRect(0, 450, 60, 50)
+            ctx.lineWidth = 3
+            ctx.stokeStyle = "#000"
+            ctx.strokeRect(0, 450, 60, 50)
+
+
+            ctx.clearRect(0, 0, 50, 80)
+            ctx.lineWidth = 3
+            ctx.stokeStyle = "#000"
+            ctx.strokeRect(0, 0, 50, 80)
+
+            update()
+
+            anima = requestAnimationFrame(desenha)
+        }
+
+        function update() {
+
+            px1 += dir_x1 * vel
+            py1 += dir_y1 * vel
+
+
+            if (px1 + 50 == 500 && py1 == 0) {
+                dir_y1 = 1
+                dir_x1 = 0
+                cor = cor1
+                vel += 20
+            }
+            if (px1 + 50 == 500 && py1 == 450) {
+                dir_y1 = 0
+                dir_x1 = -1
+                cor = cor2
+                vel += -10
+            }
+            if (px1 == 0 && py1 == 450) {
+                dir_y1 = -1
+                dir_x1 = 0
+                cor = cor3
+                vel += -5
+            }
+            if (px1 == 0 && py1 == 0) {
+                dir_y1 = 0
+                dir_x1 = 1
+                cor = corAux
+                vel += -5
+            }
+
+
+        }
+    </script>
+</body>
+
+</html>

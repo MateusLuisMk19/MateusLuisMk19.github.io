@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aula 4</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <canvas id="canvas" width="500" height="500">
+        Seu Browser não suporta o canvas
+    </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext('2d')
+        var px = 0
+        var py = 0
+        var anima
+        var dir_x = 1
+        var dir_x1 = 1
+        var px1 = 0
+        var py1 = 60
+        var cor = "f4a"
+        var cor1 = "0aa"
+
+        desenha()
+        function desenha() {
+            ctx.clearRect(0, 0, 500, 500)
+
+            ctx.fillStyle = `#${cor}`
+            ctx.fillRect(px, py, 50, 50)
+
+            ctx.fillStyle = `#${cor1}`
+            ctx.fillRect(px1, py1, 50, 50)
+
+            ctx.fillStyle = `#${cor}`
+            ctx.fillRect(px, py + 120, 50, 50)
+
+            ctx.fillStyle = `#${cor1}`
+            ctx.fillRect(px1, py1 + 120, 50, 50)
+
+            ctx.fillStyle = `#${cor}`
+            ctx.fillRect(px, py + 180 + 60, 50, 50)
+
+            px += dir_x
+            px1 += dir_x1 * 2
+
+            if (px1 + 50 >= 500 || px1 <= 0) {
+                dir_x1 *= -1
+            }
+            if (px + 50 >= 500 || px <= 0) {
+                dir_x *= -1
+            }
+            if (px === px1) {
+                var aux
+                aux = cor
+                cor = cor1
+                cor1 = aux
+            }
+
+            anima = requestAnimationFrame(desenha)
+        }
+    </script>
+</body>
+
+</html>
