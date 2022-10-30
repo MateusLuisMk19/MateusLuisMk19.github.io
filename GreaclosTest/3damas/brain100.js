@@ -45,6 +45,6 @@ function preview(value, ident) {
 }
 
 function changeShadow() {
-  shadow == "#000" ? (shadow = "#fff") : (shadow = "#000");
+  shadow == "#000" ? (shadow = "#aaa") : (shadow = "#000");
   paintField();
 }

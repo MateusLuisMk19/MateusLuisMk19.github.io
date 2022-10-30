@@ -27,40 +27,42 @@
 
     <div class="mt-3 d-flex position-relative border position-absolute end-0" id="menuCRGB100">
         <button class="btn btn-primary" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling"
-            aria-controls="offcanvasScrolling">Edit Field</button>
+            aria-controls="offcanvasScrolling">
+            < </button>
 
-        <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1"
-            id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-            <div class="offcanvas-header">
-                <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Change Color Field</h5>
-                <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
-                    aria-label="Close"></button>
-            </div>
-            <div class="offcanvas-body">
-                <div class="w-100 p-2 rounded-3">
-                    <label for="redRange" class="form-label">Red</label><br>
-                    <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
-                        onchange="preview(this.value,'red')" id="redRange"><br>
-                </div>
+                <div class="offcanvas offcanvas-end" data-bs-scroll="true" data-bs-backdrop="true" tabindex="-1"
+                    id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+                    <div class="offcanvas-header">
+                        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Change Color Field</h5>
+                        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas"
+                            aria-label="Close"></button>
+                    </div>
+                    <div class="offcanvas-body">
+                        <div class="w-100 p-2 rounded-3">
+                            <label for="redRange" class="form-label">Red</label><br>
+                            <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
+                                onchange="preview(this.value,'red')" id="redRange"><br>
+                        </div>
 
-                <div class="w-100 p-2 rounded-3">
-                    <label for="greenRange" class="form-label">Green</label><br>
-                    <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
-                        onchange="preview(this.value,'green')" id="greenRange"><br>
-                </div>
+                        <div class="w-100 p-2 rounded-3">
+                            <label for="greenRange" class="form-label">Green</label><br>
+                            <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
+                                onchange="preview(this.value,'green')" id="greenRange"><br>
+                        </div>
 
-                <div class="w-100 p-2 rounded-3">
-                    <label for="blueRange" class="form-label">Blue</label><br>
-                    <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
-                        onchange="preview(this.value,'blue')" id="blueRange"><br>
-                </div>
-                <div class="w-100 rounded-3">
-                    <div class="border w-75 text-center btn-secondary m-auto rounded-3" onclick="changeShadow()">
-                        Change Shadow
+                        <div class="w-100 p-2 rounded-3">
+                            <label for="blueRange" class="form-label">Blue</label><br>
+                            <input type="range" class="form-range w-100 danger" min="0" max="255" step="1" value="0"
+                                onchange="preview(this.value,'blue')" id="blueRange"><br>
+                        </div>
+                        <div class="w-100 rounded-3">
+                            <div class="border w-75 text-center btn-secondary m-auto rounded-3"
+                                onclick="changeShadow()">
+                                Change Shadow
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
     </div>
 
 
