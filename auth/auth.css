@@ -56,19 +56,3 @@ form {
 .control-label {
   margin: 2%;
 }
-
-#btn-sub {
-  height: 30px;
-  border-radius: 20px;
-  border-color: black;
-  background-color: #335384;
-  color: white;
-  font-size: large;
-}
-
-#btn-sub:hover {
-  border-color: #335384;
-  background-color: #245aab;
-  color: white;
-  font-size: medium;
-}
