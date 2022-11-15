@@ -33,7 +33,6 @@
 
         input,
         select>option {
-            border: none;
             text-align: center;
             border-color: aliceblue;
         }
@@ -52,9 +51,11 @@
     </div>
     <div class="form-group container  m-auto">
         <div class="row col-12 m-auto mt-3" id="title-line">
-            <div class="col-8"></div>
-            <div class="col-2"><button class="w-100 btn btn-success">Terminar Dia</button></div>
-            <div class="col-2"><button class="w-100 btn btn-secondary">Limpar BD</button></div>
+            <div class="col-6"></div>
+            <div class="col-2"><button onclick="remover()" class="w-100 btn btn-warning">Remover</button></div>
+            <div class="col-2"><button onclick="terminarDia()" class="w-100 btn btn-success">Terminar Dia</button></div>
+            <div class="col-2"><button onclick="StorageM('', 'clear');" class="w-100 btn btn-secondary">Limpar
+                    BD</button></div>
         </div>
 
         <div class="row col-12 m-auto mt-3" id="title-line">
@@ -92,8 +93,7 @@
 
         <div class="row col-12 m-auto mt-1 mb-5">
             <div class="col-8"></div>
-            <div class="col-2"><button type="button" id="newLine"
-                    class="btn btn-primary w-100">Enviar</button></div>
+            <div class="col-2"><button type="button" id="newLine" class="btn btn-primary w-100">Enviar</button></div>
             <div class="col-2"><button type="button" onclick="limpar()"
                     class="btn btn-secondary w-100">Cancelar</button></div>
         </div>

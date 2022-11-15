@@ -10,23 +10,39 @@ var variavel;
 function escolha() {
   let another;
   let cambio = 590;
+  let str = "";
+  let valor = "";
 
   if (document.getElementById("valorKz").value != (null || "")) {
     another = document.getElementById("valorDl");
-    let valor = document.getElementById("valorKz").value / cambio;
-    let str = valor.toString();
-
+    valor = parseInt(document.getElementById("valorKz").value) / cambio;
+    str = valor.toString();
+    console.log(str);
     for (let i = 0; i < str.length; i++) {
-      str[i] == ("," || ".")
-        ? (another.value = str.slice(0, str[i] + 2))
-        : (another.value = str);
+      console.log(str[i]);
+
+      if (str[i] == ".") {
+        another.value = str.slice(0, i + 3);
+        return;
+      } else {
+        another.value = str;
+      }
     }
 
     // another.setAttribute("disabled", "");
   } else if (document.getElementById("valorDl").value != (null || "")) {
     another = document.getElementById("valorKz");
-    let valor = document.getElementById("valorDl").value * cambio;
-    another.value = valor.toString().slice(0, 4);
+    valor = parseInt(document.getElementById("valorDl").value) * cambio;
+    str = valor.toString();
+
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] == ".") {
+        another.value = str.slice(0, i + 3);
+        return;
+      } else {
+        another.value = str;
+      }
+    }
     // another.setAttribute("disabled", "");
   } else {
   }
@@ -39,26 +55,6 @@ function limpar() {
   document.getElementById("bankEnt").value = "";
   document.getElementById("bankSai").value = "";
 }
-
-document.getElementById("newLine").addEventListener("click", () => {
-  form.nome = document.getElementById("nome").value;
-  form.valorKz = parseInt(document.getElementById("valorKz").value);
-  form.valorDl = parseInt(document.getElementById("valorDl").value);
-  form.bankEnt = document.getElementById("bankEnt").value;
-  form.bankSai = document.getElementById("bankSai").value;
-
-  if (!form.nome.includes(" ")) {
-    alert("Por favor preencha o campo nome com Nome e Sobrenome");
-  } else if (!form.valorDl && !form.valorKz) {
-    alert("Por favor preencha um dos valores monetarios");
-  } else {
-    StorageM(form, "set");
-    // atualizar();
-    window.location.reload();
-    limpar();
-  }
-  // StorageM("", "clear");
-});
 
 function atualizar() {
   var iavel = StorageM("", "getData");
@@ -124,10 +120,12 @@ function StorageM(pão, option) {
       }
       break;
     case "remove":
-      window.sessionStorage.removeItem(pão.nome.replace(" ", ""));
+      window.sessionStorage.removeItem(pão);
       break;
     case "clear":
       window.sessionStorage.clear();
+      window.location.reload();
+
       break;
     case "get":
       let db = window.sessionStorage.getItem(pão);
@@ -166,4 +164,52 @@ function StorageM(pão, option) {
       break;
   }
 }
+
+function terminarDia() {
+  var iavel = StorageM("", "getData");
+  var totalKz = 0;
+  var totalDl = 0;
+
+  var cambilAtual = parseInt(prompt("Qual é o cambio atual?"));
+
+  for (let i = 0; i < iavel.length; i++) {
+    let newD = StorageM(iavel[i], "get");
+    totalKz += parseInt(newD[1]);
+    totalDl += parseInt(newD[2]);
+  }
+
+  //Total de Kz - (Total de Dollar * cambio Atual)
+  let lucro = totalKz - totalDl * cambilAtual;
+  alert("Terminou o dia com um Lucro de: " + lucro + "Kz");
+}
+
+function remover() {
+  var client = prompt("Quem deseja remover?").replace(" ", "");
+  //   StorageM(client, "remove");
+  let dataN = window.sessionStorage.getItem("data");
+  dataN = dataN.replace(`,${client}`, "");
+  window.sessionStorage.setItem("data", [dataN]);
+  window.location.reload();
+}
+
+document.getElementById("newLine").addEventListener("click", () => {
+  form.nome = document.getElementById("nome").value;
+  form.valorKz = parseInt(document.getElementById("valorKz").value);
+  form.valorDl = parseInt(document.getElementById("valorDl").value);
+  form.bankEnt = document.getElementById("bankEnt").value;
+  form.bankSai = document.getElementById("bankSai").value;
+
+  if (!form.nome.includes(" ")) {
+    alert("Por favor preencha o campo nome com Nome e Sobrenome");
+  } else if (!form.valorDl && !form.valorKz) {
+    alert("Por favor preencha um dos valores monetarios");
+  } else {
+    StorageM(form, "set");
+    // atualizar();
+    window.location.reload();
+    limpar();
+  }
+  // StorageM("", "clear");
+});
+
 atualizar();
