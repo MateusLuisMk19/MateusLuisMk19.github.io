@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ex Damas Canvas</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+        canvas {
+            border: 2px solid black;
+            /* transform: perspective(1250px) rotatex(60deg); */
+        }
+    </style>
+</head>
+
+<body class="container">
+    <div class="mt-5 d-flex border">
+        <a href="index.html" class="btn btn-secondary m-3 mt-0 mb-0">
+            < </a>
+                <h3 class="">Damas Canvas</h3>
+    </div>
+    <canvas class="container" id="canvas" width="500" height="500">
+        Seu Browser não suporta o canvas
+    </canvas>
+    <script type="text/javascript">
+        var canvas = document.getElementById("canvas")
+        var ctx = canvas.getContext('2d')
+        var xIni = 1, yIni = 2
+        var xFin = 9, yFin = 10
+        var pieceOne = []
+        var pieceTwo = []
+        var altBase = 80, largBase = 420
+        var piece2 = new Image(); // Create new img element
+        var piece = new Image(); // Create new img element
+
+        piece.src = "damas-piece.png";
+        piece2.src = "damas-piece2.png";
+
+        for (let i = 0; i < 12; i++) {
+            pieceOne[i] = new Image(); // Create new img element
+            pieceOne[i].src = "damas-piece.png";
+        }
+        for (let i = 0; i < 12; i++) {
+            pieceTwo[i] = new Image(); // Create new img element
+            pieceTwo[i].src = "damas-piece2.png";
+        }
+
+        function field() {
+
+            //tamanho da borda
+            ctx.lineWidth = 3
+            //cor da borda
+            ctx.stokeStyle = "#000"
+            //renderiza a borda
+
+            for (let line = xIni; line < xFin; line++) {
+                for (let col = yIni; col < yFin; col++) {
+
+                    if (line % 2 == 0) {
+                        if (col % 2 == 0) {
+                            ctx.fillStyle = "rgb(250,250,250)";
+                            ctx.fillRect(line * 50, col * 50, 50, 50);
+                        } else {
+                            ctx.fillStyle = "rgb(20,20,20)";
+                            ctx.fillRect(line * 50, col * 50, 50, 50);
+                        }
+                    } else {
+                        if (col % 2 == 0) {
+                            ctx.fillStyle = "rgb(20,20,20)";
+                            ctx.fillRect(line * 50, col * 50, 50, 50);
+                        } else {
+                            ctx.fillStyle = "rgb(250,250,250)";
+                            ctx.fillRect(line * 50, col * 50, 50, 50);
+                        }
+                    }
+                }
+            }
+            ctx.strokeRect(xIni * 50, yIni * 50, 400, 400)
+        }
+
+        desenha()
+        function desenha() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            field()
+
+            update()
+            render()
+            anima = requestAnimationFrame(desenha)
+        }
+
+        function update() {
+            window.addEventListener('keydown', (event) => {
+                console.log(event.code, event.key)
+                switch (event.key) {
+                    case 1:
+
+                        break;
+                    case 2:
+
+                        break;
+                    case 3:
+
+                        break;
+                    case 4:
+
+                        break;
+
+                    default:
+                        break;
+                }
+            })
+        }
+
+
+
+        function render() {
+            //linha da frente
+            ctx.drawImage(pieceOne[0], 80, 320, 90, 90)
+            ctx.drawImage(pieceOne[1], 80 + 100, 320, 90, 90)
+            ctx.drawImage(pieceOne[2], 80 + 200, 320, 90, 90)
+            ctx.drawImage(pieceOne[3], 80 + 300, 320, 90, 90)
+
+            //Linha do meio
+            ctx.drawImage(pieceOne[4], 30, 370, 90, 90)
+            ctx.drawImage(pieceOne[5], 30 + 100, 370, 90, 90)
+            ctx.drawImage(pieceOne[6], 30 + 200, 370, 90, 90)
+            ctx.drawImage(pieceOne[7], 30 + 300, 370, 90, 90)
+
+            //Ultima Linha
+            ctx.drawImage(pieceOne[8], 80, 420, 90, 90)
+            ctx.drawImage(pieceOne[9], 80 + 100, 420, 90, 90)
+            ctx.drawImage(pieceOne[10], 80 + 200, 420, 90, 90)
+            ctx.drawImage(pieceOne[11], 80 + 300, 420, 90, 90)
+
+            // /////////////////////////////////////
+
+            //Linha da frente
+            ctx.drawImage(pieceTwo[0], 30, 170, 90, 90)
+            ctx.drawImage(pieceTwo[1], 30 + 100, 170, 90, 90)
+            ctx.drawImage(pieceTwo[2], 30 + 200, 170, 90, 90)
+            ctx.drawImage(pieceTwo[3], 30 + 300, 170, 90, 90)
+
+            //Linha do meio
+            ctx.drawImage(pieceTwo[4], 80, 120, 90, 90)
+            ctx.drawImage(pieceTwo[5], 80 + 100, 120, 90, 90)
+            ctx.drawImage(pieceTwo[6], 80 + 200, 120, 90, 90)
+            ctx.drawImage(pieceTwo[7], 80 + 300, 120, 90, 90)
+
+            //Ultima linha
+            ctx.drawImage(pieceTwo[8], 30, 70, 90, 90)
+            ctx.drawImage(pieceTwo[9], 30 + 100, 70, 90, 90)
+            ctx.drawImage(pieceTwo[10], 30 + 200, 70, 90, 90)
+            ctx.drawImage(pieceTwo[11], 30 + 300, 70, 90, 90)
+
+        }
+
+
+
+    </script>
+</body>
+
+</html>

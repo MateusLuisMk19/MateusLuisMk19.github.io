@@ -18,18 +18,23 @@ var d_y = 0;
  */
 
 var background = new Image(); // Create new img element
+
 background.src = "./media/field.png";
+
 var pc1 = new Image(); // Create new img element
 pc1.src = "./media/tccm-pc-amarela.png";
+
 var pc2 = new Image(); // Create new img element
 pc2.src = "./media/tccm-pc-verde.png";
 
-pc1.addEventListener("click", () => {
-  console.log("ai");
-});
+
 
 function loop() {
   window.requestAnimationFrame(loop, canvas);
+
+  pc1.on = () => {
+    console.log("ai");
+  };
 
   update();
   render();

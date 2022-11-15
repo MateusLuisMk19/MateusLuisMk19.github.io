@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aula 7</title>
+    <title>Aula 8</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -16,7 +16,7 @@
     <div class="mt-5 d-flex border">
         <a href="index.html" class="btn btn-secondary m-3 mt-0 mb-0">
             < </a>
-                <h3 class="">Circulos Animados</h3>
+                <h3 class="">Arct To</h3>
     </div>
     <canvas class="container" id="canvas" width="500" height="500">
         Seu Browser não suporta o canvas
@@ -34,61 +34,25 @@
 
         desenha()
         function desenha() {
-
-            
-
-            for (let i = 0; i < maxCirculos; i++) {
-                ctx.beginPath()
-                ctx.fillStyle = "rgba(" + Math.random() * 250 + "," + Math.random() * 255 + "," + Math.random() * 240 + "," + Math.random() * 0.9 + ")"
-                ctx.arc(Math.random() * 500,
-                    Math.random() * 500, Math.random() * tamMax + tamMin,
-                    angRad(0), angRad(360), true)
-                ctx.fill()
-
-            }
+            ctx.clearRect(0, 0, 500, 500)
 
             ctx.beginPath()
-            ctx.fillStyle = "#000"
-            ctx.arc(250, 250, 150,
-                angRad(angIni), angRad(angFin), true)
-            ctx.fill()
-
-
-            ctx.beginPath()
-            ctx.fillStyle = "#f00"
-            ctx.arc(290, coAlt, 50 * btm,
-                angRad(0), angRad(360), true)
-            ctx.arc(210, coAlt, 50 * btm,
-                angRad(0), angRad(360), true)
-            ctx.fill()
+            ctx.moveTo(0, 0)
+            ctx.lineTo(100, 100)
+            //Posição inicial (x1,y1)
+            //Posição final (x2,y2)
+            //Raio
+            // x1,y1,x2,y2, raio
+            ctx.arcTo(250, 250, 500, 0, 150)
+            ctx.lineTo(500, 0)
             ctx.closePath()
-
-            ctx.beginPath()
-            ctx.moveTo(171, 250)
-            ctx.lineTo(250, 340)
-            ctx.lineTo(165 * 2, 250)
-            ctx.lineTo(250, 200)
-            ctx.lineTo(171, 250)
-
-            ctx.fill()
-
-
-
-
-
+            ctx.stroke()
 
             update()
             anima = requestAnimationFrame(desenha)
         }
 
         function update() {
-            angIni++
-            angIni > 360 ? angIni = 0 : ""
-            btm += 0.001
-            if (btm > 1.08) {
-                btm = 1
-                btm += 0.001
-            }
 
         }
 
