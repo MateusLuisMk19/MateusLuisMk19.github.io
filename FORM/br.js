@@ -1,17 +1,19 @@
 const form = {
   nome: "",
+  typeCard: "",
   valorKz: 0,
   valorDl: 0,
   bankEnt: "",
   bankSai: "",
 };
 var variavel;
+let cambio;
 
 function escolha() {
   let another;
-  let cambio = 590;
   let str = "";
   let valor = "";
+  let card = document.getElementById("typeCard").value;
 
   if (document.getElementById("valorKz").value != (null || "")) {
     another = document.getElementById("valorDl");
@@ -50,6 +52,7 @@ function escolha() {
 
 function limpar() {
   document.getElementById("nome").value = "";
+  document.getElementById("typeCard").value = "";
   document.getElementById("valorKz").value = "";
   document.getElementById("valorDl").value = "";
   document.getElementById("bankEnt").value = "";
@@ -58,8 +61,10 @@ function limpar() {
 
 function atualizar() {
   var iavel = StorageM("", "getData");
-  for (let i = 0; i < iavel.length; i++) {
-    createLines(iavel[i]);
+  if (iavel) {
+    for (let i = 0; i < iavel.length; i++) {
+      createLines(iavel[i]);
+    }
   }
 }
 
@@ -68,34 +73,38 @@ function createLines(names) {
   variavel = StorageM(names, "get");
   console.log(variavel);
 
+  let tr = document.createElement("tr");
+
   let div = document.createElement("div");
-  div.setAttribute("class", "row col-12 m-auto");
-  div.setAttribute("id", "data-line");
+  div.setAttribute("class", "col-sm");
 
   let div2 = document.createElement("div");
-  div2.setAttribute("class", "col row inp");
+  div2.setAttribute("class", "col-sm");
 
-  let pre = [];
+  let td = [];
   for (let i = 0; i < 5; i++) {
-    pre[i] = document.createElement("pre");
-    pre[i].setAttribute("class", "col inp");
+    td[i] = document.createElement("td");
   }
-  pre[0].innerHTML = variavel[0];
-  pre[1].innerHTML = variavel[1];
-  pre[2].innerHTML = variavel[2];
-  pre[3].innerHTML = variavel[3];
-  pre[4].innerHTML = variavel[4];
 
-  div.appendChild(pre[0]);
-  div.appendChild(pre[1]);
-  div.appendChild(pre[2]);
+  for (let i = 0; i < 4; i++) {
+    td[i].innerHTML = variavel[i];
+  }
 
-  div2.appendChild(pre[3]);
-  div2.appendChild(pre[4]);
+  div.innerHTML = variavel[4];
+  div2.innerHTML = variavel[5];
 
-  div.appendChild(div2);
+  td[4].setAttribute("class", "row");
+  td[4].setAttribute("colspan", "2");
+  td[4].appendChild(div);
+  td[4].appendChild(div2);
 
-  Pai.appendChild(div);
+  tr.appendChild(td[0]);
+  tr.appendChild(td[1]);
+  tr.appendChild(td[2]);
+  tr.appendChild(td[3]);
+  tr.appendChild(td[4]);
+
+  Pai.appendChild(tr);
 }
 
 function StorageM(pão, option) {
@@ -106,6 +115,7 @@ function StorageM(pão, option) {
     case "set":
       window.sessionStorage.setItem(pão.nome.replace(" ", ""), [
         pão.nome,
+        pão.typeCard,
         pão.valorKz,
         pão.valorDl,
         pão.bankEnt,
@@ -118,19 +128,20 @@ function StorageM(pão, option) {
       } else {
         window.sessionStorage.setItem("data", [pão.nome.replace(" ", "")]);
       }
+      window.location.reload();
       break;
     case "remove":
       window.sessionStorage.removeItem(pão);
+      window.location.reload();
       break;
     case "clear":
       window.sessionStorage.clear();
       window.location.reload();
-
       break;
     case "get":
       let db = window.sessionStorage.getItem(pão);
       each = "";
-      let allDb = ["", "", "", "", ""];
+      let allDb = ["", "", "", "", "", ""];
       iAll = 0;
 
       for (let i = 0; i <= db.length; i++) {
@@ -149,19 +160,32 @@ function StorageM(pão, option) {
       let allDbD = [];
       iAll = 0;
 
-      for (let i = 0; i <= dbD.length; i++) {
-        if (dbD[i] == "," || i == dbD.length) {
-          allDbD[iAll] = each;
-          each = "";
-          iAll++;
-        } else {
-          each += dbD[i];
+      if (dbD) {
+        for (let i = 0; i <= dbD.length; i++) {
+          if (dbD[i] == "," || i == dbD.length) {
+            allDbD[iAll] = each;
+            each = "";
+            iAll++;
+          } else {
+            each += dbD[i];
+          }
         }
+        return allDbD;
       }
-      return allDbD;
-
+      break;
     default:
       break;
+  }
+}
+
+function limparBD() {
+  var data = StorageM("", "getData");
+
+  if (data) {
+    StorageM("", "clear");
+    atualizar();
+  } else {
+    alert("A Base de Dados já se encontra limpa");
   }
 }
 
@@ -170,30 +194,49 @@ function terminarDia() {
   var totalKz = 0;
   var totalDl = 0;
 
-  var cambilAtual = parseInt(prompt("Qual é o cambio atual?"));
+  if (iavel) {
+    var cambilAtual = parseInt(prompt("Qual é o cambio atual?"));
 
-  for (let i = 0; i < iavel.length; i++) {
-    let newD = StorageM(iavel[i], "get");
-    totalKz += parseInt(newD[1]);
-    totalDl += parseInt(newD[2]);
+    for (let i = 0; i < iavel.length; i++) {
+      let newD = StorageM(iavel[i], "get");
+      totalKz += parseInt(newD[2]);
+      totalDl += parseInt(newD[3]);
+    }
+
+    //Total de Kz - (Total de Dollar * cambio Atual)
+    let lucro = parseFloat(totalKz - totalDl * cambilAtual);
+    alert("Terminou o dia com um Lucro de: " + lucro + " Kz");
+  } else {
+    alert("Você ainda nem começou o dia");
   }
-
-  //Total de Kz - (Total de Dollar * cambio Atual)
-  let lucro = totalKz - totalDl * cambilAtual;
-  alert("Terminou o dia com um Lucro de: " + lucro + "Kz");
 }
 
 function remover() {
-  var client = prompt("Quem deseja remover?").replace(" ", "");
   //   StorageM(client, "remove");
   let dataN = window.sessionStorage.getItem("data");
-  dataN = dataN.replace(`,${client}`, "");
-  window.sessionStorage.setItem("data", [dataN]);
-  window.location.reload();
+
+  if (dataN) {
+    var client = prompt("Quem deseja remover?").replace(" ", "");
+
+    dataN = dataN.replace(`,${client}`, "");
+    window.sessionStorage.setItem("data", [dataN]);
+    window.location.reload();
+  } else {
+    alert("Sem dados para serem removidos");
+  }
+}
+
+function whatCard(card) {
+  card == "V-GO"
+    ? (cambio = 590)
+    : card == "V-PREMIUM"
+    ? (cambio = 590)
+    : (cambio = 600);
 }
 
 document.getElementById("newLine").addEventListener("click", () => {
   form.nome = document.getElementById("nome").value;
+  form.typeCard = document.getElementById("typeCard").value;
   form.valorKz = parseInt(document.getElementById("valorKz").value);
   form.valorDl = parseInt(document.getElementById("valorDl").value);
   form.bankEnt = document.getElementById("bankEnt").value;
@@ -203,10 +246,19 @@ document.getElementById("newLine").addEventListener("click", () => {
     alert("Por favor preencha o campo nome com Nome e Sobrenome");
   } else if (!form.valorDl && !form.valorKz) {
     alert("Por favor preencha um dos valores monetarios");
+  } else if (!form.bankEnt || !form.bankSai || !form.typeCard) {
+    !form.bankEnt
+      ? alert("Por favor selecione o Banco de entrada dos valores")
+      : "";
+    !form.bankSai
+      ? alert("Por favor selecione o Banco de saída dos valores")
+      : "";
+    !form.typeCard
+      ? alert("Por favor selecione o tipo de cartão requisitado")
+      : "";
   } else {
     StorageM(form, "set");
     // atualizar();
-    window.location.reload();
     limpar();
   }
   // StorageM("", "clear");
