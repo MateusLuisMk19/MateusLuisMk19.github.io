@@ -1,0 +1,136 @@
+* {
+  padding: 0;
+  margin: 0;
+}
+
+/* V 64 ----------------------------------------------------------------------------------------------------- */
+
+.map-tab-def {
+  font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif;
+  font-size: larger;
+}
+
+.map-dim.bases {
+  width: 580px;
+  height: 35px;
+  padding: auto 0;
+}
+
+.map-dim.lados {
+  width: 35px;
+  height: 580px;
+  padding: auto 0;
+}
+
+.map-tab-bases {
+  float: left;
+  width: 70px;
+  margin: 0 1px;
+  text-align: center;
+  border: #000 solid 2px;
+}
+
+.map-tap-lados {
+  height: 70px;
+  margin: 2px 0;
+  text-align: center;
+  border: #000 solid 2px;
+  padding-top: 60%;
+}
+
+#map-tab {
+  background: linear-gradient(45deg,rgb(147, 80, 39),rgb(155, 124, 71)) ;
+  margin: auto;
+  width: 650px;
+  height: 650px;
+}
+
+#tabuleiro {
+  width: 580px;
+  height: 580px;
+  border: #000 solid 1px;
+  padding: 1px;
+  background-color: #fff;
+}
+
+#tabuleiro div {
+  width: 70px;
+  height: 70px;
+  float: left;
+  margin: 1px;
+  font-size: 48px;
+  border: #000 solid 1px;
+  text-align: center;
+}
+
+#t11,
+#t13,
+#t15,
+#t17,
+#t22,
+#t24,
+#t26,
+#t28,
+#t31,
+#t33,
+#t35,
+#t37,
+#t42,
+#t44,
+#t46,
+#t48,
+#t51,
+#t53,
+#t55,
+#t57,
+#t62,
+#t64,
+#t66,
+#t68,
+#t71,
+#t73,
+#t75,
+#t77,
+#t82,
+#t84,
+#t86,
+#t88 {
+  background-color: #fff;
+}
+
+#t12,
+#t14,
+#t16,
+#t18,
+#t21,
+#t23,
+#t25,
+#t27,
+#t32,
+#t34,
+#t36,
+#t38,
+#t41,
+#t43,
+#t45,
+#t47,
+#t52,
+#t54,
+#t56,
+#t58,
+#t61,
+#t63,
+#t65,
+#t67,
+#t72,
+#t74,
+#t76,
+#t78,
+#t81,
+#t83,
+#t85,
+#t87 {
+  background-color: #666;
+}
+
+/* V 100 ----------------------------------------------------------------------------------------------------- */

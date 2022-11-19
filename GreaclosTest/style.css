@@ -12,3 +12,45 @@
 #quadrado:hover {
   transform: perspective(300px) rotatex(60deg);
 }
+
+/* html,
+body {
+  position: relative; 
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+} */
+
+.bloco {
+  /**/
+  margin: 5px;
+  border-radius: 5px;
+  background: linear-gradient(red, black);
+  width: 128px;
+  height: 128px;
+}
+
+/* .arrastar {
+  float: left;
+  position: relative;
+  border: 1px solid;
+  width: 128px;
+  height: 128px;
+  /
+  ccc
+} */
+
+.arrastando {
+  transform: scale(1.1);
+  z-index: 999;
+  background-color: bisque;
+}
+
+.arrastar:hover {
+  cursor: grab;
+}
+
+.arrastar:hover {
+  cursor: grabbing;
+}

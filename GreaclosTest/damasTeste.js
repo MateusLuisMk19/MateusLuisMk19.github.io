@@ -1,21 +1,6 @@
-const Tabuleiro = document.querySelector("#tabuleiro");
+function inicia_jogo() {
+  vez = "branco"; //vez de quem jogar
 
-function createTabuleiro() {
-  console.log("Oi");
-  for (let i = 1; i <= 8; i++) {
-    for (let j = 1; j <= 8; j++) {
-      let quadrado = document.createElement("div");
-      quadrado.setAttribute("id", `t${i}${j}`);
-      quadrado.setAttribute("onclick", `seleciona(${i},${j})`);
-
-      Tabuleiro.appendChild(quadrado);
-
-      // quadrado.innerHTML = `i${line}j${col}`;
-    }
-  }
-}
-
-function setPieces() {
   //muda a classe das pecas pretas(encima) para mostrar imgens das pecas
   document.getElementById("t11").innerHTML = "&#9820;";
   document.getElementById("t12").innerHTML = "&#9822;";
@@ -53,73 +38,56 @@ function setPieces() {
   document.getElementById("t76").innerHTML = "&#9817;";
   document.getElementById("t77").innerHTML = "&#9817;";
   document.getElementById("t78").innerHTML = "&#9817;";
-}
 
-function cria_array() {
-  var x, y;
+  //cria array que var receber as posicoes do tabuleiro
+  cria_array();
+  function cria_array() {
+    var x, y;
 
-  peca = new Array();
+    peca = new Array();
 
-  for (x = 1; x <= 8; x++) {
-    peca[x] = new Array();
+    for (x = 1; x <= 8; x++) {
+      peca[x] = new Array();
 
-    for (y = 1; y <= 8; y++) {
-      peca[x][y] = new Array();
-      peca[x][y]["peca"] = false; //defino como falso para as que não começam com peça ficarem nulas
-      peca[x][y]["cor"] = false; //defino como falso para as que não começam com peça ficarem nulas
+      for (y = 1; y <= 8; y++) {
+        peca[x][y] = new Array();
+        peca[x][y]["peca"] = false; //defino como falso para as que não começam com peça ficarem nulas
+        peca[x][y]["cor"] = false; //defino como falso para as que não começam com peça ficarem nulas
+      }
     }
+
+    il = new Array();
+    il["preto"] = new Array();
+    il["branco"] = new Array();
   }
 
-  il = new Array();
-  il["preto"] = new Array();
-  il["branco"] = new Array();
-
-  console.log(peca,il)
-}
-
-function inicia_jogo() {
-  createTabuleiro();
-  vez = "branco"; //vez de quem jogar
-
-  setPieces();
-
-  //cria array que vai receber as posicoes do tabuleiro
-  cria_array();
-
-  //posiciona as pecas pretas no array (mecanica)
+  //posiciona as pecas pretas no array
   peca[1][1]["peca"] = "torre";
   peca[1][1]["cor"] = "preto";
   peca[1][1]["mov"] = 0;
   il["preto"]["torre"] = "&#9820;";
-
   peca[1][2]["peca"] = "cavalo";
   peca[1][2]["cor"] = "preto";
   peca[1][2]["mov"] = 0;
   il["preto"]["cavalo"] = "&#9822;";
-
   peca[1][3]["peca"] = "bispo";
   peca[1][3]["cor"] = "preto";
   peca[1][3]["mov"] = 0;
   il["preto"]["bispo"] = "&#9821;";
-
   peca[1][4]["peca"] = "rainha";
   peca[1][4]["cor"] = "preto";
   peca[1][4]["mov"] = 0;
   il["preto"]["rainha"] = "&#9819;";
-
   peca[1][5]["peca"] = "rei";
   peca[1][5]["cor"] = "preto";
   peca[1][5]["mov"] = 0;
   il["preto"]["rei"] = "&#9818;";
-
   peca[1][6]["peca"] = "bispo";
   peca[1][6]["cor"] = "preto";
   peca[1][6]["mov"] = 0;
-
   peca[1][7]["peca"] = "cavalo";
   peca[1][7]["cor"] = "preto";
   peca[1][7]["mov"] = 0;
-
   peca[1][8]["peca"] = "torre";
   peca[1][8]["cor"] = "preto";
   peca[1][8]["mov"] = 0;
@@ -128,31 +96,24 @@ function inicia_jogo() {
   peca[2][1]["cor"] = "preto";
   peca[2][1]["mov"] = 0;
   il["preto"]["peao"] = "&#9823;";
-
   peca[2][2]["peca"] = "peao";
   peca[2][2]["cor"] = "preto";
   peca[2][2]["mov"] = 0;
-
   peca[2][3]["peca"] = "peao";
   peca[2][3]["cor"] = "preto";
   peca[2][3]["mov"] = 0;
-
   peca[2][4]["peca"] = "peao";
   peca[2][4]["cor"] = "preto";
   peca[2][4]["mov"] = 0;
-
   peca[2][5]["peca"] = "peao";
   peca[2][5]["cor"] = "preto";
   peca[2][5]["mov"] = 0;
-
   peca[2][6]["peca"] = "peao";
   peca[2][6]["cor"] = "preto";
   peca[2][6]["mov"] = 0;
-
   peca[2][7]["peca"] = "peao";
   peca[2][7]["cor"] = "preto";
   peca[2][7]["mov"] = 0;
-
   peca[2][8]["peca"] = "peao";
   peca[2][8]["cor"] = "preto";
   peca[2][8]["mov"] = 0;
@@ -215,22 +176,6 @@ function inicia_jogo() {
   peca[7][8]["mov"] = 0;
 
   ///aray para movimentar as pecas
-  /*
-  movimenta[
-    selecionada[
-      cor = "0",
-      peca ="0",
-      x = 0,
-      y = 0,
-    ],
-    destino[
-      cor = "0",
-      peca ="0",
-      x = 0,
-      y = 0,
-    ]
-  ]
-  */
   movimenta = new Array();
 
   movimenta["selecionada"] = new Array();
@@ -244,8 +189,6 @@ function inicia_jogo() {
   movimenta["destino"]["y"] = 0;
   movimenta["destino"]["peca"] = "0";
   movimenta["destino"]["cor"] = "0";
-
-  // console.log(movimenta);
 
   ///aray para os possiveis movimentos
   possiveis = new Array();
@@ -505,5 +448,3 @@ function escolhecor_incio(cor) {
   document.getElementById("fundo").style.display = "none";
   vez = cor; //vez de quem jogar
 }
-
-inicia_jogo();
