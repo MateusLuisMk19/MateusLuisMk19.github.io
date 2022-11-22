@@ -8,6 +8,7 @@ const form = {
 };
 var variavel;
 let cambio;
+var dataGetted;
 
 function escolha() {
   let another;
@@ -19,9 +20,9 @@ function escolha() {
     another = document.getElementById("valorDl");
     valor = parseInt(document.getElementById("valorKz").value) / cambio;
     str = valor.toString();
-    console.log(str);
+    // console.log(str);
     for (let i = 0; i < str.length; i++) {
-      console.log(str[i]);
+      // console.log(str[i]);
 
       if (str[i] == ".") {
         another.value = str.slice(0, i + 3);
@@ -60,49 +61,61 @@ function limpar() {
 }
 
 function atualizar() {
-  var iavel = StorageM("", "getData");
-  if (iavel) {
-    for (let i = 0; i < iavel.length; i++) {
-      createLines(iavel[i]);
+  dataGetted = StorageM("", "getData");
+  if (dataGetted) {
+    for (let i = 0; i < dataGetted.length; i++) {
+      createLines(dataGetted[i]);
     }
+  }
+
+  if (!dataGetted) {
+    document.querySelectorAll(".botoes-sup").forEach((botao) => {
+      botao.classList.add("visually-hidden");
+    });
+  } else {
+    document.querySelectorAll(".botoes-sup").forEach((botao) => {
+      botao.classList.replace("visually-hidden", "visually");
+    });
   }
 }
 
 function createLines(names) {
   let Pai = document.getElementById("lines");
   variavel = StorageM(names, "get");
-  console.log(variavel);
+  // console.log(variavel);
 
   let tr = document.createElement("tr");
 
-  let div = document.createElement("div");
-  div.setAttribute("class", "col-sm");
-
-  let div2 = document.createElement("div");
-  div2.setAttribute("class", "col-sm");
-
   let td = [];
-  for (let i = 0; i < 5; i++) {
+  for (let i = 0; i < 6; i++) {
     td[i] = document.createElement("td");
   }
 
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < 6; i++) {
     td[i].innerHTML = variavel[i];
   }
 
-  div.innerHTML = variavel[4];
-  div2.innerHTML = variavel[5];
+  switch (td[1].innerHTML) {
+    case "V-GO":
+      td[1].classList.add("bg-v-go");
+      break;
+    case "V-BOOST":
+      td[1].classList.add("bg-v-boost");
 
-  td[4].setAttribute("class", "row");
-  td[4].setAttribute("colspan", "2");
-  td[4].appendChild(div);
-  td[4].appendChild(div2);
+      break;
+    case "V-PREMIUM":
+      td[1].classList.add("bg-v-premium");
+      break;
+    default:
+      break;
+  }
 
-  tr.appendChild(td[0]);
-  tr.appendChild(td[1]);
-  tr.appendChild(td[2]);
-  tr.appendChild(td[3]);
-  tr.appendChild(td[4]);
+  tr.appendChild(td[0]); //Nome
+  tr.appendChild(td[1]); //Catão
+  tr.appendChild(td[2]); //Kz
+  tr.appendChild(td[3]); //$
+  tr.appendChild(td[4]); //Bank Entrada
+  tr.appendChild(td[5]); //Bannk Saida
 
   Pai.appendChild(tr);
 }
@@ -121,10 +134,10 @@ function StorageM(pão, option) {
         pão.bankEnt,
         pão.bankSai,
       ]);
-      let dataN = window.sessionStorage.getItem("data");
-      if (dataN) {
-        dataN += "," + pão.nome.replace(" ", "");
-        window.sessionStorage.setItem("data", [dataN]);
+      let dataNames = window.sessionStorage.getItem("data");
+      if (dataNames) {
+        dataNames += "," + pão.nome.replace(" ", "");
+        window.sessionStorage.setItem("data", [dataNames]);
       } else {
         window.sessionStorage.setItem("data", [pão.nome.replace(" ", "")]);
       }
@@ -190,6 +203,59 @@ function limparBD() {
 }
 
 function terminarDia() {
+  function lastLine(lucro) {
+    let Pai = document.getElementById("lines");
+    let tr = document.createElement("tr");
+    let trEmpty = document.createElement("tr");
+
+    let td = [];
+    for (let i = 0; i < 5; i++) {
+      td[i] = document.createElement("td");
+    }
+
+    let tdEmpty = [];
+    for (let i = 0; i < 6; i++) {
+      tdEmpty[i] = document.createElement("td");
+    }
+
+    trEmpty.appendChild(tdEmpty[0]);
+    trEmpty.appendChild(tdEmpty[1]);
+    trEmpty.appendChild(tdEmpty[2]);
+    trEmpty.appendChild(tdEmpty[3]);
+    trEmpty.appendChild(tdEmpty[4]);
+    trEmpty.appendChild(tdEmpty[5]);
+
+    td[0].setAttribute("class", "fw-bold");
+    td[0].innerHTML = "Total";
+
+    td[1].setAttribute("title", "Número total de cartões");
+    td[1].innerHTML = iavel.length;
+
+    td[2].setAttribute("title", "Valor total em Kz");
+    td[2].innerHTML = totalKz;
+
+    td[3].setAttribute("title", "Valor total em $");
+    td[3].innerHTML = totalDl;
+
+    td[4].setAttribute("colspan", "2");
+    td[4].setAttribute("class", "fw-bold");
+    td[4].setAttribute("title", "Lucro do Dia");
+    td[4].innerHTML = `Lucro: ${lucro}Kz`;
+    if (lucro < 0) {
+      td[4].classList.add("bg-danger");
+    } else if (lucro > 0) {
+      td[4].classList.add("bg-success");
+    }
+    tr.appendChild(td[0]);
+    tr.appendChild(td[1]);
+    tr.appendChild(td[2]);
+    tr.appendChild(td[3]);
+    tr.appendChild(td[4]);
+
+    Pai.appendChild(trEmpty);
+    Pai.appendChild(tr);
+  }
+
   var iavel = StorageM("", "getData");
   var totalKz = 0;
   var totalDl = 0;
@@ -197,17 +263,50 @@ function terminarDia() {
   if (iavel) {
     var cambilAtual = parseInt(prompt("Qual é o cambio atual?"));
 
-    for (let i = 0; i < iavel.length; i++) {
-      let newD = StorageM(iavel[i], "get");
-      totalKz += parseInt(newD[2]);
-      totalDl += parseInt(newD[3]);
-    }
+    if (cambilAtual) {
+      for (let i = 0; i < iavel.length; i++) {
+        let newD = StorageM(iavel[i], "get");
+        totalKz += parseInt(newD[2]);
+        totalDl += parseInt(newD[3]);
+      }
 
-    //Total de Kz - (Total de Dollar * cambio Atual)
-    let lucro = parseFloat(totalKz - totalDl * cambilAtual);
-    alert("Terminou o dia com um Lucro de: " + lucro + " Kz");
+      //Total de Kz - (Total de Dollar * cambio Atual)
+      let lucro = parseFloat(totalKz - totalDl * cambilAtual);
+      lastLine(lucro);
+
+      let inc = 5;
+      let botaoTD = document.querySelector("#terminarDia");
+      botaoTD.setAttribute("disabled", "");
+      let baixar = setInterval(() => {
+        if (inc == 0) {
+          botaoTD.removeAttribute("disabled", "");
+          botaoTD.innerHTML = "Terminar Dia";
+          Export();
+          clearInterval(baixar);
+        } else {
+          botaoTD.innerHTML = "Baixar Excel " + inc--;
+        }
+      }, [1000]);
+    }
   } else {
     alert("Você ainda nem começou o dia");
+  }
+
+  function Export() {
+    let dataL = new Date();
+    let dataA =
+      dataL.getDate() +
+      "/" +
+      dataL.getMonth() +
+      "/" +
+      dataL.getFullYear().toString().slice(2, 4);
+    let horas = dataL.getHours() + ":" + dataL.getMinutes();
+    let name = "REG-" + dataA + "-" + horas + "-JB";
+    // console.log(name);
+
+    $("#registoDia").table2excel({
+      filename: `${name}.xls`,
+    });
   }
 }
 
@@ -217,8 +316,17 @@ function remover() {
 
   if (dataN) {
     var client = prompt("Quem deseja remover?").replace(" ", "");
+    // console.log(dataN[0]);
 
-    dataN = dataN.replace(`,${client}`, "");
+    dataN = dataN.replace(`${client}`, "");
+    // console.log(dataN[0]);
+    if (dataN.includes(",,")) {
+      dataN = dataN.replace(`,,`, ",");
+    }
+    if (dataN[0] == ",") {
+      dataN = dataN.replace(`,`, "");
+    }
+    window.sessionStorage.setItem("data", []);
     window.sessionStorage.setItem("data", [dataN]);
     window.location.reload();
   } else {
@@ -234,6 +342,15 @@ function whatCard(card) {
     : (cambio = 600);
 }
 
+function isMT1space(str) {
+  let cont = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] == " ") cont++;
+  }
+  if (cont > 1) return true;
+  return false;
+}
+
 document.getElementById("newLine").addEventListener("click", () => {
   form.nome = document.getElementById("nome").value;
   form.typeCard = document.getElementById("typeCard").value;
@@ -242,8 +359,10 @@ document.getElementById("newLine").addEventListener("click", () => {
   form.bankEnt = document.getElementById("bankEnt").value;
   form.bankSai = document.getElementById("bankSai").value;
 
-  if (!form.nome.includes(" ")) {
-    alert("Por favor preencha o campo nome com Nome e Sobrenome");
+  if (!form.nome.includes(" ") || isMT1space(form.nome)) {
+    alert(
+      "Por favor preencha o campo nome com Nome e Sobrenome ou retire o espaço depois do último nome"
+    );
   } else if (!form.valorDl && !form.valorKz) {
     alert("Por favor preencha um dos valores monetarios");
   } else if (!form.bankEnt || !form.bankSai || !form.typeCard) {
