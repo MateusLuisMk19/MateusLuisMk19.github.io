@@ -336,10 +336,10 @@ function remover() {
 
 function whatCard(card) {
   card == "V-GO"
-    ? (cambio = 590)
+    ? (cambio = 625)
     : card == "V-PREMIUM"
-    ? (cambio = 590)
-    : (cambio = 600);
+    ? (cambio = 625)
+    : (cambio = 635);
 }
 
 function isMT1space(str) {
