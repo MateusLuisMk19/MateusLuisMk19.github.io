@@ -97,7 +97,7 @@ function updateCambioView() {
   // console.log(cambioList, spanList);
 
   for (let i = 0; i < cambioList.length; i++) {
-    spanList[i].innerHTML = cambioList[i] ? (cambioList[i]+"Kz") : "S/C";
+    spanList[i].innerHTML = cambioList[i] ? cambioList[i] + "Kz" : "S/C";
   }
 }
 
@@ -357,11 +357,25 @@ function remover() {
 }
 
 function whatCard(card) {
+  function valor(num) {
+    let val = parseInt(spanList[num].innerHTML);
+
+    if (val) {
+      return val;
+    }
+    alert(
+      "Este cartão não tem câmbio definido\nPor favor defina o câmbio de " +
+        card +
+        " nas definições"
+    );
+  }
   card == "V-GO"
-    ? (cambio = parseInt(spanList[0].innerHTML))
+    ? (cambio = valor(0))
     : card == "V-PREMIUM"
-    ? (cambio = parseInt(spanList[2].innerHTML))
-    : (cambio = parseInt(spanList[1].innerHTML));
+    ? (cambio = valor(3))
+    : card == "V-BOOST"
+    ? (cambio = valor(1))
+    : "";
 }
 
 function isMT1space(str) {
@@ -424,10 +438,12 @@ function sendCambio(option, type) {
       break;
     case "get":
       return window.localStorage.getItem(type);
+    case "trash":
+      window.localStorage.clear();
+      break;
     default:
       break;
   }
-  // window.localStorage.clear()
 
   window.location.reload();
 }
