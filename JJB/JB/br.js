@@ -6,6 +6,12 @@ const form = {
   bankEnt: "",
   bankSai: "",
 };
+const CAMBIO = {
+  v_go: 0,
+  v_boost: 0,
+  v_premium: 0,
+};
+let spanList = document.querySelectorAll("span.cmb");
 var variavel;
 let cambio;
 var dataGetted;
@@ -76,6 +82,22 @@ function atualizar() {
     document.querySelectorAll(".botoes-sup").forEach((botao) => {
       botao.classList.replace("visually-hidden", "visually");
     });
+  }
+  updateCambioView();
+}
+
+function updateCambioView() {
+  let cambioList = [
+    sendCambio("get", "v_go"),
+    sendCambio("get", "v_boost"),
+    sendCambio("get", "v_go"),
+    sendCambio("get", "v_premium"),
+  ];
+
+  // console.log(cambioList, spanList);
+
+  for (let i = 0; i < cambioList.length; i++) {
+    spanList[i].innerHTML = cambioList[i] ? (cambioList[i]+"Kz") : "S/C";
   }
 }
 
@@ -336,10 +358,10 @@ function remover() {
 
 function whatCard(card) {
   card == "V-GO"
-    ? (cambio = 625)
+    ? (cambio = parseInt(spanList[0].innerHTML))
     : card == "V-PREMIUM"
-    ? (cambio = 625)
-    : (cambio = 635);
+    ? (cambio = parseInt(spanList[2].innerHTML))
+    : (cambio = parseInt(spanList[1].innerHTML));
 }
 
 function isMT1space(str) {
@@ -384,3 +406,28 @@ document.getElementById("newLine").addEventListener("click", () => {
 });
 
 atualizar();
+
+function sendCambio(option, type) {
+  switch (option) {
+    case "set":
+      CAMBIO.v_go = document.getElementById("cmb-v-go").value;
+      CAMBIO.v_boost = document.getElementById("cmb-v-boost").value;
+      CAMBIO.v_premium = document.getElementById("cmb-v-premium").value;
+
+      CAMBIO.v_go ? window.localStorage.setItem("v_go", CAMBIO.v_go) : "";
+      CAMBIO.v_boost
+        ? window.localStorage.setItem("v_boost", CAMBIO.v_boost)
+        : "";
+      CAMBIO.v_premium
+        ? window.localStorage.setItem("v_premium", CAMBIO.v_premium)
+        : "";
+      break;
+    case "get":
+      return window.localStorage.getItem(type);
+    default:
+      break;
+  }
+  // window.localStorage.clear()
+
+  window.location.reload();
+}
