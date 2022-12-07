@@ -36,7 +36,7 @@ const reg_Diario = {
   totalDl: 0,
   totalKz: 0,
   ops: [],
-  user:'',
+  user: "",
 };
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - -
@@ -72,8 +72,8 @@ function startConfig() {
   showBanksTab("jj", User.cargo);
 }
 
-function startContas(){
-  getContas(User.cargo)
+function startContas() {
+  getContas(User.cargo);
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -100,26 +100,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
         document.querySelector("#username-show").innerHTML = User.nome;
 
-        switch (path.slice(26, path.length)) {
-          case "Pages/home.html":
-            startHome();
-            break;
-          case "Pages/colaboradores.html":
-            startColab();
-            break;
-          case "Pages/history.html":
-            startHistory();
-            break;
-          case "Pages/config.html":
-            startConfig();
-            break;
-          case "Pages/contas.html":
-            startContas();
-            break;
-
-          default:
-            break;
-        }
+        if (path.includes("Pages/home.html")) startHome();
+        if (path.includes("Pages/colaboradores.html")) startColab();
+        if (path.includes("Pages/history.html")) startHistory();
+        if (path.includes("Pages/contas.html")) startContas();
+        if (path.includes("Pages/config.html")) startConfig();
       });
   });
 });
