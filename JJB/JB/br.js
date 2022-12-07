@@ -12,7 +12,7 @@ const CAMBIO = {
   v_premium: 0,
 };
 let spanList = document.querySelectorAll("span.cmb");
-var variavel;
+var data;
 let cambio;
 var dataGetted;
 
@@ -70,7 +70,7 @@ function atualizar() {
   dataGetted = StorageM("", "getData");
   if (dataGetted) {
     for (let i = 0; i < dataGetted.length; i++) {
-      createLines(dataGetted[i]);
+      showOperations(dataGetted[i]);
     }
   }
 
@@ -101,9 +101,9 @@ function updateCambioView() {
   }
 }
 
-function createLines(names) {
+function showOperations(names) {
   let Pai = document.getElementById("lines");
-  variavel = StorageM(names, "get");
+  data = StorageM(names, "get");
   // console.log(variavel);
 
   let tr = document.createElement("tr");
@@ -114,7 +114,7 @@ function createLines(names) {
   }
 
   for (let i = 0; i < 6; i++) {
-    td[i].innerHTML = variavel[i];
+    td[i].innerHTML = data[i];
   }
 
   switch (td[1].innerHTML) {
@@ -388,29 +388,27 @@ function isMT1space(str) {
 }
 
 document.getElementById("newLine").addEventListener("click", () => {
-  form.nome = document.getElementById("nome").value;
-  form.typeCard = document.getElementById("typeCard").value;
+  form.clientNome = document.getElementById("nome").value;
+  form.card = document.getElementById("typeCard").value;
   form.valorKz = parseInt(document.getElementById("valorKz").value);
   form.valorDl = parseInt(document.getElementById("valorDl").value);
-  form.bankEnt = document.getElementById("bankEnt").value;
-  form.bankSai = document.getElementById("bankSai").value;
+  form.bancoEnt = document.getElementById("bankEnt").value;
+  form.bancoSai = document.getElementById("bankSai").value;
 
-  if (!form.nome.includes(" ") || isMT1space(form.nome)) {
+  if (!form.clientNome.includes(" ") || isMT1space(form.clientNome)) {
     alert(
       "Por favor preencha o campo nome com Nome e Sobrenome ou retire o espaço depois do último nome"
     );
   } else if (!form.valorDl && !form.valorKz) {
     alert("Por favor preencha um dos valores monetarios");
-  } else if (!form.bankEnt || !form.bankSai || !form.typeCard) {
-    !form.bankEnt
+  } else if (!form.bancoEnt || !form.bancoSai || !form.card) {
+    !form.bancoEnt
       ? alert("Por favor selecione o Banco de entrada dos valores")
       : "";
-    !form.bankSai
+    !form.bancoSai
       ? alert("Por favor selecione o Banco de saída dos valores")
       : "";
-    !form.typeCard
-      ? alert("Por favor selecione o tipo de cartão requisitado")
-      : "";
+    !form.card ? alert("Por favor selecione o tipo de cartão requisitado") : "";
   } else {
     StorageM(form, "set");
     // atualizar();

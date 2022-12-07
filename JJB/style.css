@@ -1,0 +1,116 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+label {
+    text-align: center;
+    font-weight: bold;
+    border-bottom: 1.5px solid;
+    margin: 5px;
+}
+
+.inp {
+    margin: 5px 5px 10px 5px;
+    text-align: center;
+}
+
+.inp>input,
+th,
+td {
+    text-align: center;
+}
+
+input,
+select {
+    text-align: center;
+    border-color: aliceblue;
+}
+
+option.disabled {
+    font-style: italic;
+}
+
+button {
+    min-width: 115px;
+}
+
+#termDia {
+    margin: 10px;
+}
+
+.bg-digi-mais {
+    background: radial-gradient(closest-side, black, rgb(39, 39, 39), white);
+    color: white;
+}
+
+.bg-digi-basico {
+    background: radial-gradient(closest-side, cyan, rgb(100, 201, 255), white);
+    color: white;
+    font-weight: bolder;
+}
+
+.bg-v-premium {
+    background: radial-gradient(closest-side, black, rgb(39, 39, 39), white);
+    color: white;
+}
+
+.bg-v-go {
+    background: radial-gradient(closest-side, red, rgb(255, 96, 96), white);
+    font-weight: bolder;
+
+}
+
+.bg-v-boost {
+    background: radial-gradient(closest-side, rgba(255, 216, 24, 0.977), yellow, white);
+}
+
+header {
+    border-bottom: 2px solid;
+    max-height: 70px;
+}
+
+.dinamico {
+    line-height: 90px;
+    height: 90px;
+    overflow: hidden;
+}
+
+.dinamico li {
+    margin: 0;
+    padding: 0;
+    font-size: small;
+    font-weight: bolder;
+    list-style: none;
+    left: 0;
+    position: relative;
+    top: 0;
+    animation: slide 6s steps(4) infinite;
+}
+
+@keyframes slide {
+    100% {
+        top: -360px;
+    }
+}
+
+
+@media only screen and (max-width: 600px) {
+    button {
+        margin: 3px;
+        font-size: x-small;
+    }
+
+    #termDia {
+        margin: 0px;
+    }
+
+    .container-lg {
+        padding: 0;
+        margin: 0;
+    }
+
+    #bankSai {
+        margin-top: 3px;
+    }
+}

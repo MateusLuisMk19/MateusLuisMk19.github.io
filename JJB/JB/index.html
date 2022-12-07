@@ -15,112 +15,7 @@
     <script type="text/javascript" defer
         src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
     <script src="../../Utilities/table2excel.js" defer type="text/javascript"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-        }
-
-        label {
-            text-align: center;
-            font-weight: bold;
-            border-bottom: 1.5px solid;
-            margin: 5px;
-        }
-
-        .inp {
-            margin: 5px 5px 10px 5px;
-            text-align: center;
-        }
-
-        .inp>input,
-        th,
-        td {
-            text-align: center;
-        }
-
-        input,
-        select {
-            text-align: center;
-            border-color: aliceblue;
-        }
-
-        option.disabled {
-            font-style: italic;
-        }
-
-        button {
-            min-width: 115px;
-        }
-
-        #termDia {
-            margin: 10px;
-        }
-
-        .bg-v-premium {
-            background: radial-gradient(closest-side, black, rgb(39, 39, 39), white);
-            color: white;
-        }
-
-        .bg-v-go {
-            background: radial-gradient(closest-side, red, rgb(255, 96, 96), white);
-            font-weight: bolder;
-
-        }
-
-        .bg-v-boost {
-            background: radial-gradient(closest-side, rgba(255, 216, 24, 0.977), yellow, white);
-        }
-
-        @media only screen and (max-width: 600px) {
-            button {
-                margin: 3px;
-                font-size: x-small;
-            }
-
-            #termDia {
-                margin: 0px;
-            }
-
-            .container-lg {
-                padding: 0;
-                margin: 0;
-            }
-
-            #bankSai {
-                margin-top: 3px;
-            }
-        }
-
-        header {
-            border-bottom: 2px solid;
-            max-height: 70px;
-        }
-
-        .dinamico {
-            line-height: 90px;
-            height: 90px;
-            overflow: hidden;
-        }
-
-        .dinamico li {
-            margin: 0;
-            padding: 0;
-            font-size: small;
-            font-weight: bolder;
-            list-style: none;
-            left: 0;
-            position: relative;
-            top: 0;
-            animation: slide 6s steps(4) infinite;
-        }
-
-        @keyframes slide {
-            100% {
-                top: -360px;
-            }
-        }
-    </style>
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body class="container-lg">
@@ -147,7 +42,8 @@
             </svg>
         </div>
     </header>
-    <div class="form-group container-md  m-auto">
+
+    <main class="form-group container-md  m-auto">
         <div class="m-auto" id="title-line">
             <div class="float-sm-end mt-1 mb-1 m-2 botoes-sup"><button onclick="remover()"
                     class="w-100 btn btn-warning p-1">Remover</button></div>
@@ -231,6 +127,7 @@
                                                 <option>Revolut</option>
                                                 <option>Santander</option>
                                                 <option>CTT</option>
+                                                <option>WISE</option>
                                             </select>
                                         </div>
                                     </th>
@@ -284,9 +181,9 @@
                                 </tr>
                             </tbody>
                         </table>
-                        <button onclick="sendCambio('trash')"><svg id="i-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32"
-                                height="32" fill="none" stroke="currentcolor" stroke-linecap="round"
-                                stroke-linejoin="round" stroke-width="2">
+                        <button onclick="sendCambio('trash')"><svg id="i-trash" xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="currentcolor"
+                                stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
                                 <path
                                     d="M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6" />
                             </svg></button>
@@ -300,7 +197,7 @@
 
 
         <script src="br.js"></script>
-    </div>
+    </main>
 </body>
 
 </html>

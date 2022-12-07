@@ -239,13 +239,15 @@ function terminarDia() {
       lastLine(luc);
 
       let inc = 5;
+      window.sessionStorage.setItem("isTerminedDay",true)
       let botaoTD = document.querySelector("#terminarDia");
+    
       botaoTD.setAttribute("disabled", "");
+
       let baixar = setInterval(() => {
         if (inc == 0) {
-          botaoTD.removeAttribute("disabled", "");
           botaoTD.innerHTML = "Terminar Dia";
-          Export();
+          //Export();
           clearInterval(baixar);
         } else {
           botaoTD.innerHTML = "Baixar Excel " + inc--;
@@ -392,4 +394,39 @@ function getCambio(digi) {
     default:
       break;
   }
+}
+console.log(window.sessionStorage.getItem("isTerminedDay"))
+if(window.sessionStorage.getItem("isTerminedDay")){
+  let botaoTD = document.querySelector("#terminarDia");
+  let botaoNC = document.querySelector("#newClient");
+
+  botaoTD.setAttribute("disabled", "");
+  botaoNC.setAttribute("disabled", "");
+}
+
+function sendCambio(option, type) {
+  switch (option) {
+    case "set":
+      CAMBIO.v_go = document.getElementById("cmb-v-go").value;
+      CAMBIO.v_boost = document.getElementById("cmb-v-boost").value;
+      CAMBIO.v_premium = document.getElementById("cmb-v-premium").value;
+
+      CAMBIO.v_go ? window.localStorage.setItem("v_go", CAMBIO.v_go) : "";
+      CAMBIO.v_boost
+        ? window.localStorage.setItem("v_boost", CAMBIO.v_boost)
+        : "";
+      CAMBIO.v_premium
+        ? window.localStorage.setItem("v_premium", CAMBIO.v_premium)
+        : "";
+      break;
+    case "get":
+      return window.localStorage.getItem(type);
+    case "trash":
+      window.localStorage.clear();
+      break;
+    default:
+      break;
+  }
+
+  window.location.reload();
 }
