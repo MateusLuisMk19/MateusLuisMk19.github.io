@@ -1364,7 +1364,7 @@ function logOut() {
       .then(() => {
         if (window.location.href.includes("cadastro.html"))
           navigate("login.html");
-        else navigate("../login.html");
+        else navigate("auth/login.html");
       });
   }
 }
