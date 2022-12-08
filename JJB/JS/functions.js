@@ -158,7 +158,6 @@ async function showOperations(by, value) {
       // console.log(td);
     });
 
-    if (reg != null) {
       if (reg.exist) {
         for (let f = 0; f < botoes.length; f++) {
           botoes[f].classList.add("disabled");
@@ -187,7 +186,7 @@ async function showOperations(by, value) {
         divM.appendChild(divCol[2]);
         PaiG.appendChild(divM);
       }
-    }
+    return await dataOp;
   } else {
     const dataOp = await firebase
       .firestore()
@@ -1258,38 +1257,46 @@ async function update_del(mode, id, target) {
   btnModal.click();
 }
 
-function terminarDia() {
-  let btn = document.getElementById("btnModal-fimDay");
-  let footer = document.getElementById("footer-fimDay");
-  footer.classList.remove("modal-footer");
+async function terminarDia() {
+  const operations = await showOperations("today", User.uid);
+  console.log(operations.length == 0);
+  if (operations.length == 0) {
+    console.log("maluco");
+  } else if (operations.length != 0) {
+    let btn = document.getElementById("btnModal-fimDay");
+    let footer = document.getElementById("footer-fimDay");
+    footer.classList.remove("modal-footer");
+    footer.innerHTML = "";
 
-  let button = document.createElement("button");
-  button.setAttribute("onclick", "calcularDia()");
-  button.setAttribute("class", "btn btn-primary");
-  button.innerHTML = "Enviar";
+    let button = document.createElement("button");
+    button.setAttribute("onclick", "calcularDia()");
+    button.setAttribute("class", "btn btn-primary");
+    button.innerHTML = "Enviar";
 
-  let btnFechar = document.createElement("button");
-  btnFechar.setAttribute("type", "button");
-  btnFechar.setAttribute("id", "fechar-fimDay");
-  btnFechar.setAttribute("class", "btn btn-secondary m-1 visually-hidden");
-  btnFechar.setAttribute("data-bs-dismiss", `modal`);
+    let btnFechar = document.createElement("button");
+    btnFechar.setAttribute("type", "button");
+    btnFechar.setAttribute("id", "fechar-fimDay");
+    btnFechar.setAttribute("class", "btn btn-secondary m-1");
+    btnFechar.setAttribute("data-bs-dismiss", `modal`);
+    btnFechar.innerHTML = "Fechar";
 
-  document.getElementById("cambioAtual").addEventListener("change", (e) => {
-    if (e.target.value > 100) {
-      footer.classList.add("modal-footer");
-      footer.appendChild(btnFechar);
-      footer.appendChild(button);
-    } else {
-      footer.children.length > 0
-        ? (footer.classList.remove("modal-footer"),
-          footer.removeChild(btnFechar),
-          footer.removeChild(button))
-        : footer.classList.remove("modal-footer");
-    }
-    // console.log(e.target.value);
-  });
+    footer.classList.add("modal-footer");
+    footer.appendChild(btnFechar);
+    document.getElementById("cambioAtual").addEventListener("change", (e) => {
+      if (e.target.value > 100) {
+        footer.appendChild(button);
+      } else {
+        footer.children.length > 0
+          ? (footer.classList.remove("modal-footer"),
+            footer.removeChild(btnFechar),
+            footer.removeChild(button))
+          : footer.classList.remove("modal-footer");
+      }
+      // console.log(e.target.value);
+    });
 
-  btn.click();
+    btn.click();
+  }
 }
 
 async function calcularDia() {
@@ -1335,7 +1342,7 @@ async function calcularDia() {
     });
 }
 
-//
+// Firebase
 //
 //
 //
@@ -1467,8 +1474,6 @@ async function cadastrar() {
       });
   }
 }
-
-//------------------------------------
 
 function recoverPassword(email) {
   firebase
