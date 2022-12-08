@@ -239,15 +239,15 @@ function terminarDia() {
       lastLine(luc);
 
       let inc = 5;
-      window.sessionStorage.setItem("isTerminedDay",true)
+      window.sessionStorage.setItem("isTerminedDay", true);
       let botaoTD = document.querySelector("#terminarDia");
-    
+
       botaoTD.setAttribute("disabled", "");
 
       let baixar = setInterval(() => {
         if (inc == 0) {
           botaoTD.innerHTML = "Terminar Dia";
-          //Export();
+          Export();
           clearInterval(baixar);
         } else {
           botaoTD.innerHTML = "Baixar Excel " + inc--;
@@ -395,8 +395,8 @@ function getCambio(digi) {
       break;
   }
 }
-console.log(window.sessionStorage.getItem("isTerminedDay"))
-if(window.sessionStorage.getItem("isTerminedDay")){
+console.log(window.sessionStorage.getItem("isTerminedDay"));
+if (window.sessionStorage.getItem("isTerminedDay")) {
   let botaoTD = document.querySelector("#terminarDia");
   let botaoNC = document.querySelector("#newClient");
 

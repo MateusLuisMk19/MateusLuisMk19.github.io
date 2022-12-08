@@ -120,13 +120,16 @@ async function showOperations(by, value) {
       .get()
       .then((snapshot) => {
         const operations = snapshot.docs.map((doc) => doc);
-        console.log("Opening", operations[0].exists);
-        return {
-          dados: operations[0].data(),
-          exist: operations[0].exists,
-        };
+        // console.log("Opening", operations.length);
+        if (operations.length != 0) {
+          return {
+            dados: operations[0].data(),
+            exist: operations[0].exists,
+          };
+        }
+        return null;
       });
-    console.log("REG", reg);
+    // console.log("REG", reg);
 
     dataOp.forEach(async (doc) => {
       // console.log(doc);
@@ -155,33 +158,35 @@ async function showOperations(by, value) {
       // console.log(td);
     });
 
-    if (reg.exist) {
-      for (let f = 0; f < botoes.length; f++) {
-        botoes[f].classList.add("disabled");
+    if (reg != null) {
+      if (reg.exist) {
+        for (let f = 0; f < botoes.length; f++) {
+          botoes[f].classList.add("disabled");
+        }
+
+        divM.classList.add("row", "w-100", "bg-success");
+
+        let divCol = [];
+        for (let i = 0; i < 3; i++) {
+          divCol[i] = document.createElement("div");
+          divCol[i].classList.add(
+            "col",
+            "fs-3",
+            "text-white",
+            "m-2",
+            "text-center"
+          );
+        }
+
+        divCol[0].innerHTML = "Dia Terminado";
+        divCol[1].innerHTML = `Lucro: ${reg.dados.lucro} Kz`;
+        divCol[2].innerHTML = `Data: ${reg.dados.data}`;
+
+        divM.appendChild(divCol[0]);
+        divM.appendChild(divCol[1]);
+        divM.appendChild(divCol[2]);
+        PaiG.appendChild(divM);
       }
-
-      divM.classList.add("row", "w-100", "bg-success");
-
-      let divCol = [];
-      for (let i = 0; i < 3; i++) {
-        divCol[i] = document.createElement("div");
-        divCol[i].classList.add(
-          "col",
-          "fs-3",
-          "text-white",
-          "m-2",
-          "text-center"
-        );
-      }
-
-      divCol[0].innerHTML = "Dia Terminado";
-      divCol[1].innerHTML = `Lucro: ${reg.dados.lucro} Kz`;
-      divCol[2].innerHTML = `Data: ${reg.dados.data}`;
-
-      divM.appendChild(divCol[0]);
-      divM.appendChild(divCol[1]);
-      divM.appendChild(divCol[2]);
-      PaiG.appendChild(divM);
     }
   } else {
     const dataOp = await firebase
@@ -273,7 +278,7 @@ async function createSelect(ramo, type, method) {
             bank = doc.data();
             banksText[index] = bank.nome;
           });
-          console.log(banksText);
+          // console.log(banksText);
           return banksText;
         });
 
@@ -288,7 +293,7 @@ async function createSelect(ramo, type, method) {
         dataBank,
         "seletBanks"
       ); //JB Virtual Cartão
-      console.log("ihii", dataBank);
+      // console.log("ihii", dataBank);
 
       break;
 
@@ -346,7 +351,7 @@ async function getContas(cargo) {
     .get()
     .then((snapshot) => {
       const operations = snapshot.docs.map((doc) => doc.data());
-      console.log("Exp", operations);
+      // console.log("Exp", operations);
       return operations;
     });
 
@@ -374,41 +379,15 @@ async function getContas(cargo) {
             td[i] = document.createElement("td");
           }
 
-          let th = document.createElement('th')
-          th.innerHTML = index+1;
+          let th = document.createElement("th");
+          th.innerHTML = index + 1;
 
           td[0].innerHTML = doc.data;
-          td[1].innerHTML = doc.totalKz+' Kz';
-          td[2].innerHTML = doc.totalDl+' $';
+          td[1].innerHTML = doc.totalKz + " Kz";
+          td[2].innerHTML = doc.totalDl + " $";
           td[3].innerHTML = doc.numClientes;
-          td[4].innerHTML = doc.lucro+' Kz';
+          td[4].innerHTML = doc.lucro + " Kz";
           td[5].innerHTML = users[0].nome;
-
-          // let button = document.createElement("button");
-          // button.setAttribute("class", "btn btn-secondary btn-sm");
-          // button.setAttribute(
-          //   "style",
-          //   "border-radius: 50%; height: 32px; width: 32px;"
-          // );
-          // button.setAttribute("title", "Ver detalhes");
-          // button.setAttribute("value", dataOp.id[index]);
-          // button.setAttribute("onclick", `showDetails(this.value,'${cargo}')`);
-          // button.innerHTML = `<svg
-          //   id="i-paperclip"
-          //   xmlns="http://www.w3.org/2000/svg"
-          //   viewBox="0 0 35 32"
-          //   width="20"
-          //   height="20"
-          //   fill="none"
-          //   stroke="currentcolor"
-          //   stroke-linecap="round"
-          //   stroke-linejoin="round"
-          //   stroke-width="2"
-          // >
-          //   <path d="M10 9 L10 24 C10 28 13 30 16 30 19 30 22 28 22 24 L22 6 C22 3 20 2 18 2 16 2 14 3 14 6 L14 23 C14 24 15 25 16 25 17 25 18 24 18 23 L18 9" />
-          // </svg>`;
-
-          // td[6].appendChild(button);
 
           tr.appendChild(th); //Nome
           tr.appendChild(td[0]); //Nome
@@ -529,7 +508,7 @@ async function getUsers(uid, cargo) {
     "border-radius: 50%; height: 35px; width: 35px;"
   );
   button_cad.setAttribute("title", "Novo Colaborador");
-  button_cad.setAttribute("onclick", "navigate('../cadastro.html')");
+  button_cad.setAttribute("onclick", "navigate('auth/cadastro.html')");
   button_cad.innerHTML = `<svg
         id="i-plus"
         xmlns="http://www.w3.org/2000/svg"
@@ -882,16 +861,7 @@ function alertar(message, type) {
 
   setTimeout(() => {
     btn.click();
-  }, [6000]);
-}
-
-// ----------------------------- Firebase auth
-
-//Essa função aqui faz biscoito
-function logOut() {
-  if (firebase.auth().currentUser) {
-    firebase.auth().signOut();
-  }
+  }, [5000]);
 }
 
 function loadingBtn(btn) {
@@ -1362,5 +1332,157 @@ async function calcularDia() {
       setTimeout(() => {
         alertar("Poderá consultar o registo no menu 'Contas'", "success");
       }, 2000);
+    });
+}
+
+//
+//
+//
+//
+//
+// Firebase initialization
+function initFirebase() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDb2e4DpNdaYF9QrO1DIBrzLpzNRANKNaM",
+    authDomain: "jjb-virtual.firebaseapp.com",
+    projectId: "jjb-virtual",
+    storageBucket: "jjb-virtual.appspot.com",
+    messagingSenderId: "615811618989",
+    appId: "1:615811618989:web:613d2b3c065e0cbab14e24",
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+}
+// ----------------------------- Firebase auth
+
+function logOut() {
+  if (firebase.auth().currentUser) {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => {
+        if (window.location.href.includes("cadastro.html"))
+          navigate("login.html");
+        else navigate("../login.html");
+      });
+  }
+}
+
+function login() {
+  //Pegar valores do formulario
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
+
+  console.log(email, password);
+  //validar se nenhum dos campos está nulo
+  if (email && password) {
+    //Faz a requisição de login, passando o email e password como parametros
+    firebase
+      .auth()
+      .signInWithEmailAndPassword(email, password)
+      .then((response) => {
+        //Caso a requisição seja bem sucedida
+        alertar("Login efetuado com sucesso!", "success");
+
+        document.getElementById("password").value = "";
+        document.getElementById("email").value = "";
+
+        // setTimeout(() => {
+        //   navigate("../home.html");
+        // }, [1000]);
+      })
+      .catch((error) => {
+        //Caso a requisição dê erro
+
+        //Reseta campo do formulario
+        document.getElementById("password").value = "";
+
+        //Chamada da função validaAuth
+        validaAuth(error.code);
+      });
+  } else {
+    //se email nulo mostra o allerta
+    email ? "" : alertar("O campo email é obrigatório", "warning");
+    //se password nula mostra o allerta
+    password ? "" : alertar("O campo palavra passe é obrigatório", "warning");
+  }
+}
+
+async function cadastrar() {
+  const new_User = {
+    nome: document.getElementById("nome").value,
+    cargo: document.getElementById("cargo").value,
+    ramo: document.getElementById("ramo").value,
+    uid: "",
+  };
+
+  email = document.getElementById("email").value;
+  email_conf = document.getElementById("emailCf").value;
+  password = "jjb2021_2022";
+
+  if (email != email_conf) {
+    alertar("A confirmação do email não confere", "danger");
+  } else if (!nome || !cargo || !ramo || !email) {
+    alertar("Preencha todos os campos", "warning");
+  } else {
+    firebase
+      .auth()
+      .createUserWithEmailAndPassword(email, password)
+      .then((_new) => {
+        loadingBtn("#cadastrar");
+        new_User.uid = _new.user.uid;
+        console.log(new_User);
+
+        //
+        firebase
+          .firestore()
+          .collection("users")
+          .add(new_User)
+          .then(() => {
+            //
+
+            alertar("conta criada com sucesso", "success");
+            // console.log(_new.user.uid);
+            setTimeout(() => {
+              alertar(
+                "Enviando mensagem para o email do proprietario...",
+                "success"
+              );
+              recoverPassword(email);
+            }, [2000]);
+            setTimeout(() => {
+              alertar(
+                "A sua sessão será terminada. Apenas para evitar conflito de autenticação",
+                "warning"
+              );
+            }, [4000]);
+            setTimeout(() => {
+              logOut();
+            }, [8000]);
+          });
+      })
+      .catch((error) => {
+        validaAuth(error.code, "Registar");
+      });
+  }
+}
+
+//------------------------------------
+
+function recoverPassword(email) {
+  firebase
+    .auth()
+    .sendPasswordResetEmail(email)
+    .then(() => {
+      alertar(
+        "Foi enviado para o email " +
+          email +
+          " um link para definir a password. Deve verifique o Spam",
+        "success"
+      );
+    })
+    .catch((error) => {
+      validaAuth(error.code, "Entrar");
     });
 }

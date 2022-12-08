@@ -76,35 +76,69 @@ function startContas() {
   getContas(User.cargo);
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-  firebase.auth().onAuthStateChanged((user) => {
-    if (!user) {
-      navigate("../login.html");
+document.addEventListener("DOMContentLoaded", async () => {
+  initFirebase();
+  let path = window.location.href;
+
+  await firebase.auth().onAuthStateChanged(async (user) => {
+    if (!user && !path.includes("login.html")) {
+      if (path.includes("cadastro.html")) navigate("login.html");
+      else navigate("auth/login.html");
       //   console.log(window.location.href);
     }
     // console.log(user.uid)
-    firebase
-      .firestore()
-      .collection("users")
-      .where("uid", "==", user.uid)
-      .get()
-      .then(async (userData) => {
-        const dados = await userData.docs.map((doc) => doc.data());
-        dados.forEach((element) => {
-          User.nome = element.nome;
-          User.cargo = element.cargo;
-          User.ramo = element.ramo;
-          User.uid = element.uid;
+    if (path.includes("login.html")) authLogin();
+    else {
+      await firebase
+        .firestore()
+        .collection("users")
+        .where("uid", "==", user.uid)
+        .get()
+        .then(async (userData) => {
+          const dados = await userData.docs.map((doc) => doc.data());
+          dados.forEach((element) => {
+            User.nome = element.nome;
+            User.cargo = element.cargo;
+            User.ramo = element.ramo;
+            User.uid = element.uid;
+          });
+
+          document.querySelector("#username-show").innerHTML = User.nome;
+
+          if (path.includes("cadastro.html")) startCadastro();
+
+          if (path.includes("Pages/home.html")) startHome();
+          if (path.includes("Pages/colaboradores.html")) startColab();
+          if (path.includes("Pages/history.html")) startHistory();
+          if (path.includes("Pages/contas.html")) startContas();
+          if (path.includes("Pages/config.html")) startConfig();
         });
-        let path = window.location.href;
-
-        document.querySelector("#username-show").innerHTML = User.nome;
-
-        if (path.includes("Pages/home.html")) startHome();
-        if (path.includes("Pages/colaboradores.html")) startColab();
-        if (path.includes("Pages/history.html")) startHistory();
-        if (path.includes("Pages/contas.html")) startContas();
-        if (path.includes("Pages/config.html")) startConfig();
-      });
+    }
   });
 });
+
+function authLogin() {
+  // console.log("Login in");
+  addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      // console.log("clicou");
+      document.getElementById("entrar").click();
+    }
+  });
+
+  firebase.auth().onAuthStateChanged((user) => {
+    if (user) {
+      navigate("../home.html");
+    }
+  });
+}
+
+function startCadastro() {
+  // console.log("Login in");
+  addEventListener("keypress", function (e) {
+    if (e.key === "Enter") {
+      // console.log("clicou");
+      document.getElementById("cadastrar").click();
+    }
+  });
+}
