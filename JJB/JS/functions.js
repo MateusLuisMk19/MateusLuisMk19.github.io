@@ -97,8 +97,7 @@ async function showOperations(by, value) {
       // console.log(td);
     });
   } else if (by == "today") {
-    let today =
-      dt.getFullYear() + "-" + (dt.getUTCMonth() + 1) + "-0" + dt.getDate();
+    let today = todayDate;
 
     const dataOp = await firebase
       .firestore()
@@ -108,7 +107,10 @@ async function showOperations(by, value) {
       .orderBy("horario", "desc")
       .get()
       .then((snapshot) => {
-        const operations = snapshot.docs.map((doc) => doc.data());
+        const operations = snapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
         // console.log(operations);
         return operations;
       });
@@ -117,11 +119,13 @@ async function showOperations(by, value) {
       .firestore()
       .collection("jjb_reg_dia")
       .where("data", "==", today)
+      .where("user", "==", User.uid)
       .get()
       .then((snapshot) => {
         const operations = snapshot.docs.map((doc) => doc);
         // console.log("Opening", operations.length);
         if (operations.length != 0) {
+          console.log(operations[0].data());
           return {
             dados: operations[0].data(),
             exist: operations[0].exists,
@@ -137,7 +141,7 @@ async function showOperations(by, value) {
       let tr = document.createElement("tr");
 
       let td = [];
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 7; i++) {
         td[i] = document.createElement("td");
       }
 
@@ -147,6 +151,12 @@ async function showOperations(by, value) {
       td[3].innerHTML = doc.valorDl;
       td[4].innerHTML = doc.bancoEnt;
       td[5].innerHTML = doc.bancoSai;
+      td[6].innerHTML = `<button class="btn btn-danger btn-sm" 
+      onclick="deleteOperation('${doc.id}', '${doc.clientNome}', '${doc.data}')"
+      style="border-radius: 50%; height: 30px; width: 30px;"
+                            title="Eliminar">X
+                        </button>`;
+      td[6].setAttribute("style", "width:40px");
 
       tr.appendChild(td[0]); //Nome
       tr.appendChild(td[1]); //Catão
@@ -154,10 +164,12 @@ async function showOperations(by, value) {
       tr.appendChild(td[3]); //$
       tr.appendChild(td[4]); //Bank Entrada
       tr.appendChild(td[5]); //Bannk Saida
+      tr.appendChild(td[6]); //apagar
       Pai.appendChild(tr);
       // console.log(td);
     });
 
+    if (reg) {
       if (reg.exist) {
         for (let f = 0; f < botoes.length; f++) {
           botoes[f].classList.add("disabled");
@@ -186,6 +198,7 @@ async function showOperations(by, value) {
         divM.appendChild(divCol[2]);
         PaiG.appendChild(divM);
       }
+    }
     return await dataOp;
   } else {
     const dataOp = await firebase
@@ -311,11 +324,14 @@ async function salvarOperations() {
   form.user = getCurrentUser().uid;
 
   if (isValido(form)) {
-    form.data =
-      dt.getFullYear() + "-" + (dt.getUTCMonth() + 1) + "-0" + dt.getDate();
+    form.data = todayDate;
     form.user = User.uid;
     form.horario = dt.getHours() + ":" + dt.getMinutes();
-    form.ramo = User.ramo;
+    if (User.ramo == "all") {
+      form.ramo = form.card.nome.includes("Digi") ? "jj" : "jb";
+    } else {
+      form.ramo = User.ramo;
+    }
 
     // console.log('form1',form);
 
@@ -489,8 +505,95 @@ async function getHistory(cargo) {
   });
 }
 
-function deleteOperation(opId) {
-  console.log(opId, "Apagado!");
+// {
+//   <div >
+//       <div class="modal-dialog  ">
+
+//           <div class="modal-">
+
+//               <div class="modal-header">
+//                   <h1 class="modal-title fs-5" id="datailsOpLabel">Eliminar operação</h1>
+//                   <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+//               </div>
+
+//               <div class="modal-body">
+
+//               </div>
+
+//               <div class="modal-footer">
+//               </div>
+
+//           </div>
+
+//       </div>
+//   </div>
+// }
+
+function deleteOperation(opId, nome, data) {
+  let PAI = document.querySelector("body");
+  document.querySelector(`#btn-f-${opId}`)
+    ? document.querySelector(`#btn-f-${opId}`).click()
+    : "";
+
+  let btn_modal = document.createElement("button");
+  btn_modal.setAttribute("class", "btn btn-primary visually-hidden");
+  btn_modal.setAttribute("data-bs-target", "#deletOp");
+  btn_modal.setAttribute("data-bs-toggle", "modal");
+  btn_modal.setAttribute("data-bs-dismiss", "modal");
+
+  let modal = document.createElement("div");
+  modal.setAttribute("class", "modal fade");
+  modal.setAttribute("id", "deletOp");
+  modal.setAttribute("data-bs-backdrop", "static");
+  modal.setAttribute("data-bs-keyboard", "false");
+  modal.setAttribute("tabindex", "-1");
+  modal.setAttribute("aria-labelledby", "deletOpLabel");
+  modal.setAttribute("aria-hidden", "true");
+
+  let modal_dialog = document.createElement("div");
+  modal_dialog.setAttribute("class", "modal-dialog modal-dialog-centered");
+
+  let modal_content = document.createElement("div");
+  modal_content.setAttribute("class", "modal-content");
+  modal_content.innerHTML = `
+  <div class="modal-header">
+    <h1 class="modal-title fs-5" id="datailsOpLabel">Eliminar operação</h1>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body">
+    <label>Pretende realmente eliminar a operaçao de: <br/><span class="fw-bold">${nome} - ${data}</span></label>
+  </div>
+
+  <div class="modal-footer">
+    <button type="button" class="btn btn-secondary" id="fecharDelOp" data-bs-dismiss="modal">Cancelar</button>
+    <button type="button" class="btn btn-danger" id="confirmDelOp">Confirmar</button>
+  </div>`;
+
+  modal_dialog.appendChild(modal_content);
+  modal.appendChild(modal_dialog);
+  PAI.appendChild(modal);
+  PAI.appendChild(btn_modal);
+  btn_modal.click();
+
+  document.getElementById("confirmDelOp").addEventListener("click", () => {
+    confirmDel();
+    document.getElementById("fecharDelOp").click();
+  });
+
+  function confirmDel() {
+    firebase
+      .firestore()
+      .collection(`jjb_op`)
+      .doc(opId)
+      .delete()
+      .then((snapshot) => {
+        alertar(`Operação "${nome} - ${data}" Apagado!`, "success");
+        setTimeout(() => {
+          Reload();
+        }, [2000]);
+      });
+  }
 }
 // User ------------------------------------------------------------------
 
@@ -595,6 +698,59 @@ function deleteUser(uid) {
 
 // Create html
 
+function configBut() {
+  const divPai = document.querySelector("#configBut");
+
+  console.log();
+  if (window.innerWidth < 768) {
+    if (divPai.classList.contains("dropstart")) {
+      divPai.classList.remove("dropstart");
+    }
+    divPai.classList.remove("dropdown");
+    divPai.classList.add("dropend");
+  } else {
+    if (divPai.classList.contains("dropend")) {
+      divPai.classList.remove("dropend");
+    }
+    divPai.classList.remove("dropdown");
+    divPai.classList.add("dropstart");
+  }
+  divPai.innerHTML = `
+  <svg id="i-options" class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" width="32" 
+  height="32" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" 
+  stroke-width="2" class="nav-link dropdown-toggle" href="#" role="button"
+  data-bs-toggle="dropdown" aria-expanded="false">
+    <path d="M28 6 L4 6 M28 16 L4 16 M28 26 L4 26 M24 3 L24 9 M8 13 L8 19 M20 23 L20 29" />
+</svg>
+  <ul class="dropdown-menu fs-6">
+    <li>
+        <a class="dropdown-item" href="#">
+            <svg id="i-user" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="18"
+                height="18" fill="none" stroke="currentcolor" stroke-linecap="round"
+                stroke-linejoin="round" stroke-width="2">
+                <path
+                    d="M22 11 C22 16 19 20 16 20 13 20 10 16 10 11 10 6 12 3 16 3 20 3 22 6 22 11 Z M4 30 L28 30 C28 21 22 20 16 20 10 20 4 21 4 30 Z" />
+            </svg><span style="margin-left: 5px;" id="username-show"></span>
+        </a>
+    </li>
+    <li><a class="dropdown-item" role="button"
+            onclick="navigate('config.html')">
+            <svg id="i-settings" class="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 40" width="18"
+  height="18" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round"
+  stroke-width="2" class="nav-link dropdown-toggle" href="#" role="button"
+  data-bs-toggle="dropdown" aria-expanded="false">
+  <path
+      d="M13 2 L13 6 11 7 8 4 4 8 7 11 6 13 2 13 2 19 6 19 7 21 4 24 8 28 11 25 13 26 13 30 19 30 19 26 21 25 24 28 28 24 25 21 26 19 30 19 30 13 26 13 25 11 28 8 24 4 21 7 19 6 19 2 Z" />
+  <circle cx="16" cy="16" r="4" />
+  </svg><span style="margin-left: 5px;">Configurações</span></a></li>
+    <li><a class="dropdown-item" href="#">Another action</a></li>
+    <li>
+        <hr class="dropdown-divider">
+    </li>
+    <li><a class="dropdown-item" onclick="logOut()">Sair</a></li>
+  </ul>`;
+}
+
 function optionSel(
   attr,
   val,
@@ -660,7 +816,7 @@ async function whatCard(card) {
   Cambio.valor = dataCard.cambio;
   Cambio.type = dataCard.type;
 
-  console.log(Cambio);
+  // console.log(Cambio);
   createList("listDl", "valorDl");
   createList("listKz", "valorKz");
 }
@@ -886,6 +1042,7 @@ function showDetails(opId, cargo) {
 
   let btnFechar = document.createElement("button");
   btnFechar.setAttribute("type", "button");
+  btnFechar.setAttribute("id", `btn-f-${opId}`);
   btnFechar.setAttribute("class", "btn btn-secondary");
   btnFechar.setAttribute("data-bs-dismiss", `modal`);
   btnFechar.innerHTML = "Fechar";
@@ -893,7 +1050,6 @@ function showDetails(opId, cargo) {
   let btnDel = document.createElement("button");
   btnDel.setAttribute("type", "button");
   btnDel.setAttribute("class", "btn btn-danger");
-  btnDel.setAttribute("onclick", `deleteOperation('${opId}')`);
   btnDel.innerHTML = "Eliminar operação";
 
   footerD.appendChild(btnFechar);
@@ -953,6 +1109,10 @@ function showDetails(opId, cargo) {
                 dataDetails.responsavel.innerHTML = userName;
               });
             });
+          btnDel.setAttribute(
+            "onclick",
+            `deleteOperation('${opId}','${dados.clientNome}','${dados.data}')`
+          );
         }
       });
     });
@@ -962,9 +1122,21 @@ function showDetails(opId, cargo) {
 async function showCardsTab(ramo, cargo) {
   const pai = document.querySelector("#cartoes");
 
-  let h6 = document.createElement("h6");
-  h6.classList.add("h6");
-  h6.innerHTML = "Cartões " + ramo == "jb" ? "JB Virtual" : "JJ DigiPay";
+  let h6 = document.createElement("h5");
+  h6.classList.add("h5");
+  switch (ramo) {
+    case "jj":
+      h6.innerHTML = "Cartões JJ DigiPay";
+      break;
+    case "jb":
+      h6.innerHTML = "Cartões JB Virtual";
+      break;
+    case "all":
+      h6.innerHTML = "Todos Cartões";
+      break;
+    default:
+      break;
+  }
 
   const dados = await firebase
     .firestore()
@@ -1043,25 +1215,55 @@ async function showCardsTab(ramo, cargo) {
 async function showBanksTab(ramo, cargo) {
   const pai = document.querySelector("#bancos");
 
-  let h6 = document.createElement("h6");
-  h6.classList.add("h6");
-  h6.innerHTML = "Bancos " + ramo == "jb" ? "JB Virtual" : "JJ DigiPay";
+  let h6 = document.createElement("h5");
+  h6.classList.add("h5");
+  switch (ramo) {
+    case "jj":
+      h6.innerHTML = "Bancos JJ DigiPay";
+      break;
+    case "jb":
+      h6.innerHTML = "Bancos JB Virtual";
+      break;
+    case "all":
+      h6.innerHTML = "Todos Bancos";
+      break;
+    default:
+      break;
+  }
 
-  const dados = await firebase
-    .firestore()
-    .collection("jjb_banks")
-    .where("order", "!=", 0)
-    .where("ramo", "in", [ramo, "all"])
-    .get()
-    .then((snapshot) => {
-      const operations = {
-        data: snapshot.docs.map((doc) => doc.data()),
-        id: snapshot.docs.map((doc) => doc.id),
-      };
-      // console.log("Exp", operations);
-      return operations;
-    });
+  var dados;
 
+  if (ramo == "all") {
+    dados = await firebase
+      .firestore()
+      .collection("jjb_banks")
+      .where("order", "!=", 0)
+      .where("ramo", "in", ["jj", "jb", "all"])
+      .get()
+      .then((snapshot) => {
+        const operations = {
+          data: snapshot.docs.map((doc) => doc.data()),
+          id: snapshot.docs.map((doc) => doc.id),
+        };
+        // console.log("Exp", operations);
+        return operations;
+      });
+  } else {
+    dados = await firebase
+      .firestore()
+      .collection("jjb_banks")
+      .where("order", "!=", 0)
+      .where("ramo", "in", [ramo, "all"])
+      .get()
+      .then((snapshot) => {
+        const operations = {
+          data: snapshot.docs.map((doc) => doc.data()),
+          id: snapshot.docs.map((doc) => doc.id),
+        };
+        // console.log("Exp", operations);
+        return operations;
+      });
+  }
   console.log(dados.data);
 
   let th = [];
@@ -1338,7 +1540,10 @@ async function calcularDia() {
       alertar("Dia de Trabalho registado", "success");
       setTimeout(() => {
         alertar("Poderá consultar o registo no menu 'Contas'", "success");
-      }, 2000);
+      }, 1000);
+      setTimeout(() => {
+        Reload();
+      }, 2200);
     });
 }
 
