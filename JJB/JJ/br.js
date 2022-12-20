@@ -7,8 +7,8 @@ const form = {
   bankSai: "",
 };
 const CAMBIO = {
-  digi_basico: 610,
-  digi_mais: 620,
+  digi_basico: 625,
+  digi_mais: 635,
 };
 var variavel;
 var cambio;

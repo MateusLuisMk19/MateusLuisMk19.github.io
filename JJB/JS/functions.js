@@ -97,13 +97,11 @@ async function showOperations(by, value) {
       // console.log(td);
     });
   } else if (by == "today") {
-    let today = todayDate;
-
     const dataOp = await firebase
       .firestore()
       .collection("jjb_op")
-      .where("data", "==", today)
-      .where("user", "==", value)
+      .where("data", "==", todayDate)
+      .where("user", "==", User.uid)
       .orderBy("horario", "desc")
       .get()
       .then((snapshot) => {
@@ -118,7 +116,7 @@ async function showOperations(by, value) {
     const reg = await firebase
       .firestore()
       .collection("jjb_reg_dia")
-      .where("data", "==", today)
+      .where("data", "==", todayDate)
       .where("user", "==", User.uid)
       .get()
       .then((snapshot) => {
@@ -652,7 +650,13 @@ async function getUsers(uid, cargo) {
       td[i] = document.createElement("td");
     }
 
-    td[0].innerHTML = doc.nome;
+    let nameLink = document.createElement("a");
+    nameLink.innerHTML = doc.nome;
+    nameLink.setAttribute("class", "link-local");
+    nameLink.setAttribute("role", "button");
+    nameLink.setAttribute("onclick", `registoPessoal('${doc.uid}')`);
+    td[0].appendChild(nameLink);
+
     td[1].innerHTML = doc.cargo;
     td[2].innerHTML =
       doc.ramo == "jj"
@@ -661,16 +665,16 @@ async function getUsers(uid, cargo) {
         ? "JB Virtual"
         : "Global";
 
-    let button = document.createElement("button");
-    button.setAttribute("class", "btn btn-danger btn-sm");
-    button.setAttribute(
+    let buttonDeleteUser = document.createElement("button");
+    buttonDeleteUser.setAttribute("class", "btn btn-danger btn-sm m-1");
+    buttonDeleteUser.setAttribute(
       "style",
       "border-radius: 50%; height: 35px; width: 35px;"
     );
-    button.setAttribute("title", "Eliminar");
-    button.setAttribute("value", doc.uid);
-    button.setAttribute("onclick", "deleteUser(this.value)");
-    button.innerHTML = `<svg id="i-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 32"
+    buttonDeleteUser.setAttribute("title", "Eliminar");
+    buttonDeleteUser.setAttribute("value", doc.uid);
+    buttonDeleteUser.setAttribute("onclick", "deleteUser(this.value)");
+    buttonDeleteUser.innerHTML = `<svg id="i-trash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 35 32"
                         width="20"
                         height="20"
                         fill="none"
@@ -680,7 +684,36 @@ async function getUsers(uid, cargo) {
                         stroke-width="2"
                         ><path d="M28 6 L6 6 8 30 24 30 26 6 4 6 M16 12 L16 24 M21 12 L20 24 M11 12 L12 24 M12 6 L13 2 19 2 20 6" /></svg>`;
 
-    cargo == "Administrador" ? td[3].appendChild(button) : "";
+    let buttonPromotion = document.createElement("button");
+    let colorBtn = "";
+    let titleBtn = "";
+    let svgProm = `<svg id="i-chevron-top" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                      <path d="M30 20 L16 8 2 20" />
+                  </svg>`;
+    let svgDesp = `<svg id="i-chevron-bottom" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="none" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                  <path d="M30 12 L16 24 2 12" />
+              </svg>`;
+    let icon = "";
+    doc.cargo == "Administrador"
+      ? ((colorBtn = "danger"), (titleBtn = "Despromover"), (icon = svgDesp))
+      : ((colorBtn = "success"), (titleBtn = "Promover"), (icon = svgProm));
+    buttonPromotion.setAttribute("class", `btn btn-${colorBtn} btn-sm m-1`);
+    buttonPromotion.setAttribute(
+      "style",
+      "border-radius: 50%; height: 35px; width: 35px;"
+    );
+    buttonPromotion.setAttribute("title", titleBtn);
+    buttonPromotion.setAttribute("value", doc.uid);
+    buttonPromotion.setAttribute(
+      "onclick",
+      `userPromotion(this.value,'${titleBtn}')`
+    );
+    buttonPromotion.innerHTML = icon;
+    cargo == "Administrador"
+      ? (td[3].appendChild(buttonPromotion),
+        td[3].appendChild(buttonDeleteUser),
+        td[3].setAttribute("style", "width:110px"))
+      : "";
 
     tr.appendChild(td[0]); //Nome
     tr.appendChild(td[1]); //Cargo
@@ -693,9 +726,28 @@ async function getUsers(uid, cargo) {
 }
 
 function deleteUser(uid) {
-  console.log(uid);
+  console.log("Delete", uid);
 }
 
+function userPromotion(uid, type) {
+  switch (type) {
+    case "Promover":
+      console.log(type, uid);
+
+      break;
+    case "Despromover":
+      console.log(type, uid);
+
+      break;
+
+    default:
+      break;
+  }
+}
+
+function registoPessoal(uid) {
+  console.log("Registos de", uid);
+}
 // Create html
 
 function configBut() {
@@ -1595,6 +1647,8 @@ function login() {
       .signInWithEmailAndPassword(email, password)
       .then((response) => {
         //Caso a requisição seja bem sucedida
+
+        // firebase.firestore().collection('users').where('uid','==',)
         alertar("Login efetuado com sucesso!", "success");
 
         document.getElementById("password").value = "";

@@ -1,4 +1,22 @@
-.descritive-text{
+.descritive-text {
   font-weight: bold;
   font-style: normal;
 }
+
+.link-local {
+  text-decoration: none;
+  color: currentColor;
+}
+
+/* input[type="number"],
+input[type="text"],select[name="TypeCard"],select[name="Entrada"],select[name="Saída"] {
+  background: #212529;
+  color: #eeffee;
+}
+
+input[type="number"]:enabled,
+input[type="text"]:enabled{
+  background: #212529;
+  color: #eeffee;
+} */
+
