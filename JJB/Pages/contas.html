@@ -46,7 +46,7 @@
                 </ul>
                 <span class="navbar-text">
                     <div class="btn pt-2 p-0 dropdown" id="configBut">
-                       
+
                     </div>
                 </span>
             </div>
@@ -74,7 +74,7 @@
                 </div>
             </div>
 
-            <table class="table table-xxs table-striped" id="registoDia">
+            <table class="table table-xxs table-striped" id="registoDia" style="height: 10px;">
                 <thead>
                     <tr>
                         <th scope="col">#</th>
@@ -87,10 +87,19 @@
                         <th></th>
                     </tr>
                 </thead>
-                <tbody id="lines">
+                <tbody id="lines" data-bs-spy="scroll" class="scrollspy-example">
 
                 </tbody>
             </table>
+        </div>
+
+        <div class="container-md row">
+            <canvas class="bg-danger col" id="grafico" width="600" height="400">
+                Seu Browser não suporta o canvas
+            </canvas>
+            <div class="col">
+
+            </div>
         </div>
     </main>
 

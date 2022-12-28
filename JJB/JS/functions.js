@@ -1215,7 +1215,7 @@ async function showCardsTab(ramo, cargo) {
   th[1].innerHTML = "Câmbio";
   th[2].setAttribute("colspan", "2");
   cargo == "Administrador"
-    ? (th[2].innerHTML = `<button title="Editar" class="btn btn-success btn-sm m-1" onclick="navigate('')"
+    ? (th[2].innerHTML = `<button title="Novo" class="btn btn-success btn-sm m-1" onclick="config_mod('new', '${ramo}','card')"
   style="border-radius: 50%; height: 35px; width: 35px;" title="Criar novo"></button>`)
     : "";
 
@@ -1243,9 +1243,9 @@ async function showCardsTab(ramo, cargo) {
     campo[0].innerHTML = arq.type;
     campo[1].innerHTML = arq.cambio + " Kz";
     cargo == "Administrador"
-      ? (campo[2].innerHTML = `<button title="Editar" class="btn btn-primary btn-sm m-1" onclick="update_del('edit', '${arq.id}','card')"
+      ? (campo[2].innerHTML = `<button title="Editar" class="btn btn-primary btn-sm m-1" onclick="config_mod('edit', '${arq.id}','card')"
        style="border-radius: 50%; height: 35px; width: 35px;" title="Novo cliente"></button>
-       <button title="Apagar" class="btn btn-danger btn-sm m-1" onclick="update_del('del', '${arq.id}','card')"
+       <button title="Apagar" class="btn btn-danger btn-sm m-1" onclick="config_mod('del', '${arq.id}','card')"
        style="border-radius: 50%; height: 35px; width: 35px;" title="Novo cliente"></button>`)
       : "";
 
@@ -1328,7 +1328,7 @@ async function showBanksTab(ramo, cargo) {
   th[1].innerHTML = "Metodo";
   th[2].setAttribute("colspan", "2");
   cargo == "Administrador"
-    ? (th[2].innerHTML = `<button title="Editar" class="btn btn-success btn-sm m-1" onclick="navigate('')"
+    ? (th[2].innerHTML = `<button title="Editar" class="btn btn-success btn-sm m-1" onclick="config_mod('new', '${dados.id}','banks')"
   style="border-radius: 50%; height: 35px; width: 35px;" title="Criar novo"></button>`)
     : "";
 
@@ -1356,10 +1356,10 @@ async function showBanksTab(ramo, cargo) {
     campo[0].innerHTML = arq.nome;
     campo[1].innerHTML = arq.method == "in" ? "Entrada" : "Saída";
     cargo == "Administrador"
-      ? (campo[2].innerHTML = `<button title="Editar" class="btn btn-primary btn-sm m-1" onclick="update_del('edit', '${dados.id[index]}','banks')"
-       style="border-radius: 50%; height: 35px; width: 35px;" title="Novo cliente"></button>
-       <button title="Apagar" class="btn btn-danger btn-sm m-1" onclick="update_del('del', '${dados.id[index]}','banks')"
-       style="border-radius: 50%; height: 35px; width: 35px;" title="Novo cliente"></button>`)
+      ? (campo[2].innerHTML = `<button title="Editar" class="btn btn-primary btn-sm m-1" onclick="config_mod('edit', '${dados.id[index]}','banks')"
+       style="border-radius: 50%; height: 35px; width: 35px;"></button>
+       <button title="Apagar" class="btn btn-danger btn-sm m-1" onclick="config_mod('del', '${dados.id[index]}','banks')"
+       style="border-radius: 50%; height: 35px; width: 35px;"></button>`)
       : "";
 
     let tr = document.createElement("tr");
@@ -1377,7 +1377,7 @@ async function showBanksTab(ramo, cargo) {
   pai.appendChild(table);
 }
 
-async function update_del(mode, id, target) {
+async function config_mod(mode, id, target) {
   const body = document.querySelector("#body-edit-del");
   const label = document.querySelector("#edit-delLabel");
   const btnModal = document.getElementById("btnModal-edit-del");
@@ -1394,7 +1394,7 @@ async function update_del(mode, id, target) {
   body.innerHTML = "";
   label.innerHTML = "";
 
-  // console.log(db)
+  // console.log('tipo',db.type);
   if (mode == "edit") {
     label.innerHTML = "Editar";
 
@@ -1402,13 +1402,15 @@ async function update_del(mode, id, target) {
     btnFechar.setAttribute("type", "button");
     btnFechar.setAttribute("class", "btn btn-secondary m-1");
     btnFechar.setAttribute("data-bs-dismiss", `modal`);
+    btnFechar.setAttribute("id", db.type + "-fechar");
     btnFechar.innerHTML = "Cancelar";
 
     let btnConfirm = document.createElement("button");
     btnConfirm.setAttribute("type", "button");
     btnConfirm.setAttribute("class", "btn btn-primary m-1");
     btnConfirm.setAttribute("value", `${id}`);
-    // btnConfirm.setAttribute("onclick", `deleteOperation('${opId}')`);
+    btnConfirm.setAttribute("onclick", `${target}Update(this.value)`);
+
     btnConfirm.innerHTML = "Confirmar";
 
     let divRow = document.createElement("div");
@@ -1457,14 +1459,16 @@ async function update_del(mode, id, target) {
     }
 
     if (target == "card") {
-      labelForm[0].innerHTML = "Câmbio";
-      labelForm[1].innerHTML = "Valor";
+      labelForm[0].innerHTML = "Descrição";
+      labelForm[1].innerHTML = "Câmbio";
 
       let inputV = document.createElement("input");
       inputV.classList.add("form-control");
 
       inputV.value = db.cambio;
+      inputV.setAttribute("id", "inp-Card-valor-up");
       input.value = db.type;
+      input.setAttribute("id", "inp-Card-desc-up");
 
       divCol[1].appendChild(labelForm[1]);
       divCol[1].appendChild(inputV);
@@ -1498,7 +1502,8 @@ async function update_del(mode, id, target) {
     let btnConfirm = document.createElement("button");
     btnConfirm.setAttribute("type", "button");
     btnConfirm.setAttribute("class", "btn btn-danger m-1 float-right");
-    // btnConfirm.setAttribute("onclick", `deleteOperation('${opId}')`);
+    btnConfirm.setAttribute("value", `${id}`);
+    btnConfirm.setAttribute("onclick", `${target}Delete(this.value)`);
     btnConfirm.innerHTML = "Sim";
 
     footer.classList.add("modal-footer");
@@ -1508,6 +1513,88 @@ async function update_del(mode, id, target) {
     console.log(id, "apagado");
   }
 
+  if (mode == "new") {
+    label.innerHTML = "Criar";
+
+    let btnFechar = document.createElement("button");
+    btnFechar.setAttribute("type", "button");
+    btnFechar.setAttribute("class", "btn btn-secondary m-1");
+    btnFechar.setAttribute("data-bs-dismiss", `modal`);
+    // btnFechar.setAttribute("id", db.type + "-fechar");
+    btnFechar.innerHTML = "Cancelar";
+
+    let btnConfirm = document.createElement("button");
+    btnConfirm.setAttribute("type", "button");
+    btnConfirm.setAttribute("class", "btn btn-primary m-1");
+    btnConfirm.innerHTML = "Enviar";
+    btnConfirm.setAttribute("onclick", `${target}Create('${id}')`);
+
+    let divRow = document.createElement("div");
+    divRow.classList.add("row");
+
+    let divCol = [];
+    let labelForm = [];
+
+    let input = document.createElement("input");
+    input.classList.add("form-control");
+
+    for (let i = 0; i < 2; i++) {
+      divCol[i] = document.createElement("div");
+      divCol[i].classList.add("col");
+
+      labelForm[i] = document.createElement("label");
+      labelForm[i].classList.add("form-label");
+    }
+
+    if (target == "banks") {
+      let select = document.createElement("select");
+      let option = document.createElement("option");
+      let option2 = document.createElement("option");
+
+      option.innerHTML = "Entrada";
+      option.value = "in";
+
+      option2.innerHTML = "Saída";
+      option.value = "out";
+
+      select.classList.add("form-select");
+      select.appendChild(option);
+      select.appendChild(option2);
+
+      labelForm[0].innerHTML = "Banco";
+      labelForm[1].innerHTML = "Metódo";
+
+      divCol[1].appendChild(labelForm[1]);
+      divCol[1].appendChild(select);
+    }
+
+    if (target == "card") {
+      labelForm[0].innerHTML = "Descrição";
+      labelForm[1].innerHTML = "Câmbio";
+
+      let inputV = document.createElement("input");
+      inputV.classList.add("form-control");
+
+      inputV.setAttribute("id", "inp-Card-valor-ct");
+      input.setAttribute("id", "inp-Card-desc-ct");
+
+      divCol[1].appendChild(labelForm[1]);
+      divCol[1].appendChild(inputV);
+    }
+
+    divCol[0].appendChild(labelForm[0]);
+    divCol[0].appendChild(input);
+
+    divRow.appendChild(divCol[0]);
+    divRow.appendChild(divCol[1]);
+
+    body.appendChild(divRow);
+    footer.classList.add("modal-footer");
+    footer.appendChild(btnFechar);
+    footer.appendChild(btnConfirm);
+
+    console.log("criar novo");
+  }
   btnModal.click();
 }
 
@@ -1596,6 +1683,101 @@ async function calcularDia() {
       setTimeout(() => {
         Reload();
       }, 2200);
+    });
+}
+
+// Config.............................
+async function cardUpdate(id) {
+  const card = {
+    cambio: document.getElementById("inp-Card-valor-up").value,
+    type: document.getElementById("inp-Card-desc-up").value,
+  };
+
+  let btnFechar = document.getElementById(card.type + "-fechar");
+  console.log(btnFechar);
+
+  const cardDb = await firebase
+    .firestore()
+    .collection("jjb_card")
+    .doc(id)
+    .get()
+    .then((snapshot) => {
+      // const cards = snapshot.docs.map((doc) => doc.data());
+      // console.log(snapshot);
+      return snapshot.data();
+    });
+
+  if (card.cambio != cardDb.cambio || card.type != cardDb.type) {
+    firebase
+      .firestore()
+      .collection("jjb_card")
+      .doc(id)
+      .update(card)
+      .then((snapshot) => {
+        btnFechar.click();
+        Reload();
+      })
+      .catch((err) => {
+        console.log("Erro ao atualizar", err);
+        btnFechar.click();
+      });
+    // console.log(cardDb);
+    // console.log(card);
+  }
+}
+
+async function cardCreate(ramoN) {
+  const card = {
+    cambio: document.getElementById("inp-Card-valor-ct").value,
+    order: "",
+    ramo: ramoN,
+    type: document.getElementById("inp-Card-desc-ct").value,
+  };
+
+  // let btnFechar = document.getElementById(card.type + "-fechar");
+  // console.log(btnFechar);
+
+  const maxOrder = await firebase
+    .firestore()
+    .collection("jjb_card")
+    .orderBy("order", "desc")
+    .get()
+    .then((snapshot) => {
+      const cards = snapshot.docs.map((doc) => doc.data());
+      // console.log(snapshot);
+      return parseInt(cards[0].order);
+    });
+
+  card.order = maxOrder + 1;
+  console.log(maxOrder);
+
+  if (card.cambio != "" || card.type != "") {
+    firebase
+      .firestore()
+      .collection("jjb_card")
+      .add(card)
+      .then((snapshot) => {
+        // btnFechar.click();
+        Reload();
+      })
+      .catch((err) => {
+        console.log("Erro ao atualizar", err);
+        // btnFechar.click();
+      });
+    // console.log(cardDb);
+    // console.log(card);
+  }
+}
+
+function cardDelete(id) {
+  firebase
+    .firestore()
+    .collection("jjb_card")
+    .doc(id)
+    .delete()
+    .then((snapshot) => {
+      // btnFechar.click();
+      Reload();
     });
 }
 
@@ -1750,3 +1932,6 @@ function recoverPassword(email) {
       validaAuth(error.code, "Entrar");
     });
 }
+
+//1. total diario, de todo mundo
+//2. total mensal, de todo mundo*
