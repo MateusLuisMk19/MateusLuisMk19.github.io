@@ -1,14 +1,14 @@
 const form = {
   nome: "",
   typeCard: "",
-  valorKz: 0,
-  valorDl: 0,
+  valorKz: 0.0,
+  valorDl: 0.0,
   bankEnt: "",
   bankSai: "",
 };
 const CAMBIO = {
-  digi_basico: 625,
-  digi_mais: 635,
+  digi_basico: 640,
+  digi_mais: 640,
 };
 var variavel;
 var cambio;

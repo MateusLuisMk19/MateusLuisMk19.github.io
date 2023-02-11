@@ -1,5 +1,14 @@
+const dt = new Date();
+const todayDate =
+  dt.getFullYear() +
+  "-" +
+  (dt.getUTCMonth() + 1 < 10
+    ? "0" + (dt.getUTCMonth() + 1)
+    : "-" + dt.getUTCMonth() + 1) +
+  (dt.getDate() < 10 ? "-0" + dt.getDate() : "-" + dt.getDate());
+
 //constantes
-const form = {
+const reg_form = {
   clientNome: "",
   card: {
     nome: "",
@@ -15,17 +24,18 @@ const form = {
   ramo: "",
 };
 
+const reg_form_Aux = {
+  img_fr: "",
+  img_vr: "",
+  bi_num: "",
+  iban: "",
+  nome: "",
+};
+
 const Cambio = {
   valor: 0,
   type: "",
 };
-
-const dt = new Date();
-const todayDate =
-  dt.getFullYear() +
-  "-" +
-  (dt.getUTCMonth() + 1) +
-  (dt.getDate() < 10 ? "-0" + dt.getDate() : "-" + dt.getDate());
 
 const User = {
   ramo: "",
@@ -35,7 +45,7 @@ const User = {
 };
 
 const reg_Diario = {
-  data:todayDate,
+  data: todayDate,
   lucro: 0,
   numClientes: 0,
   totalDl: 0,
@@ -43,7 +53,29 @@ const reg_Diario = {
   ops: [],
   user: "",
 };
-console.log(reg_Diario.data);
+
+const Client = {
+  data: "",
+  ramo: "",
+  nome: "",
+  sobrenome: "",
+  numSolicitacao: 0,
+  bi: {
+    img: {
+      front: "",
+      verse: "",
+    },
+    num: "",
+    verificado: true,
+  },
+  iban: [],
+  total_pago: {
+    dolar: 0,
+    kz: 0,
+  },
+};
+
+// console.log(reg_Diario.data);
 // - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - -
 
 function startHome() {
@@ -89,6 +121,35 @@ function startHome() {
     createList("listKz", "valorKz");
     // console.log(inputJB);
   }, [2000]);
+
+  // showOperations('ramo',User.ramo);
+  // showOperations('user',User.uid);
+  showOperations("today", User.uid);
+}
+
+function startClients() {
+  getClients();
+  const labelJJ = document.querySelector(`#lb-jj`);
+  const labelJB = document.querySelector(`#lb-jb`);
+  const inputJJ = document.querySelector(`#inp-jj`);
+  const inputJB = document.querySelector(`#inp-jb`);
+
+  if (User.ramo == "all") {
+    inputJB.setAttribute("checked", "");
+
+    document.querySelectorAll(`input[name="options-ramo"]`).forEach((e) => {
+      e.addEventListener("click", (b) => {
+        console.log(b.target);
+      });
+    });
+  } else if (User.ramo == "jj") {
+    labelJB.classList.add("visually-hidden");
+    inputJJ.setAttribute("checked", "");
+  } else if (User.ramo == "jb") {
+    console.log(labelJJ);
+    labelJJ.classList.add("visually-hidden");
+    inputJB.setAttribute("checked", "");
+  }
 
   // showOperations('ramo',User.ramo);
   // showOperations('user',User.uid);
@@ -157,6 +218,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           if (path.includes("Pages/history.html")) startHistory();
           if (path.includes("Pages/contas.html")) startContas();
           if (path.includes("Pages/config.html")) startConfig();
+          if (path.includes("Pages/clients.html")) startClients();
         });
     }
   });

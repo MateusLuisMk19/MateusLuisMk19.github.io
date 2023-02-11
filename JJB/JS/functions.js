@@ -313,22 +313,38 @@ async function createSelect(ramo, type, method) {
 }
 
 async function salvarOperations() {
-  form.clientNome = document.getElementById("nome").value;
-  form.card.nome = document.getElementById("typeCard").value;
-  form.valorKz = parseFloat(document.getElementById("valorKz").value);
-  form.valorDl = parseFloat(document.getElementById("valorDl").value);
-  form.bancoEnt = document.getElementById("bankEnt").value;
-  form.bancoSai = document.getElementById("bankSai").value;
-  form.user = getCurrentUser().uid;
+  reg_form.clientNome = document.getElementById("nome").value;
+  reg_form.card.nome = document.getElementById("typeCard").value;
+  reg_form.valorKz = parseFloat(document.getElementById("valorKz").value);
+  reg_form.valorDl = parseFloat(document.getElementById("valorDl").value);
+  reg_form.bancoEnt = document.getElementById("bankEnt").value;
+  reg_form.bancoSai = document.getElementById("bankSai").value;
+  reg_form.user = getCurrentUser().uid;
 
-  if (isValido(form)) {
-    form.data = todayDate;
-    form.user = User.uid;
-    form.horario = dt.getHours() + ":" + dt.getMinutes();
+  reg_form_Aux.img_fr = document.getElementById("bi-img-fr").files[0];
+  reg_form_Aux.img_vr = document.getElementById("bi-img-vr").files[0];
+  reg_form_Aux.bi_num = document.getElementById("bi-num").value;
+
+  reg_form_Aux.iban = document.getElementById("iban").value;
+
+  console.log(Client.nome, Client.sobrenome);
+  if (isValido(reg_form)) {
+    Client.bi.verificado = true;
+
+    var splittedN = reg_form.clientNome.split(" ");
+
+    Client.nome = splittedN[0];
+    Client.sobrenome = splittedN[splittedN.length - 1];
+
+    Client.total_pago.kz = reg_form.valorKz;
+
+    reg_form.data = todayDate;
+    reg_form.user = User.uid;
+    reg_form.horario = dt.getHours() + ":" + dt.getMinutes();
     if (User.ramo == "all") {
-      form.ramo = form.card.nome.includes("Digi") ? "jj" : "jb";
+      reg_form.ramo = reg_form.card.nome.includes("Digi") ? "jj" : "jb";
     } else {
-      form.ramo = User.ramo;
+      reg_form.ramo = User.ramo;
     }
 
     // console.log('form1',form);
@@ -336,15 +352,15 @@ async function salvarOperations() {
     firebase
       .firestore()
       .collection("jjb_card")
-      .where("type", "==", form.card.nome)
+      .where("type", "==", reg_form.card.nome)
       .get()
       .then((snapshot) => {
-        form.card.cambio = snapshot.docs[0].data().cambio;
+        reg_form.card.cambio = snapshot.docs[0].data().cambio;
         // console.log('form2',form);
         firebase
           .firestore()
           .collection("jjb_op")
-          .add(form)
+          .add(reg_form)
           .then(() => {
             Reload();
           });
@@ -352,6 +368,258 @@ async function salvarOperations() {
   }
 }
 
+// -----------------------clients
+async function getClients() {
+  let Pai = document.getElementById("lines");
+  Pai.innerHTML = "";
+
+  const dataCli = await firebase
+    .firestore()
+    .collection("jjb_clients")
+    .where('ramo','==',User.ramo)
+    .orderBy("nome")
+    .get()
+    .then((snapshot) => {
+      const cli = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      console.log(cli);
+      return cli;
+    });
+
+  // console.log("ihii", dataOp);
+
+  const ibanDb = await firebase
+    .firestore()
+    .collection("clients_iban")
+    .get()
+    .then((snapshot) => {
+      let res = snapshot.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+      console.log(res);
+      return res;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+
+  dataCli.forEach(async (doc) => {
+    // console.log(doc);
+
+    let tr = document.createElement("tr");
+
+    let td = [];
+    for (let i = 0; i < 5; i++) {
+      td[i] = document.createElement("td");
+    }
+
+    let nameLink = document.createElement("a");
+    nameLink.innerHTML = doc.nome + " " + doc.sobrenome;
+    nameLink.setAttribute("class", "link-local");
+    nameLink.setAttribute("role", "button");
+    nameLink.setAttribute("onclick", `registoPessoal('${doc.uid}')`);
+    td[0].appendChild(nameLink);
+
+    doc.bi.verificado ? td[1].setAttribute("class", "text-success") : "";
+    td[1].innerHTML = doc.bi.num;
+
+    const ibanDat=[]
+    ibanDb.forEach(element => {
+      doc.iban.forEach(iid => {
+        if(element.id==iid){
+          ibanDat.push(element.iban)
+        }
+      })
+      
+    });
+
+    td[2].innerHTML = ibanDat.length > 1 ? "Mais de um..." : ibanDat[0];
+    td[2].setAttribute("class", "text-center");
+
+    // const valorTotalDb = await firebase
+    //   .firestore()
+    //   .collection("jjb_op")
+    //   .get()
+    //   .then((snapshot) => {
+    //     const res = [];
+    //     snapshot.docs.map((cada, index) => {
+    //       console.log(doc.iban[index]);
+    //       if (cada.id == doc.iban[index].toString()) {
+    //         res.push(cada.data());
+    //       }
+    //     });
+    //     return res;
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
+
+    // console.log(valorTotalDb);
+
+    // td[3].innerHTML = doc.total_pago.kz;
+    // td[3].setAttribute('class','text-center')
+
+    let dropleft = document.createElement("div");
+    dropleft.classList.add("dropstart");
+    dropleft.innerHTML = `<svg id="i-ellipsis-vertical" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 45 45" width="32" 
+    height="32" role='button' fill="none" data-bs-toggle="dropdown" stroke="currentcolor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2">
+                          <circle cx="16" cy="7" r="2" />
+                          <circle cx="16" cy="16" r="2" />
+                          <circle cx="16" cy="25" r="2" />
+                          </svg>`;
+
+    let ulDr = document.createElement("ul");
+    ulDr.setAttribute("class", "dropdown-menu");
+
+    let li = [];
+    for (let i = 0; i < 3; i++) {
+      li[i] = document.createElement("li");
+    }
+
+    let opEdit = document.createElement("a");
+    opEdit.setAttribute("class", "dropdown-item");
+    opEdit.setAttribute("title", "Editar");
+    opEdit.setAttribute("value", doc.id);
+    opEdit.setAttribute("onclick", "editClient(this.value)");
+    opEdit.innerHTML = "Editar";
+
+    li[0].appendChild(opEdit);
+
+    let opDelete = document.createElement("a");
+    opDelete.setAttribute("class", "dropdown-item");
+    opDelete.setAttribute("title", "Eliminar");
+    opDelete.setAttribute("value", doc.id);
+    opDelete.setAttribute("onclick", "deleteClient(this.value)");
+    opDelete.innerHTML = "Eliminar";
+
+    li[1].appendChild(opDelete);
+
+    ulDr.appendChild(li[0]);
+    ulDr.appendChild(li[1]);
+    dropleft.appendChild(ulDr);
+    td[4].appendChild(dropleft);
+
+    tr.appendChild(td[0]); //Nome completo
+    tr.appendChild(td[1]); //BI
+    tr.appendChild(td[2]); //Iban
+    tr.appendChild(td[3]); //botão
+    tr.appendChild(td[4]); //botão
+
+    Pai.appendChild(tr);
+    // console.log(td);
+  });
+}
+
+async function salvarClient() {
+  reg_form_Aux.nome = document.getElementById("nome").value;
+
+  reg_form_Aux.img_fr = document.getElementById("bi-img-fr").files[0];
+  reg_form_Aux.img_vr = document.getElementById("bi-img-vr").files[0];
+  reg_form_Aux.bi_num = document.getElementById("bi-num").value;
+
+  reg_form_Aux.iban = document.getElementById("iban").value;
+
+  console.log(iban);
+  if (isValido("client")) {
+    // if (true) {
+    let splittedN = reg_form_Aux.nome.split(" ");
+    let nib = reg_form_Aux.iban;
+    let iban = {
+      iban:
+        "AO06 " +
+        nib.slice(0, 4) +
+        " " +
+        nib.slice(4, 8) +
+        " " +
+        nib.slice(8, 12) +
+        " " +
+        nib.slice(12, 16) +
+        " " +
+        nib.slice(16, 20) +
+        " " +
+        nib.slice(20, 24) +
+        " " +
+        nib.slice(24, 25) +
+        "",
+      nib: reg_form_Aux.iban + "",
+    };
+
+    await withFire();
+    Client.nome = splittedN[0];
+    Client.sobrenome = splittedN[splittedN.length - 1];
+    Client.data = todayDate;
+    Client.ramo = document.querySelector(".ramo-ch[checked]").value;
+    Client.bi.num = reg_form_Aux.bi_num;
+
+    console.log(Client);
+
+    setTimeout(async () => {
+      await firebase
+        .firestore()
+        .collection("jjb_clients")
+        .add(Client)
+        .then(() => {
+          alertar("Novo cliente adicionado", "success");
+          setTimeout(() => {
+            Reload();
+          }, [3000]);
+        })
+        .catch((err) => {
+          alertar(err, "danger");
+        });
+    }, [5000]);
+
+    // console.log('form1',form);
+    async function withFire() {
+      Client.bi.img.front = await firebase
+        .storage()
+        .ref()
+        .child("bi")
+        .child(reg_form_Aux.nome + "_BI-front")
+        .put(reg_form_Aux.img_fr)
+        .then(async (res) => {
+          let linkImg = await res.ref.getDownloadURL().then((link) => {
+            return link;
+          });
+          return linkImg;
+        })
+        .catch((err) => {
+          alertar(err, "danger");
+        });
+
+      Client.bi.img.verse = await firebase
+        .storage()
+        .ref()
+        .child("bi")
+        .child(reg_form_Aux.nome + "_BI-Verse")
+        .put(reg_form_Aux.img_vr)
+        .then(async (res) => {
+          let linkImg = await res.ref.getDownloadURL().then((link) => {
+            return link;
+          });
+          return linkImg;
+        })
+        .catch((err) => {
+          alertar(err, "danger");
+        });
+
+      const ibnCl = await firebase
+        .firestore()
+        .collection("clients_iban")
+        .add(iban)
+        .then((res) => {
+          return res.id;
+        })
+        .catch((err) => {
+          alertar(err, "danger");
+        });
+      Client.iban.push(await ibnCl);
+    }
+  }
+}
 // Contas -------------------------------------------------------------------
 async function getContas(cargo) {
   let Pai = document.getElementById("lines");
@@ -952,26 +1220,65 @@ function createList(id, type) {
 // Auxiliares
 
 function isValido(ddd) {
-  if (!ddd.clientNome || ddd.clientNome.length < 6) {
-    alert("Por favor preencha o campo nome");
-  } else if (!ddd.valorDl && !ddd.valorKz) {
-    alert("Por favor preencha um dos valores monetarios");
-  } else if (
-    ddd.bancoEnt == "Banco de entrada" ||
-    ddd.bancoSai == "Banco de saída" ||
-    ddd.card.nome == "Escolher cartão"
-  ) {
-    ddd.bancoEnt == "Banco de entrada"
-      ? alert("Por favor selecione o Banco de entrada dos valores")
-      : "";
-    ddd.bancoSai == "Banco de saída"
-      ? alert("Por favor selecione o Banco de saída dos valores")
-      : "";
-    ddd.card.nome == "Escolher cartão"
-      ? alert("Por favor selecione o tipo de cartão requisitado")
-      : "";
+  console.log(reg_form_Aux.iban);
+  if (ddd == "client") {
+
+    if (
+      !reg_form_Aux.nome ||
+      !reg_form_Aux.nome.includes(" ") ||
+      reg_form_Aux.nome[reg_form_Aux.nome.length - 1] == " "
+    ) {
+      alertar("Por favor preencha o campo nome e sobrenome", "danger");
+    } else if (!reg_form_Aux.iban) {
+      alertar("Por favor preencha o campo de IBAN", "danger");
+    } else if (reg_form_Aux.iban.length != 21) {
+      alertar("IBAN incorreto", "danger");
+    } else if (
+      reg_form_Aux.img_fr == "" ||
+      reg_form_Aux.img_vr == "" ||
+      !reg_form_Aux.bi_num
+    ) {
+      alertar("Por favor preencha todos os campos relativos ao BI", "danger");
+    } else {
+      if (reg_form_Aux.img_fr.name == reg_form_Aux.img_vr.name)
+        alertar("As imagens do BI não podem ser iguais", "danger");
+      else return true;
+    }
   } else {
-    return true;
+    if (
+      !ddd.clientNome ||
+      !ddd.clientNome.includes(" ") ||
+      ddd.clientNome[ddd.clientNome.length - 1] == " "
+    ) {
+      alertar("Por favor preencha o campo nome e sobrenome", "danger");
+    } else if (!ddd.valorDl && !ddd.valorKz) {
+      alertar("Por favor preencha um dos valores monetarios", "danger");
+    } else if (!reg_form_Aux.iban) {
+      alertar("Por favor preencha o campo de IBAN", "danger");
+    } else if (reg_form_Aux.iban.length != 21) {
+      alertar("IBAN incorreto", "danger");
+    } else if (!reg_form_Aux.img_fr || !reg_form_Aux.img_vr || !Client.bi.num) {
+      alertar("Por favor preencha todos os campos relativos ao BI", "danger");
+    } else if (
+      ddd.bancoEnt == "Banco de entrada" ||
+      ddd.bancoSai == "Banco de saída" ||
+      ddd.card.nome == "Escolher cartão"
+    ) {
+      ddd.bancoEnt == "Banco de entrada"
+        ? alertar(
+            "Por favor selecione o Banco de entrada dos valores",
+            "danger"
+          )
+        : "";
+      ddd.bancoSai == "Banco de saída"
+        ? alertar("Por favor selecione o Banco de saída dos valores", "danger")
+        : "";
+      ddd.card.nome == "Escolher cartão"
+        ? alertar("Por favor selecione o tipo de cartão requisitado", "danger")
+        : "";
+    } else {
+      return true;
+    }
   }
 }
 
@@ -1800,6 +2107,16 @@ function initFirebase() {
   // Initialize Firebase
   firebase.initializeApp(firebaseConfig);
 }
+
+// firebase.storage()
+
+function imagem() {
+  console.log(Client.bi.img);
+}
+
+// document.getElementById("bi-img").addEventListener('change', (event) => {
+//   console.log(event.target)
+// })
 // ----------------------------- Firebase auth
 
 function logOut() {
