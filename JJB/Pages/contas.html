@@ -22,6 +22,14 @@
     <script defer type="module" src="https://www.gstatic.com/firebasejs/9.13.0/firebase-firestore-compat.js"></script>
     <script defer type="module" src="https://www.gstatic.com/firebasejs/9.13.0/firebase-auth-compat.js"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
 </head>
 
 <body class="container-lg" style="background:rgb(248, 248, 248);">
@@ -57,7 +65,10 @@
 
     <main class="">
         <div class="form-group container-md p-0 m-auto">
-            <div class="mt-3 float-end">
+            <div class="h2 mt-3 float-start">
+                Relatório Mensal
+            </div>
+                <div class="mt-3 float-end">
                 <button class="btn btn-secondary btn-sm visually-hidden" data-bs-toggle="modal" id="btnModal"
                     data-bs-target="#detailsOp" style="border-radius: 50%; height: 32px; width: 32px;"
                     title="Detalhes de operação">
@@ -69,8 +80,7 @@
                     </svg>
                 </button>
 
-                <div class="h4">
-                    Filtros
+                <div class="row bg-info p-1" id="filterBar">
                 </div>
             </div>
 
@@ -94,11 +104,10 @@
         </div>
 
         <div class="container-md row">
-            <canvas class="bg-danger col" id="grafico" width="600" height="400">
+            <canvas class="col-md" id="line-chart" width="70%">
                 Seu Browser não suporta o canvas
             </canvas>
-            <div class="col">
-
+            <div class="col-md">
             </div>
         </div>
     </main>

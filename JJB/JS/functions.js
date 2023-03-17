@@ -376,7 +376,7 @@ async function getClients() {
   const dataCli = await firebase
     .firestore()
     .collection("jjb_clients")
-    .where('ramo','==',User.ramo)
+    .where("ramo", "==", User.ramo)
     .orderBy("nome")
     .get()
     .then((snapshot) => {
@@ -426,14 +426,13 @@ async function getClients() {
     doc.bi.verificado ? td[1].setAttribute("class", "text-success") : "";
     td[1].innerHTML = doc.bi.num;
 
-    const ibanDat=[]
-    ibanDb.forEach(element => {
-      doc.iban.forEach(iid => {
-        if(element.id==iid){
-          ibanDat.push(element.iban)
+    const ibanDat = [];
+    ibanDb.forEach((element) => {
+      doc.iban.forEach((iid) => {
+        if (element.id == iid) {
+          ibanDat.push(element.iban);
         }
-      })
-      
+      });
     });
 
     td[2].innerHTML = ibanDat.length > 1 ? "Mais de um..." : ibanDat[0];
@@ -621,13 +620,22 @@ async function salvarClient() {
   }
 }
 // Contas -------------------------------------------------------------------
-async function getContas(cargo) {
+async function getContas(cargo, startDate, endDate) {
   let Pai = document.getElementById("lines");
   Pai.innerHTML = "";
+
+  let getData_ = {
+    data: [],
+    valor: [],
+  };
+
+  if (!endDate) endDate = todayDate;
 
   const dataOp = await firebase
     .firestore()
     .collection("jjb_reg_dia")
+    .where("data", ">=", startDate)
+    .where("data", "<=", endDate)
     .orderBy("data", "desc")
     .get()
     .then((snapshot) => {
@@ -636,7 +644,7 @@ async function getContas(cargo) {
       return operations;
     });
 
-  // console.log("ihii", dataOp);
+  console.log("ihii", dataOp);
 
   dataOp.forEach(async (doc, index) => {
     // console.log(doc);
@@ -660,9 +668,20 @@ async function getContas(cargo) {
             td[i] = document.createElement("td");
           }
 
+          let luc = 0;
           let th = document.createElement("th");
           th.innerHTML = index + 1;
 
+          getData_.data.push(
+            monthName(doc.data.slice(5, 7), doc.data.slice(8, 11))
+          );
+          // console.log(getData_.data.length-1)
+          monthName(doc.data.slice(5, 7)) ==
+          getData_.data[getData_.data.length - 1]
+            ? (luc += doc.lucro)
+            : (luc = doc.lucro);
+
+          getData_.valor.push(luc);
           td[0].innerHTML = doc.data;
           td[1].innerHTML = doc.totalKz + " Kz";
           td[2].innerHTML = doc.totalDl + " $";
@@ -682,6 +701,26 @@ async function getContas(cargo) {
         }
       });
   });
+
+  function monthName(mNum, dia) {
+    console.log();
+    const monthNames = [
+      "Janeiro" + " " + dia,
+      "Fevereiro" + " " + dia,
+      "Março" + " " + dia,
+      "Abril" + " " + dia,
+      "Maio" + " " + dia,
+      "Junho" + " " + dia,
+      "Julho" + " " + dia,
+      "Agosto" + " " + dia,
+      "Setembro" + " " + dia,
+      "Outubro" + " " + dia,
+      "Novembro" + " " + dia,
+      "Dezembro" + " " + dia,
+    ];
+    return monthNames[mNum - 1];
+  }
+  graphic(getData_);
 }
 // History -----------------------------------------------------------------
 async function getHistory(cargo) {
@@ -1222,7 +1261,6 @@ function createList(id, type) {
 function isValido(ddd) {
   console.log(reg_form_Aux.iban);
   if (ddd == "client") {
-
     if (
       !reg_form_Aux.nome ||
       !reg_form_Aux.nome.includes(" ") ||
@@ -2252,3 +2290,136 @@ function recoverPassword(email) {
 
 //1. total diario, de todo mundo
 //2. total mensal, de todo mundo*
+
+//Canvas
+
+function graphic(dados) {
+  console.log(dados);
+  let data = {
+    labels: dados.data,
+    datasets: [
+      {
+        label: "Lucro Mensal",
+        data: dados.valor,
+        backgroundColor: "rgba(54, 162, 235, 0.2)",
+        borderColor: "rgba(54, 162, 235, 1)",
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  let options = {
+    scales: {
+      yAxes: [
+        {
+          ticks: {
+            beginAtZero: true,
+          },
+        },
+      ],
+    },
+  };
+
+  let ctx = document.getElementById("line-chart").getContext("2d");
+  let chart = new Chart(ctx, {
+    type: "bar",
+    data: data,
+    options: options,
+  });
+}
+
+//Filter
+function createFilterBar() {
+  let Pai = document.querySelector("#filterBar");
+
+  let numFilter = 4;
+
+  //
+  let div = [];
+  for (let i = 0; i <= numFilter; i++) {
+    div[i] = document.createElement("div");
+    div[i].classList.add("form-group", "col", "p-0");
+  }
+
+  let input = document.createElement("input");
+  input.setAttribute("type", "date");
+  input.setAttribute("id", "dateInputIn");
+  input.classList.add("form-control");
+
+  if (path.includes("contas.html")) {
+    input.setAttribute("title", "De");
+
+    let input2 = document.createElement("input");
+    input2.setAttribute("type", "date");
+    input2.setAttribute("title", "Até");
+    input2.setAttribute("id", "dateInputOut");
+    input2.classList.add("form-control");
+
+    let button = document.createElement("button");
+    button.setAttribute("type", "button");
+    button.setAttribute("class", "btn btn-secondary");
+    button.setAttribute(
+      "onclick",
+      "getContas(User.cargo,dateInputIn.value,dateInputOut.value)"
+    );
+    button.innerHTML = "Filtrar";
+
+    div[0].appendChild(input);
+    div[1].appendChild(input2);
+    div[2].appendChild(button);
+
+    Pai.appendChild(div[0]);
+    Pai.appendChild(div[1]);
+    Pai.appendChild(div[2]);
+  } else {
+    div[0].appendChild(
+      createSelect("clientOption", ["João", "Paulo", "Antonio"], "Cliente")
+    );
+
+    div[1].appendChild(
+      createSelect(
+        "cardOption",
+        ["Facebook", "Google Ads", "Netflix"],
+        "Cartão"
+      )
+    );
+    div[2].appendChild(input);
+
+    div[3].appendChild(
+      createSelect(
+        "responsableOption",
+        ["Mateus", "Maria", "Jumar"],
+        "Responsavel"
+      )
+    );
+
+    Pai.appendChild(div[0]);
+    Pai.appendChild(div[1]);
+    Pai.appendChild(div[2]);
+    Pai.appendChild(div[3]);
+  }
+
+  function createSelect(idSelect, opNameList, listOf) {
+    let select = document.createElement("select");
+
+    select.setAttribute("class", "form-control");
+    select.setAttribute("id", idSelect);
+
+    let op = document.createElement("option");
+    op.setAttribute("selected", "");
+    op.setAttribute("disabled", "");
+    op.innerHTML = listOf;
+
+    select.appendChild(op);
+
+    for (let i = 0; i < opNameList.length; i++) {
+      let op = document.createElement("option");
+      op.setAttribute("value", opNameList[i]);
+      op.innerHTML = opNameList[i];
+
+      select.appendChild(op);
+    }
+
+    return select;
+  }
+}

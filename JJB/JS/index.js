@@ -7,6 +7,7 @@ const todayDate =
     : "-" + dt.getUTCMonth() + 1) +
   (dt.getDate() < 10 ? "-0" + dt.getDate() : "-" + dt.getDate());
 
+let path = window.location.href;
 //constantes
 const reg_form = {
   clientNome: "",
@@ -164,6 +165,7 @@ function startHistory() {
   // getHistory('ramo',User.ramo);
   // getHistory('user',User.uid);
   getHistory(User.cargo);
+  createFilterBar();
 }
 
 function startConfig() {
@@ -176,13 +178,12 @@ function startConfig() {
 }
 
 function startContas() {
-  getContas(User.cargo);
+  getContas(User.cargo,'',todayDate);
+  createFilterBar();
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
   initFirebase();
-
-  let path = window.location.href;
 
   !path.includes("login.html") ? configBut() : "";
 

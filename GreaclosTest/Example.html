@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html>
 
 <head>
     <title>Examples</title>
@@ -10,64 +10,124 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
         crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+    <style>
+        canvas {
+            -moz-user-select: none;
+            -webkit-user-select: none;
+            -ms-user-select: none;
+        }
+    </style>
 </head>
 
 <body class="container ">
-    <div class="mt-5 d-flex border">
-        <a href="index.html" class="btn btn-secondary m-3 mt-0 mb-0">
-            < </a>
-                <h3 class="">Example</h3>
-    </div>
-    <div class="container mt-5 pt-5">
-        <div id="quadrad" class="container w-50">
-            <form class="row g-3" action="Example2.html" method="get">
-                <div class="col-md-4 form-floating ">
-                    <input type="text" class="form-control" autofocus id="name" required placeholder="Primeiro Nome">
-                    <label for="name" class="m-2 mt-0 mb-0">Primeiro Nome</label>
-                </div>
-                <div class="col-md-4 form-floating ">
-                    <input type="text" class="form-control" id="surname" required placeholder="Primeiro Nome">
-                    <label for="surname" class="m-2 mt-0 mb-0">Segundo Nome</label>
-                </div>
-                <div class="col-md-4 ">
-                    <div class="input-group w-100">
-                        <span class="input-group-text w-25 fs-3" id="inputGroupPrepend2">@</span>
-                        <div class="form-floating w-75">
-                            <input type="text" class="form-control" id="username" required
-                                placeholder="Nome de utilizador">
-                            <label for="username" class="m-2 mt-0 mb-0">username</label>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-6 form-floating ">
-                    <input type="email" class="form-control" id="email" required placeholder="Email">
-                    <label for="email" class="m-2 mt-0 mb-0">Email</label>
-                </div>
-                <div class="col-md-6 form-floating ">
-                    <input type="email" class="form-control is-invalid" id="c-email" required
-                        placeholder="Confirmar Email">
-                    <label for="c-email" class="m-2 mt-0 mb-0">Confirmar Email</label>
-                </div>
-
-                <div class="col-md-6 form-floating ">
-                    <input type="password" class="form-control" id="password" required placeholder="Palavra-passe<">
-                    <label for="password" class="m-2 mt-0 mb-0">Palavra-passe </label>
-                </div>
-                <div class="col-md-6 form-floating ">
-                    <input type="password" class="form-control" id="c-password" required
-                        placeholder="Confirmar Palavra-passe<">
-                    <label for="c-password" class="m-2 mt-0 mb-0">Confirmar Palavra-passe </label>
-                </div>
-
-
-                <div class="col-12 text-center">
-                    <button class="btn btn-primary" type="submit">Submit form</button>
-                </div>
-            </form>
+    <div class="container">
+        <h3 class="text-center mt-3">Barra de Filtro Estilizada</h3>
+        <div class="d-flex justify-content-between mt-3">
+          <div class="form-group">
+            <input type="text" class="form-control" id="searchInput" placeholder="Procurar por nome...">
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="cardOption">
+              <option value="">Selecionar tipo de cartão...</option>
+              <option value="op1">Opção 1</option>
+              <option value="op2">Opção 2</option>
+              <option value="op3">Opção 3</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <input type="date" class="form-control" id="dateInput">
+          </div>
+          <div class="form-group">
+            <select class="form-control" id="responsableOption">
+              <option value="">Selecionar responsável...</option>
+              <option value="resp1">Responsável 1</option>
+              <option value="resp2">Responsável 2</option>
+              <!-- Adicionar mais opções aqui -->
+            </select>
+          </div>
         </div>
+        <div class="d-flex flex-wrap">
+          <!-- Adicionar categorias aqui -->
+        </div>
+      </div>
+      
+      
+    <br>
+    <div style="width:75%;">
+        <canvas id="line-chart"></canvas>
     </div>
+
+
+
+    <script>
+        let data = {
+            labels: ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'],
+            datasets: [
+                {
+                    //Titulo
+                    label: 'Gastos Anuais M',
+                    //Posição das linhas
+                    data: [1700, 1600, 1700, 1300, 1800, 1700, 1500, 1700, 1700, 1600, 1700, 1500],
+                    backgroundColor: 'rgba(25, 99, 132, 0.2)',
+                    //cor das linhas
+                    borderColor: 'rgba(35, 109, 142, 1)',
+                    //borda das linhas
+                    borderWidth: 1.5,
+                    //preenchimento inferior
+                    fill: false
+                }
+            ]
+        };
+        let options = {
+            responsive: true,
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Mês'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Gastos (em R$)'
+                    }
+                }]
+            }
+        };
+        let ctx = document.getElementById('line-chart').getContext('2d');
+        let chart = new Chart(ctx, {
+            //bar,lines
+            type: 'line',
+            data: data,
+            options: options
+        });
+        let startDateInput = document.getElementById('start-date');
+        let endDateInput = document.getElementById('end-date');
+        let filterButton = document.getElementById('filter-button');
+        filterButton.addEventListener('click', function () {
+            let startDate = new Date(startDateInput.value);
+            let endDate = new Date(endDateInput.value);
+            let startMonth = startDate.getMonth();
+            let endMonth = endDate.getMonth();
+            let filteredLabels = data.labels.slice(startMonth, endMonth + 1);
+            let filteredData = data.datasets[0].data.slice(startMonth, endMonth + 1);
+            chart.data.labels = filteredLabels;
+            chart.data.datasets[0].data = filteredData;
+            chart.update();
+        });
+    </script>
 </body>
 
 </html>
