@@ -1,0 +1,179 @@
+#chessboard {
+  display: flex;
+  flex-wrap: wrap;
+  width: 480px;
+  height: 480px;
+  margin: 0 auto;
+  border: 2px solid;
+}
+
+#board-container {
+  max-width: 600px; /* Largura máxima para manter as peças dentro do tabuleiro */
+  margin: 0 auto; /* Centraliza o tabuleiro horizontalmente */
+}
+
+.piece {
+  width: 60px;
+  height: 60px;
+  position: absolute;
+}
+
+#wr1 {
+  top: 0;
+  left: 0;
+}
+
+#wn1 {
+  top: 0;
+  left: 60px;
+}
+
+#wb1 {
+  top: 0;
+  left: 120px;
+}
+
+#wq {
+  top: 0;
+  left: 180px;
+}
+
+#wk {
+  top: 0;
+  left: 240px;
+}
+
+#wb2 {
+  top: 0;
+  left: 300px;
+}
+
+#wn2 {
+  top: 0;
+  left: 360px;
+}
+
+#wr2 {
+  top: 0;
+  left: 420px;
+}
+
+#wp1 {
+  top: 60px;
+  left: 0;
+}
+
+#wp2 {
+  top: 60px;
+  left: 60px;
+}
+
+#wp3 {
+  top: 60px;
+  left: 120px;
+}
+
+#wp4 {
+  top: 60px;
+  left: 180px;
+}
+
+#wp5 {
+  top: 60px;
+  left: 240px;
+}
+
+#wp6 {
+  top: 60px;
+  left: 300px;
+}
+
+#wp7 {
+  top: 60px;
+  left: 360px;
+}
+
+#wp8 {
+  top: 60px;
+  left: 420px;
+}
+
+#br1 {
+  top: 420px;
+  left: 0;
+}
+
+#bn1 {
+  top: 420px;
+  left: 60px;
+}
+
+#bb1 {
+  top: 420px;
+  left: 120px;
+}
+
+#bq {
+  top: 420px;
+  left: 180px;
+}
+
+#bk {
+  top: 420px;
+  left: 240px;
+}
+
+#bb2 {
+  top: 420px;
+  left: 300px;
+}
+
+#bn2 {
+  top: 420px;
+  left: 360px;
+}
+
+#br2 {
+  top: 420px;
+  left: 420px;
+}
+
+#bp1 {
+  top: 360px;
+  left: 0;
+}
+
+#bp2 {
+  top: 360px;
+  left: 60px;
+}
+
+#bp3 {
+  top: 360px;
+  left: 120px;
+}
+
+#bp4 {
+  top: 360px;
+  left: 180px;
+}
+
+#bp5 {
+  top: 360px;
+  left: 240px;
+}
+
+#bp6 {
+  top: 360px;
+  left: 300px;
+}
+
+#bp7 {
+  top: 360px;
+  left: 360px;
+}
+
+#bp8 {
+  top: 360px;
+  left: 420px;
+}

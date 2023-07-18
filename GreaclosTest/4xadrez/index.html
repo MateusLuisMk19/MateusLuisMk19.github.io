@@ -4,6 +4,8 @@
 <head>
     <title>Xadrez</title>
 
+    <!-- <script src="script.js" defer ></script> -->
+    <link rel="stylesheet" href="style.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
 </head>
@@ -14,8 +16,64 @@
             < </a>
                 <h3 class="">Xadrez</h3>
     </div>
-    <div class="container ">
 
+
+    <div >
+        <div class="square"></div>
+        <div class="square">
+            <div class="piece" style="background-image: url('path/to/image.png');"></div>
+        </div>
+        <!-- ... Mais quadrados e peças aqui ... -->
+    </div>
+
+
+    <div class="container ">
+        <div id="board-container">
+            <div class="board">
+                <!-- White Pieces -->
+                <div class="square">
+                    <div class="piece" style="background-image: url('path/to/image.png');"></div>
+                </div>
+                <div class="square">
+                    <img class="piece" id="wp3" src="images/wpawn.png">
+                </div>
+<!-- 
+                <img class="piece" id="wr1" src="images/wrook.png">
+                <img class="piece" id="wn1" src="images/wknight.png">
+                <img class="piece" id="wb1" src="images/wbishop.png">
+                <img class="piece" id="wq" src="images/wqueen.png">
+                <img class="piece" id="wk" src="images/wking.png">
+                <img class="piece" id="wb2" src="images/wbishop.png">
+                <img class="piece" id="wn2" src="images/wknight.png">
+                <img class="piece" id="wr2" src="images/wrook.png">
+                <img class="piece" id="wp1" src="images/wpawn.png">
+                <img class="piece" id="wp2" src="images/wpawn.png">
+                <img class="piece" id="wp3" src="images/wpawn.png">
+                <img class="piece" id="wp4" src="images/wpawn.png">
+                <img class="piece" id="wp5" src="images/wpawn.png">
+                <img class="piece" id="wp6" src="images/wpawn.png">
+                <img class="piece" id="wp7" src="images/wpawn.png">
+                <img class="piece" id="wp8" src="images/wpawn.png"> -->
+
+                <!-- Black Pieces -->
+                <img class="piece" id="br1" src="images/brook.png">
+                <img class="piece" id="bn1" src="images/bknight.png">
+                <img class="piece" id="bb1" src="images/bbishop.png">
+                <img class="piece" id="bq" src="images/bqueen.png">
+                <img class="piece" id="bk" src="images/bking.png">
+                <img class="piece" id="bb2" src="images/bbishop.png">
+                <img class="piece" id="bn2" src="images/bknight.png">
+                <img class="piece" id="br2" src="images/brook.png">
+                <img class="piece" id="bp1" src="images/bpawn.png">
+                <img class="piece" id="bp2" src="images/bpawn.png">
+                <img class="piece" id="bp3" src="images/bpawn.png">
+                <img class="piece" id="bp4" src="images/bpawn.png">
+                <img class="piece" id="bp5" src="images/bpawn.png">
+                <img class="piece" id="bp6" src="images/bpawn.png">
+                <img class="piece" id="bp7" src="images/bpawn.png">
+                <img class="piece" id="bp8" src="images/bpawn.png">
+            </div>
+        </div>
     </div>
 </body>
 
