@@ -1057,6 +1057,7 @@ function registoPessoal(uid) {
 }
 // Create html
 
+
 function configBut() {
   const divPai = document.querySelector("#configBut");
 

@@ -8,19 +8,16 @@ const todayDate =
   (dt.getDate() < 10 ? "-0" + dt.getDate() : "-" + dt.getDate());
 
 let path = window.location.href;
+
 //constantes
 
-const reg_form_Aux = {
-  img_fr: "",
-  img_vr: "",
-  bi_num: "",
-  iban: "",
-  nome: "",
-};
-
-const Cambio = {
-  valor: 0,
-  type: "",
+const alarme = {
+  im_ticket: "",
+  ci: "",
+  data: "",
+  horario: "",
+  title: "",
+  user: "",
 };
 
 const User = {
@@ -29,110 +26,11 @@ const User = {
   nome: "",
 };
 
-const Client = {
-  data: "",
-  ramo: "",
-  nome: "",
-  sobrenome: "",
-  numSolicitacao: 0,
-  bi: {
-    img: {
-      front: "",
-      verse: "",
-    },
-    num: "",
-    verificado: true,
-  },
-  iban: [],
-  total_pago: {
-    dolar: 0,
-    kz: 0,
-  },
-};
-
 // - - - - - - - - - - - - - - - - - - - - - - - - - -  - - - - - - - - - - - -
 
-/* function startHome() {
-  const labelJJ = document.querySelector(`#lb-jj`);
-  const labelJB = document.querySelector(`#lb-jb`);
-  const inputJJ = document.querySelector(`#inp-jj`);
-  const inputJB = document.querySelector(`#inp-jb`);
-
-  if (User.ramo == "all") {
-    inputJB.setAttribute("checked", "");
-    createSelect("jb", "card");
-    createSelect("jb", "bank", "in");
-    createSelect("jb", "bank", "out");
-    document.querySelectorAll(`input[name="options-ramo"]`).forEach((e) => {
-      e.addEventListener("click", (b) => {
-        document.querySelector(`#seletBanks`).innerHTML = "";
-        document.querySelector(`#selectCard`).innerHTML = "";
-        console.log(b.target);
-        createSelect(b.target.value, "card");
-        createSelect(b.target.value, "bank", "in");
-        createSelect(b.target.value, "bank", "out");
-      });
-    });
-  } else if (User.ramo == "jj") {
-    labelJB.classList.add("visually-hidden");
-    inputJJ.setAttribute("checked", "");
-
-    createSelect("jj", "card");
-    createSelect("jj", "bank", "in");
-    createSelect("jj", "bank", "out");
-  } else if (User.ramo == "jb") {
-    console.log(labelJJ);
-    labelJJ.classList.add("visually-hidden");
-    inputJB.setAttribute("checked", "");
-
-    createSelect("jb", "card");
-    createSelect("jb", "bank", "in");
-    createSelect("jb", "bank", "out");
-  }
-
-  setTimeout(() => {
-    createList("listDl", "valorDl");
-    createList("listKz", "valorKz");
-    // console.log(inputJB);
-  }, [2000]);
-
-  // showOperations('ramo',User.ramo);
-  // showOperations('user',User.uid);
-  showOperations("today", User.uid);
+function startData() {
+  showAlarmes();
 }
-
-function startClients() {
-  getClients();
-  const labelJJ = document.querySelector(`#lb-jj`);
-  const labelJB = document.querySelector(`#lb-jb`);
-  const inputJJ = document.querySelector(`#inp-jj`);
-  const inputJB = document.querySelector(`#inp-jb`);
-
-  if (User.ramo == "all") {
-    inputJB.setAttribute("checked", "");
-
-    document.querySelectorAll(`input[name="options-ramo"]`).forEach((e) => {
-      e.addEventListener("click", (b) => {
-        console.log(b.target);
-      });
-    });
-  } else if (User.ramo == "jj") {
-    labelJB.classList.add("visually-hidden");
-    inputJJ.setAttribute("checked", "");
-  } else if (User.ramo == "jb") {
-    console.log(labelJJ);
-    labelJJ.classList.add("visually-hidden");
-    inputJB.setAttribute("checked", "");
-  }
-
-  // showOperations('ramo',User.ramo);
-  // showOperations('user',User.uid);
-  showOperations("today", User.uid);
-}
-
-function startColab() {
-  getUsers(User.uid, User.cargo);
-} */
 
 document.addEventListener("DOMContentLoaded", async () => {
   initFirebase();
@@ -155,17 +53,18 @@ document.addEventListener("DOMContentLoaded", async () => {
         .get()
         .then(async (dat) => {
           const dados = await dat.docs.map((doc) => doc.data())[0];
-          
+
           User.nome = dados.nome;
           User.username = dados.username;
           User.uid = dados.uid;
-          
+
           console.log(User);
 
-          configBut()
+          configBut();
+          startData();
         })
         .catch((error) => console.log(error));
-      }
+    }
   });
 });
 

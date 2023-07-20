@@ -59,22 +59,28 @@
     <div id="alerta"></div>
     <div class="container mt-4">
         <div class="card">
-          <div class="card-body">
-            <div class="row mb-3">
-              <div class="col">
-                <input type="text" class="form-control" id="ci" placeholder="Informe a CI" ondblclick="colarTexto(this)">
-              </div>
-              <div class="col">
-                <input type="text" class="form-control" id="im-ticket" placeholder="Informe o IM Ticket" ondblclick="colarTexto(this)">
-              </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col">
+                        <input type="text" class="form-control" id="ci" placeholder="Informe a CI"
+                            ondblclick="colarTexto(this)">
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" id="im-ticket" placeholder="Informe o IM Ticket"
+                            ondblclick="colarTexto(this)">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <input type="text" class="form-control" id="title" placeholder="Informe o Título"
+                        ondblclick="colarTexto(this)">
+                </div>
+                <button type="button" class="btn btn-primary w-100" onclick="enviar()">Enviar</button>
             </div>
-            <div class="mb-3">
-              <input type="text" class="form-control" id="title" placeholder="Informe o Título" ondblclick="colarTexto(this)">
-            </div>
-            <button type="button" class="btn btn-primary w-100">Enviar</button>
-          </div>
         </div>
-      </div>
+    </div>
+
+    <!-- Card para apresentar os dados -->
+    <div id="show"></div>
 
     <script src="JS/functions.js"></script>
     <script src="JS/index.js"></script>
