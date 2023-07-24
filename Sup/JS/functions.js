@@ -151,7 +151,7 @@ async function showAlarmes() {
                       </div>
                   </div>
               </div>
-              <button class="btn col btn-secondary btn-circle ms-auto rounded-circle" onclick="copiarParaAreaTransferencia(${element.im_ticket})">
+              <button title="copiar" class="btn col btn-secondary btn-circle ms-auto rounded-circle" onclick="copiarParaAreaTransferencia('${element.id}')">
                   <i class="">
                       <?xml version="1.0" encoding="iso-8859-1"?>
 
@@ -169,7 +169,7 @@ async function showAlarmes() {
                       </svg>
                   </i>
               </button>
-              <button class="btn col text-secondary onclick="deleteAlarme('${element.im_ticket}')">
+              <button class="btn col text-secondary" title="eliminar" onclick="deleteAlarme('${element.id}')">
                   <i class="">
                       <?xml version="1.0" encoding="iso-8859-1"?>
 
@@ -189,13 +189,14 @@ function deleteAlarme(im) {
   firebase
     .firestore()
     .collection(`alarme`)
-    .where("im_ticket", "==", `${im}`)
-    .then((snapshot) => {
-      // alertar(`Operação "${nome} - ${data}" Apagado!`, "success");
-      // setTimeout(() => {
-      //   Reload();
-      // }, [2000]);
-      console.log(snapshot);
+    .doc(im)
+    .delete()
+    .then(() => {
+      // console.log(im);
+      // alertar(`Alarme Apagado!`, "success");
+      setTimeout(() => {
+        Reload();
+      }, [300]);
     });
 }
 
@@ -222,6 +223,31 @@ function enviar() {
         Reload();
       });
   }
+}
+
+// Função para copiar o conteúdo do card para a área de transferência
+async function copiarParaAreaTransferencia(im) {
+  const dadosCard = await firebase
+    .firestore()
+    .collection(`alarme`)
+    .doc(im)
+    .get()
+    .then((docc) => {
+      return docc.data();
+    });
+
+  const dadosCardText = `ci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
+
+  // console.log(dadosCardText);
+
+  navigator.clipboard
+    .writeText(dadosCardText)
+    .then(() => {
+      alertar("Copiado!", "success");
+    })
+    .catch((err) => {
+      alertar("Não foi possível copiar", "danger");
+    });
 }
 
 // Firebase
