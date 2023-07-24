@@ -62,19 +62,19 @@
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col">
-                        <input type="text" class="form-control" id="ci" placeholder="Informe a CI"
-                            ondblclick="colarTexto(this)">
+                        <input title="Dê duplo clique para colar" type="text" class="form-control" id="ci"
+                            placeholder="Informe a CI" ondblclick="colarTexto(this)">
                     </div>
                     <div class="col">
-                        <input type="text" class="form-control" id="im-ticket" placeholder="Informe o IM Ticket"
-                            ondblclick="colarTexto(this)">
+                        <input title="Dê duplo clique para colar" type="text" class="form-control" id="im-ticket"
+                            placeholder="Informe o IM Ticket" ondblclick="colarTexto(this)">
                     </div>
                 </div>
                 <div class="mb-3">
-                    <input type="text" class="form-control" id="title" placeholder="Informe o Título"
-                        ondblclick="colarTexto(this)">
+                    <textarea title="Dê duplo clique para colar" class="form-control" name="title"
+                        placeholder="Informe o Título" id="title" rows="2" ondblclick="colarTexto(this)""></textarea>
                 </div>
-                <button type="button" class="btn btn-primary w-100" onclick="enviar()">Enviar</button>
+                <button type=" button" class="btn btn-primary w-100" onclick="enviar()">Enviar</button>
             </div>
         </div>
     </div>
