@@ -139,45 +139,45 @@ async function showAlarmes() {
     let div = document.createElement("div");
 
     div = `
-    <div class="container card mt-4" id="dados-card">
-          
-          <div class="card-body d-flex row col-12">
-              <div class="col-11">
-                  <p><strong>CI:</strong> <span id="dados-ci">${element.ci}</span></p>
-                  <p><strong>IM Ticket:</strong> <span id="dados-im-ticket">${element.im_ticket}</span></p>
-                  <div class="row">
-                      <div class="col-4 text-truncate">
-                          <strong>Título:</strong> <span id="dados-title">${element.title}</span>
-                      </div>
-                  </div>
-              </div>
-              <button title="copiar" class="btn col btn-secondary btn-circle ms-auto rounded-circle" onclick="copiarParaAreaTransferencia('${element.id}')">
-                  <i class="">
-                      <?xml version="1.0" encoding="iso-8859-1"?>
+    <div class="row align-items-center m-4 d-flex align-items-stretch border border-dark p-2 rounded">
+        <div class="col-10">
+            <p><strong>CI:</strong> <span id="dados-ci">${element.ci}</span></p>
+                <p><strong>IM Ticket:</strong> <span id="dados-im-ticket">${element.im_ticket}</span></p>
+                <div class="row">
+                    <div class="col-8 text-truncate">
+                        <strong>Título:</strong> <span id="dados-title">${element.title}</span>
+                    </div>
+                </div>
+        </div>
+        <div class="col-2 text-end">
+        <span class="text-secondary">${element.data} _ ${element.horario}</span><br/>
+          <button title="copiar" class="btn btn-secondary btn-circle ms-auto rounded-circle" onclick="copiarParaAreaTransferencia('${element.id}')">
+                <i class="">
+                    <?xml version="1.0" encoding="iso-8859-1"?>
 
-                      <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                      <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                          xmlns:xlink="http://www.w3.org/1999/xlink" width="40px" height="40px"
-                          viewBox="0 0 93.842 93.843" xml:space="preserve">
-                          <g>
-                              <path d="M74.042,11.379h-9.582v-0.693c0-1.768-1.438-3.205-3.206-3.205h-6.435V3.205C54.819,1.437,53.381,0,51.614,0H42.23
-    	c-1.768,0-3.206,1.438-3.206,3.205V7.48H32.59c-1.768,0-3.206,1.438-3.206,3.205v0.693h-9.582c-2.393,0-4.339,1.945-4.339,4.34
-    	v73.785c0,2.394,1.946,4.34,4.339,4.34h54.238c2.394,0,4.339-1.946,4.339-4.34V15.719C78.38,13.324,76.434,11.379,74.042,11.379z
-    	 M32.617,25.336h28.61c1.709,0,3.102-1.391,3.102-3.1v-3.438h7.554l0.021,68.164l-49.939,0.021V18.801h7.554v3.436
-    	C29.517,23.945,30.907,25.336,32.617,25.336z" />
-                          </g>
-                      </svg>
-                  </i>
-              </button>
-              <button class="btn col text-secondary" title="eliminar" onclick="deleteAlarme('${element.id}')">
-                  <i class="">
-                      <?xml version="1.0" encoding="iso-8859-1"?>
+                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                    <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
+                        xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px"
+                        viewBox="0 0 93.842 93.843" xml:space="preserve">
+                        <g>
+                            <path d="M74.042,11.379h-9.582v-0.693c0-1.768-1.438-3.205-3.206-3.205h-6.435V3.205C54.819,1.437,53.381,0,51.614,0H42.23
+      c-1.768,0-3.206,1.438-3.206,3.205V7.48H32.59c-1.768,0-3.206,1.438-3.206,3.205v0.693h-9.582c-2.393,0-4.339,1.945-4.339,4.34
+      v73.785c0,2.394,1.946,4.34,4.339,4.34h54.238c2.394,0,4.339-1.946,4.339-4.34V15.719C78.38,13.324,76.434,11.379,74.042,11.379z
+       M32.617,25.336h28.61c1.709,0,3.102-1.391,3.102-3.1v-3.438h7.554l0.021,68.164l-49.939,0.021V18.801h7.554v3.436
+      C29.517,23.945,30.907,25.336,32.617,25.336z" />
+                        </g>
+                    </svg>
+                </i>
+            </button>
+            <button class="btn btn-danger rounded-circle" title="eliminar" onclick="deleteAlarme('${element.id}')">
+                <i class="">
+                    <?xml version="1.0" encoding="iso-8859-1"?>
 
-                      <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg>
-                  </i> 
-              </button>
-          </div>
+                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg>
+                </i> 
+            </button>
+        </div>
       </div>
     `;
 
@@ -210,7 +210,12 @@ function enviar() {
   } else {
     alarme.ci = ciImp;
     alarme.data = todayDate;
-    alarme.horario = dt.getHours() + ":" + dt.getMinutes();
+    alarme.horario =
+      dt.getHours() < 10
+        ? "0" + dt.getHours() + ":" + dt.getMinutes() < 10
+          ? "0" + dt.getMinutes()
+          : dt.getMinutes()
+        : dt.getHours();
     alarme.im_ticket = imImp;
     alarme.user = User.uid;
     alarme.title = titleImp;
