@@ -208,14 +208,16 @@ function enviar() {
   if (ciImp == "" || imImp == "" || titleImp == "") {
     return;
   } else {
+    let hor = dt.getHours(),
+      min = dt.getMinutes();
+
+    if (dt.getHours() < 10) hor = "0" + dt.getHours();
+
+    if (dt.getMinutes() < 10) min = "0" + dt.getMinutes();
+
     alarme.ci = ciImp;
     alarme.data = todayDate;
-    alarme.horario =
-      dt.getHours() < 10
-        ? "0" + dt.getHours() + ":" + dt.getMinutes() < 10
-          ? "0" + dt.getMinutes()
-          : dt.getMinutes()
-        : dt.getHours();
+    alarme.horario = hor + ":" + min;
     alarme.im_ticket = imImp;
     alarme.user = User.uid;
     alarme.title = titleImp;
