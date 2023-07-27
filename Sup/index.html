@@ -26,8 +26,8 @@
 
 </head>
 
-<body class="container">
-    <nav class="navbar navbar-light navbar-expand-md bg-light p-0" style="border-bottom: 1px solid;">
+<body class="container" id="body">
+    <nav id="navbar" class="navbar navbar-expand-md p-0" style="border-bottom: 1px solid;">
         <div class="container-fluid pb-0">
             <a class="navbar-brand fs-4 mb-0" onclick="Reload()" role="button">Supervision</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
@@ -46,9 +46,12 @@
                         <a class="nav-link" role="button" onclick="navigate('contas.html')">Contas</a>
                     </li> -->
                 </ul>
-                <span class="navbar-text">
-                    <div class="btn pt-2 p-0 dropdown" id="configBut">
-
+                <span class="d-flex align-items-center align-items-stretch">
+                    <div class="form-check form-switch mt-0 mb-0 m-3 text-dark">
+                        <input class="form-check-input" type="checkbox" onchange="changeThemeMode(this)"
+                            id="checkDark"><span class="text-secondary">Dark</span>
+                    </div>
+                    <div class="btn p-0" id="configBut">
                     </div>
                 </span>
             </div>
@@ -58,7 +61,7 @@
 
     <div id="alerta"></div>
     <div class="container mt-4">
-        <div class="card">
+        <div class="card border" id="card-form">
             <div class="card-body">
                 <div class="row mb-3">
                     <div class="col">

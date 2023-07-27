@@ -9,7 +9,11 @@ function navigate(url) {
 function configBut() {
   const divPai = document.querySelector("#configBut");
 
-  divPai.innerHTML = `<i class="text-secondary">@${User.username}  </i> <a class="btn-link" onclick="logOut()">Sair</a>`;
+  divPai.innerHTML += `
+    <span class="float-left">
+      <i class="text-secondary">@${User.username}</i> 
+      <a class="btn-link" onclick="logOut()">Sair</a>
+    </span>`;
 }
 
 // Função para colar o conteúdo da área de transferência na caixa de texto
@@ -118,7 +122,7 @@ function alertar(message, type) {
 async function showAlarmes() {
   const divPai = document.querySelector("#show");
 
-  console.log(User.uid);
+  // console.log(User.uid);
   const dados = await firebase
     .firestore()
     .collection("alarme")
@@ -133,13 +137,13 @@ async function showAlarmes() {
       }))
     );
 
-  console.log(dados);
+  // console.log(dados);
 
   dados.forEach((element) => {
     let div = document.createElement("div");
 
     div = `
-    <div class="row align-items-center m-4 d-flex align-items-stretch border border-dark p-2 rounded">
+    <div class="row align-items-center m-4 d-flex align-items-stretch border cartao p-2 rounded">
         <div class="col-10">
             <p><strong>CI:</strong> <span id="dados-ci">${element.ci}</span></p>
                 <p><strong>IM Ticket:</strong> <span id="dados-im-ticket">${element.im_ticket}</span></p>
@@ -197,6 +201,23 @@ function deleteAlarme(im) {
       setTimeout(() => {
         Reload();
       }, [300]);
+    });
+}
+
+async function changeThemeMode(dark) {
+  console.log(dark.checked);
+
+  let theme = {
+    dark: dark.checked,
+  };
+
+  await firebase
+    .firestore()
+    .collection("site_config")
+    .doc("fZ6xWWL1xTDLqtUDRWof")
+    .update(theme)
+    .then(() => {
+      Reload();
     });
 }
 

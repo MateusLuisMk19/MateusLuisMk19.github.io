@@ -35,6 +35,7 @@ function startData() {
 document.addEventListener("DOMContentLoaded", async () => {
   initFirebase();
 
+  reloadTheme();
   // !path.includes("login.html") ? configBut() : "";
 
   await firebase.auth().onAuthStateChanged(async (user) => {
@@ -43,7 +44,7 @@ document.addEventListener("DOMContentLoaded", async () => {
       else navigate("login.html");
       //   console.log(window.location.href);
     }
-    console.log(user.uid);
+    // console.log(user.uid);
     if (path.includes("login.html")) authLogin();
     else {
       await firebase
@@ -58,7 +59,7 @@ document.addEventListener("DOMContentLoaded", async () => {
           User.username = dados.username;
           User.uid = dados.uid;
 
-          console.log(User);
+          // console.log(User);
 
           configBut();
           startData();
@@ -82,4 +83,74 @@ function authLogin() {
       navigate("index.html");
     }
   });
+}
+
+async function reloadTheme() {
+  await firebase
+    .firestore()
+    .collection("site_config")
+    .doc("fZ6xWWL1xTDLqtUDRWof")
+    .get()
+    .then((snapshot) => {
+      let body = document.getElementById("body");
+      let check = document.getElementById("checkDark");
+      let navBar = document.getElementById("navbar");
+      let cardForm = document.getElementById("card-form");
+      let ci = document.getElementById("ci")
+      let im_ticket = document.getElementById("im-ticket")
+      let title = document.getElementById("title")
+
+      // console.log(snapshot.data().dark);
+
+      function changeClass(element, newC, oldC) {
+        element.classList.contains(oldC) ? element.classList.remove(oldC) : "";
+        element.classList.add(newC);
+      }
+
+      if (snapshot.data().dark) {
+        body.setAttribute("style", "color: beige;");
+
+        changeClass(body, "bg-dark", "bg-light");
+
+        changeClass(cardForm, "bg-dark", "bg-light");
+
+        changeClass(ci, "bg-dark", "bg-light");
+        changeClass(ci, "text-light", "text-dark");
+
+        changeClass(im_ticket, "bg-dark", "bg-light");
+        changeClass(im_ticket, "text-light", "text-dark");
+
+        changeClass(title, "bg-dark", "bg-light");
+        changeClass(title, "text-light", "text-dark");
+
+        check.setAttribute("checked", "");
+        check.classList.add("bg-info")
+
+        changeClass(navBar, "navbar-dark", "navbar-light");
+
+        changeClass(navBar, "bg-dark", "bg-light");
+      } else {
+        body.removeAttribute("style");
+
+        changeClass(body, "bg-light", "bg-dark");
+
+        changeClass(cardForm, "bg-light", "bg-dark");
+
+        changeClass(ci, "bg-white", "bg-dark");
+        changeClass(ci, "text-dark", "text-light");
+
+        changeClass(im_ticket, "bg-white", "bg-dark");
+        changeClass(im_ticket, "text-dark", "text-light");
+
+        changeClass(title, "bg-white", "bg-dark");
+        changeClass(title, "text-dark", "text-light");
+
+        check.removeAttribute("checked");
+        check.classList.remove("bg-info")
+
+        changeClass(navBar, "navbar-light", "navbar-dark");
+
+        changeClass(navBar, "bg-light", "bg-dark");
+      }
+    });
 }
