@@ -209,16 +209,37 @@ async function changeThemeMode(dark) {
 
   let theme = {
     dark: dark.checked,
+    user: User.uid,
   };
 
   await firebase
     .firestore()
     .collection("site_config")
-    .doc("fZ6xWWL1xTDLqtUDRWof")
-    .update(theme)
-    .then(() => {
-      Reload();
+    .where("user", "==", User.uid)
+    .get()
+    .then((snapshot) => {
+      if (snapshot.docs.length < 1) {
+        firebase
+          .firestore()
+          .collection("site_config")
+          .doc("fZ6xWWL1xTDLqtUDRWof")
+          .add(theme)
+          .then(() => {
+            Reload();
+          });
+      } else {
+        firebase
+          .firestore()
+          .collection("site_config")
+          .doc("fZ6xWWL1xTDLqtUDRWof")
+          .update(theme)
+          .then(() => {
+            Reload();
+          });
+      }
     });
+
+  /*   */
 }
 
 function enviar() {
@@ -255,6 +276,10 @@ function enviar() {
 
 // Função para copiar o conteúdo do card para a área de transferência
 async function copiarParaAreaTransferencia(im) {
+  const pre_text = document.getElementById("pre-texto");
+  const checkPreT = document.getElementById("checkPreText");
+  let dadosCardText = "";
+
   const dadosCard = await firebase
     .firestore()
     .collection(`alarme`)
@@ -264,8 +289,17 @@ async function copiarParaAreaTransferencia(im) {
       return docc.data();
     });
 
-  const dadosCardText = `ci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
+  // console.log(pre_text.value == "")
+  if (checkPreT.checked) {
+    if (pre_text.value == "") {
+      alertar("Adicione o pré-texto para a mensagem", "warning");
+      return;
+    }
 
+    dadosCardText = `${pre_text.value}:\nci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
+  } else {
+    dadosCardText = `ci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
+  }
   // console.log(dadosCardText);
 
   navigator.clipboard
