@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Jogo de Xadrez</title>
+    <style>
+        #chessboard {
+            width: 480px;
+            height: 480px;
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+        }
+        
+        .cell {
+            width: 60px;
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .black {
+            background-color: #999999;
+        }
+        
+        .white {
+            background-color: #ffffff;
+        }
+        
+    </style>
+</head>
+<body>
+    <div id="chessboard"></div>
+    <script>
+        window.onload = function() {
+            const chessboard = document.getElementById('chessboard');
+            
+            for (let i = 0; i < 8; i++) {
+                for (let j = 0; j < 8; j++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.classList.add((i + j) % 2 === 0 ? 'white' : 'black');
+                    chessboard.appendChild(cell);
+                }
+            }
+        };
+        
+    </script>
+</body>
+</html>
