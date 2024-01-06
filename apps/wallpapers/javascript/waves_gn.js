@@ -57,9 +57,9 @@
 
     for (var i = 0; i < options.waves; i++) {
       Waves.updateColor();
-     /*  for (var j = 0; j < options.width; j++) {
+      for (var j = 0; j < options.width; j++) {
         Waves.waves[i].update();
-      } */
+      } 
     }
   };
 
