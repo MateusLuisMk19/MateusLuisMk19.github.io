@@ -152,10 +152,10 @@
     }
 
     var a = Math.floor(127 * Math.sin(0.3 * Waves.hue + 0) + 128);
-    var b = Math.floor(127 * Math.sin(0.3 * Waves.hue + 2) + 128);
+    var b = Math.floor(55 * Math.sin(0.3 * Waves.hue + 3) + 190);
     var c = Math.floor(127 * Math.sin(0.3 * Waves.hue + 4) + 128);
 
-    Waves.color = 'rgba(' + 0 + ',' + b + ',' + 0 + ', 0.1)';
+    Waves.color = 'rgba(' + 0 + ',' + b + ',' + 0 + ', 0.15)';
   };
 
   function Wave(Waves) {
