@@ -1,389 +1,525 @@
-function Reload() {
-  window.location.reload();
-}
+//Data
+const dt = new Date();
+const today = {
+  dia: dt.getDate() < 10 ? "0" + dt.getDate() : dt.getDate() + "",
+  mes:
+    1 + dt.getUTCMonth() < 10
+      ? "0" + (1 + dt.getUTCMonth())
+      : "" + (1 + dt.getUTCMonth()),
+  ano: dt.getFullYear(),
 
-function navigate(url) {
-  window.location.href = url;
-}
+  date() {
+    return this.ano + "-" + this.mes + "-" + this.dia;
+  },
+};
 
-function configBut() {
-  const divPai = document.querySelector("#configBut");
+//Navegação
+const Url = {
+  path: window.location.href,
+  params: new URLSearchParams(window.location.search),
+};
 
-  divPai.innerHTML += `
-    <span class="float-left">
-      <i class="text-secondary">@${User.username}</i> 
-      <a class="btn-link" onclick="logOut()">Sair</a>
-    </span>`;
-}
+//Territorio
+const ativos = {
+  ID: "",
+  area: "",
+  disponivel: false,
+  num: "",
+  num_casas: 0,
+  observacao: "",
+  referencias: [],
+};
 
-// Função para colar o conteúdo da área de transferência na caixa de texto
-function colarTexto(element) {
-  console.log(element.id);
+//-------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
+//--------------------------------------------------------------------------------------------
 
-  navigator.clipboard
-    .readText()
-    .then((text) => {
-      if (element.id == "im-ticket") {
-        if (text.startsWith("IM")) {
-          element.value = text;
-        } else {
-          alertar('O "IM" está incorreto!', "danger");
-          return;
-        }
-      }
-      element.value = text;
-    })
-    .catch((err) => {
-      console.error(
-        "Não foi possível ler o texto da área de transferência: ",
-        err
-      );
-    });
-}
+const html_Comp = {
+  navBar() {
+    let color = "white";
+    //Nav
+    _html.elemento(
+      "nav",
+      ["class"],
+      [`navbar navbar-expand-lg navbar-dark bg-dark p-0`],
+      "nav" /* div com id #nav */,
+      `
+      <div class="container-fluid p-0 ">
+        <a class="navbar-brand" ondblclick="html_Comp.authModal('show')"
+          style="font-size:2.3rem; padding: 0px 8px 0px 8px;" href="#">
+          <span id="my">my</span>Stock</a>
+        <div class="p-2">
+          <a class="btn btn-link" onclick="_Auth.logOut()" >Logout
+          </a>
+          
+        </div>
 
-//Recebendo os codigos de erro, traduzindo para portugues
-//E criando alertas
-//    code    string    //codigo de erro
-//    who     string    //se refere a pra quem será o alerta, o nome depois de "alert-"
-function validaAuth(code) {
-  switch (code) {
-    case "auth/wrong-password":
-      alertar("Palavra-passe errada!", "danger");
-      console.log("Palavra-passe errada!");
-      break;
-    case "auth/invalid-email":
-      alertar("Endereço de e-mail não válido!", "danger");
-      console.log("Endereço de e-mail não válido!");
-      break;
-    case "auth/user-disabled":
-      alertar("Este utilizador foi desabilitado.", "danger");
-      console.log("Este utilizador foi desabilitado.");
-      break;
-    case "auth/user-not-found":
-      alertar("Utilizador não encontrado.", "danger");
-      console.log("Utilizador não encontrado.");
-      break;
-    case "auth/too-many-requests":
-      alertar(
-        "Devida a atividades suspeitas, deverá tentar de novo em alguns minutos",
-        "danger"
-      );
-      console.log(
-        "Devida a atividades suspeitas, deverá tentar de novo em alguns minutos."
-      );
-      break;
-    case "auth/email-already-in-use":
-      alertar("Já existe uma conta neste email.", "warning");
-      console.log("Já existe uma conta neste email.");
-      break;
-    case "auth/weak-password":
-      alertar(
-        "Sua palavra passe é muito fraca, tente outra por favor.",
-        "warning"
-      );
-      console.log("Sua palavra passe é muito fraca, tente outra por favor.");
-      break;
-    case "auth/operation-not-allowed":
-      alertar("A conta neste email foi desativada.", "warning");
-      console.log("A conta neste email foi desativada.");
-      break;
-    default:
-      break;
-  }
-}
-
-function alertar(message, type) {
-  let Pai = document.querySelector(`#alerta`);
-
-  console.log(Pai);
-  let wrapper = document.createElement("div");
-  wrapper.setAttribute("class", `alert alert-${type} mt-3 alert-dismissible`);
-  wrapper.setAttribute("role", "alert");
-
-  let mensagem = document.createElement("div");
-  mensagem.innerHTML = `${message}`;
-
-  wrapper.appendChild(mensagem);
-
-  let btn = document.createElement("button");
-  btn.setAttribute("type", "button");
-  btn.setAttribute("class", "btn-close visually-hidden");
-  btn.setAttribute("data-bs-dismiss", "alert");
-  btn.setAttribute("aria-label", "Close");
-
-  wrapper.appendChild(btn);
-  Pai.appendChild(wrapper);
-
-  setTimeout(() => {
-    btn.click();
-  }, [5000]);
-}
-
-async function showAlarmes() {
-  const divPai = document.querySelector("#show");
-
-  // console.log(User.uid);
-  const dados = await firebase
-    .firestore()
-    .collection("alarme")
-    .where("user", "==", User.uid)
-    .orderBy("data", "desc")
-    .orderBy("horario", "desc")
-    .get()
-    .then((snapshot) =>
-      snapshot.docs.map((doc) => ({
-        ...doc.data(),
-        id: doc.id,
-      }))
+      </div>`
     );
+  },
 
-  // console.log(dados);
+  async bandeja() {
+    _html.elemento("div", ["id"], ["bdj"], "conteudo");
 
-  dados.forEach((element) => {
-    let div = document.createElement("div");
+    //pegar na firestore as info dos jogos
+    //const territorios = await Store.getCollection("territorios");
+    // console.log(gamesList);
 
-    div = `
-    <div class="row align-items-center m-4 d-flex align-items-stretch border cartao p-2 rounded">
-        <div class="col-10">
-            <p><strong>CI:</strong> <span id="dados-ci">${element.ci}</span></p>
-                <p><strong>IM Ticket:</strong> <span id="dados-im-ticket">${element.im_ticket}</span></p>
-                <div class="row">
-                    <div class="col-8 text-truncate">
-                        <strong>Título:</strong> <span id="dados-title">${element.title}</span>
-                    </div>
-                </div>
-        </div>
-        <div class="col-2 text-end">
-        <span class="text-secondary">${element.data} _ ${element.horario}</span><br/>
-          <button title="copiar" class="btn btn-secondary btn-circle ms-auto rounded-circle" onclick="copiarParaAreaTransferencia('${element.id}')">
-                <i class="">
-                    <?xml version="1.0" encoding="iso-8859-1"?>
+    _html.elemento(
+      "div",
+      ["class", "id"],
+      ["row justify-content-md-start", "linha"],
+      "bdj"
+    );
+  },
+};
 
-                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                    <svg fill="#000000" version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg"
-                        xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px"
-                        viewBox="0 0 93.842 93.843" xml:space="preserve">
-                        <g>
-                            <path d="M74.042,11.379h-9.582v-0.693c0-1.768-1.438-3.205-3.206-3.205h-6.435V3.205C54.819,1.437,53.381,0,51.614,0H42.23
-      c-1.768,0-3.206,1.438-3.206,3.205V7.48H32.59c-1.768,0-3.206,1.438-3.206,3.205v0.693h-9.582c-2.393,0-4.339,1.945-4.339,4.34
-      v73.785c0,2.394,1.946,4.34,4.339,4.34h54.238c2.394,0,4.339-1.946,4.339-4.34V15.719C78.38,13.324,76.434,11.379,74.042,11.379z
-       M32.617,25.336h28.61c1.709,0,3.102-1.391,3.102-3.1v-3.438h7.554l0.021,68.164l-49.939,0.021V18.801h7.554v3.436
-      C29.517,23.945,30.907,25.336,32.617,25.336z" />
-                        </g>
-                    </svg>
-                </i>
-            </button>
-            <button class="btn btn-danger rounded-circle" title="eliminar" onclick="deleteAlarme('${element.id}')">
-                <i class="">
-                    <?xml version="1.0" encoding="iso-8859-1"?>
+//Criar um elemento html
+const _html = {
+  //Criar um elemento html com valor/Conteudo de texto
+  //  nome -      string ""           //Nome do elemento a ser criado
+  //  des_Attr -  String Array [""]   //Array com as descrições dos atributos (Ex. id, class, etc)
+  //  v_Attrs -   String Array [""]   //Array com os valores dos atributos acima citados
+  //      NB: A descrição e o valor devem estar nas mesmas posições em seus respectivos Arrays (Ex. des_Attrs[0] == "id" ! v_Attrs[0] == "myId"  )
+  //  e_Pai -     string ""           //id do elemento pai para o elemento (apenas texto, sem #)
+  //  txtHtml -   string ""           //texto que será inserido no corrpo do elemento
+  //
+  //Ex. criarElemento("h2", ["id","class"], ["titulo","conteudo"], "box1", "Como faze...")
+  elemento(
+    nome_tag,
+    atributos_tag,
+    valores_dos_atributos,
+    elemento_Pai,
+    innerText_tag
+  ) {
+    let PAI = document.querySelector(`#${elemento_Pai}`);
+    let n_Attr = atributos_tag.length;
+    let elemento = document.createElement(`${nome_tag}`);
 
-                    <!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16"> <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/> <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/> </svg>
-                </i> 
-            </button>
-        </div>
-      </div>
-    `;
-
-    divPai.innerHTML += div;
-  });
-}
-
-function deleteAlarme(im) {
-  firebase
-    .firestore()
-    .collection(`alarme`)
-    .doc(im)
-    .delete()
-    .then(() => {
-      // console.log(im);
-      // alertar(`Alarme Apagado!`, "success");
-      setTimeout(() => {
-        Reload();
-      }, [300]);
-    });
-}
-
-async function changeThemeMode(dark) {
-  console.log(dark.checked);
-
-  let theme = {
-    dark: dark.checked,
-    user: User.uid,
-  };
-
-  await firebase
-    .firestore()
-    .collection("site_config")
-    .where("user", "==", User.uid)
-    .get()
-    .then((snapshot) => {
-      if (snapshot.docs.length < 1) {
-        firebase
-          .firestore()
-          .collection("site_config")
-          .doc("fZ6xWWL1xTDLqtUDRWof")
-          .add(theme)
-          .then(() => {
-            Reload();
-          });
-      } else {
-        firebase
-          .firestore()
-          .collection("site_config")
-          .doc("fZ6xWWL1xTDLqtUDRWof")
-          .update(theme)
-          .then(() => {
-            Reload();
-          });
+    if (atributos_tag != "") {
+      for (let e = 0; e < n_Attr; e++) {
+        elemento.setAttribute(
+          `${atributos_tag[e]}`,
+          `${valores_dos_atributos[e]}`
+        );
       }
-    });
-
-  /*   */
-}
-
-function enviar() {
-  const ciImp = document.getElementById("ci").value;
-  const imImp = document.getElementById("im-ticket").value;
-  const titleImp = document.getElementById("title").value;
-
-  if (ciImp == "" || imImp == "" || titleImp == "") {
-    return;
-  } else {
-    let hor = dt.getHours(),
-      min = dt.getMinutes();
-
-    if (dt.getHours() < 10) hor = "0" + dt.getHours();
-
-    if (dt.getMinutes() < 10) min = "0" + dt.getMinutes();
-
-    alarme.ci = ciImp;
-    alarme.data = todayDate;
-    alarme.horario = hor + ":" + min;
-    alarme.im_ticket = imImp;
-    alarme.user = User.uid;
-    alarme.title = titleImp;
-
-    firebase
-      .firestore()
-      .collection("alarme")
-      .add(alarme)
-      .then(() => {
-        Reload();
-      });
-  }
-}
-
-// Função para copiar o conteúdo do card para a área de transferência
-async function copiarParaAreaTransferencia(im) {
-  const pre_text = document.getElementById("pre-texto");
-  const checkPreT = document.getElementById("checkPreText");
-  let dadosCardText = "";
-
-  const dadosCard = await firebase
-    .firestore()
-    .collection(`alarme`)
-    .doc(im)
-    .get()
-    .then((docc) => {
-      return docc.data();
-    });
-
-  // console.log(pre_text.value == "")
-  if (checkPreT.checked) {
-    if (pre_text.value == "") {
-      alertar("Adicione o pré-texto para a mensagem", "warning");
-      return;
     }
 
-    dadosCardText = `${pre_text.value}:\nci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
-  } else {
-    dadosCardText = `ci:${dadosCard.ci}\n${dadosCard.im_ticket}\nTitle:${dadosCard.title}`;
-  }
-  // console.log(dadosCardText);
+    if (innerText_tag) {
+      elemento.innerHTML = innerText_tag;
+    }
+    // console.log("pai", PAI);
+    PAI.appendChild(elemento);
+  },
 
-  navigator.clipboard
-    .writeText(dadosCardText)
-    .then(() => {
-      alertar("Copiado!", "success");
-    })
-    .catch((err) => {
-      alertar("Não foi possível copiar", "danger");
-    });
-}
+  //Cria a lista de navegação, os nomes identificadores das paginas no menu
+  //  classUl -   string    [""]      //Classes para a tag Ul
+  //  textLi -    array     [""]      //nomes dos li, os titulos que aparecerão na barra
+  //  classA -    array     [""]      //classes para cada tag a correspondente aos nomes acima citados
+  //  func -                          //função pro onclick (Enviar com "") Ex. "funcao(parametros)"
+  //  e_Pai -     string    ""        //id do elemento pai para o elemento (apenas texto, sem #)
+  //Ex. navbar_list("navbar-nav ",["Home", "Histórico"],[`nav-link active`, `nav-link disabled`],[" ", " "],"navbarCollapse")
+  navbar_list(
+    class_navbar,
+    lista_de_menu,
+    class_p_iten_da_lista,
+    funcao_p_iten_da_lista,
+    elemento_Pai
+  ) {
+    let Pai = document.querySelector(`#${elemento_Pai}`);
+    let numLi = lista_de_menu.length;
 
-// Firebase
-// Firebase initialization
-function initFirebase() {
-  const firebaseConfig = {
-    apiKey: "AIzaSyAypSg2Pz0Dcuf7pnyADEP9nYX7jp0o3wE",
-    authDomain: "supervision-7cb0d.firebaseapp.com",
-    projectId: "supervision-7cb0d",
-    storageBucket: "supervision-7cb0d.appspot.com",
-    messagingSenderId: "768957089004",
-    appId: "1:768957089004:web:0a3b1b66c4092f68d7d1c9",
-    experimentalForceLongPolling: true, // this line
-    useFetchStreams: false, // and this line
-  };
+    let ul = document.createElement("ul");
+    ul.setAttribute("class", `${class_navbar}`);
 
-  // Initialize Firebase
-  firebase.initializeApp(firebaseConfig);
-}
+    for (let e = 0; e < numLi; e++) {
+      let li = document.createElement(`li`);
+      li.setAttribute("class", `nav-item`);
 
-// firebase.storage()
+      let a = document.createElement("a");
+      a.setAttribute("class", `${class_p_iten_da_lista[e]}`);
+      a.setAttribute("style", `cursor: pointer;`);
+      a.setAttribute("onclick", funcao_p_iten_da_lista[e]);
+      a.innerHTML = `${lista_de_menu[e]}`;
 
-// ----------------------------- Firebase auth
+      li.appendChild(a);
+      ul.appendChild(li);
+    }
 
-function logOut() {
-  if (firebase.auth().currentUser) {
+    Pai.appendChild(ul);
+  },
+
+  //Criar um elemento Form-Floating, imput e label dentro de uma div
+  //  id          string ""           //id do imput e que vai pro campo "for" da Label
+  //  des_Attr    String Array [""]   //Array com as descrições dos outros atributos (fora o id) (Ex. value, class, etc)
+  //  v_Attrs     String Array [""]   //Array com os valores dos atributos acima citados
+  //      NB: A descrição e o valor devem estar nas mesmas posições em seus respectivos Arrays (Ex. des_Attrs[0] == "type" ! v_Attrs[0] == "text"  )
+  //  e_Pai       string ""           //id do elemento pai para a div (apenas texto, sem #)
+  //  mb          number 0-5          //margem bottom
+  //
+  //Ex. criarElemento("input", ["type","class"], ["text","form-control"], "box1", 4)
+  criarElementoFF(id, des_Attrs, v_Attrs, e_Pai, mb) {
+    const PAI = document.querySelector(`#${e_Pai}`);
+    let n_Attr = des_Attrs.length;
+
+    let div = document.createElement(`div`);
+    div.setAttribute("class", `form-floating mb-${mb}`);
+    PAI.appendChild(div);
+
+    let input = document.createElement(`input`);
+    for (let e = 0; e < n_Attr; e++) {
+      input.setAttribute(`${des_Attrs[e]}`, `${v_Attrs[e]}`);
+    }
+    input.setAttribute("id", `${id}`);
+    div.appendChild(input);
+
+    let label = document.createElement(`label`);
+    label.setAttribute("for", `${id}`);
+    label.innerHTML = v_Attrs[v_Attrs.length - 1];
+    div.appendChild(label);
+  },
+};
+
+const _Auth = {
+  //Valida a autenticação
+  //Recebendo os codigos de erro, traduzindo para portugues
+  //E criando alertas
+  //    code    string    //codigo de erro
+  //    who     string    //se refere a pra quem será o alerta, o nome depois de "alert-"
+  validaAuth(code) {
+    switch (code) {
+      case "auth/wrong-password":
+        _aux.alertar("Palavra-passe errada!", "danger");
+        console.log("Palavra-passe errada!");
+        break;
+      case "auth/invalid-email":
+        _aux.alertar("Endereço de e-mail não válido!", "danger");
+        console.log("Endereço de e-mail não válido!");
+        break;
+      case "auth/user-disabled":
+        _aux.alertar("Este utilizador foi desabilitado.", "danger");
+        console.log("Este utilizador foi desabilitado.");
+        break;
+      case "auth/user-not-found":
+        _aux.alertar("Utilizador não encontrado.", "danger");
+        console.log("Utilizador não encontrado.");
+        break;
+      case "auth/too-many-requests":
+        _aux.alertar(
+          "Devida a atividades suspeitas, deverá tentar de novo em alguns minutos",
+          "danger"
+        );
+        console.log(
+          "Devida a atividades suspeitas, deverá tentar de novo em alguns minutos."
+        );
+        break;
+      case "auth/email-already-in-use":
+        _aux.alertar("Já existe uma conta neste email.", "warning");
+        console.log("Já existe uma conta neste email.");
+        break;
+      case "auth/weak-password":
+        _aux.alertar(
+          "Sua palavra passe é muito fraca, tente outra por favor.",
+          "warning"
+        );
+        console.log("Sua palavra passe é muito fraca, tente outra por favor.");
+        break;
+      case "auth/operation-not-allowed":
+        _aux.alertar("A conta neste email foi desativada.", "warning");
+        console.log("A conta neste email foi desativada.");
+        break;
+      default:
+        break;
+    }
+  },
+
+  logOut() {
     firebase
       .auth()
       .signOut()
       .then(() => {
-        if (window.location.href.includes("index.html")) navigate("login.html");
-        else navigate("login.html");
+        if (window.location.href.includes("index.html"))
+          _aux.Navigate("login.html");
+        else _aux.Navigate("login.html");
       });
-  }
-}
+  },
 
-function login() {
-  //Pegar valores do formulario
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+  login() {
+    //Pegar valores do formulario
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-  console.log(email, password);
-  //validar se nenhum dos campos está nulo
-  if (email && password) {
-    //Faz a requisição de login, passando o email e password como parametros
-    firebase
-      .auth()
-      .signInWithEmailAndPassword(email, password)
-      .then((response) => {
-        //Caso a requisição seja bem sucedida
+    console.log(email, password);
+    //validar se nenhum dos campos está nulo
+    if (email && password) {
+      //Faz a requisição de login, passando o email e password como parametros
+      firebase
+        .auth()
+        .signInWithEmailAndPassword(email, password)
+        .then((response) => {
+          //Caso a requisição seja bem sucedida
 
-        // firebase.firestore().collection('users').where('uid','==',)
-        alertar("Login efetuado com sucesso!", "success");
+          // firebase.firestore().collection('users').where('uid','==',)
+          _aux.alertar("Login efetuado com sucesso!", "success");
 
-        document.getElementById("password").value = "";
-        document.getElementById("email").value = "";
+          document.getElementById("password").value = "";
+          document.getElementById("email").value = "";
+        })
+        .catch((error) => {
+          //Caso a requisição dê erro
 
-        // setTimeout(() => {
-        //   navigate("../home.html");
-        // }, [1000]);
-      })
-      .catch((error) => {
-        //Caso a requisição dê erro
+          //Reseta campo do formulario
+          document.getElementById("password").value = "";
 
-        //Reseta campo do formulario
-        document.getElementById("password").value = "";
+          //Chamada da função validaAuth
+          this.validaAuth(error.code);
+        });
+    } else {
+      //se email nulo mostra o allerta
+      email ? "" : _aux.alertar("O campo email é obrigatório", "warning");
+      //se password nula mostra o allerta
+      password
+        ? ""
+        : _aux.alertar("O campo palavra passe é obrigatório", "warning");
+    }
+  },
+};
 
-        //Chamada da função validaAuth
-        validaAuth(error.code);
+const _FIRE = {
+  //FireBase Initialization
+  initFirebase() {
+    const firebaseConfig = {
+      apiKey: "AIzaSyCSo393vw0As6p9ff_LR-xQVxIjwKUgnw0",
+      authDomain: "mystocks-1217b.firebaseapp.com",
+      projectId: "mystocks-1217b",
+      storageBucket: "mystocks-1217b.appspot.com",
+      messagingSenderId: "978382151874",
+      appId: "1:978382151874:web:a5479c644b05d8f03b9b5b",
+      experimentalForceLongPolling: true, // this line
+      useFetchStreams: false, // and this line
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    // const analytics = getAnalytics(app);
+  },
+
+  authLogin() {
+    // console.log("Login in");
+    addEventListener("keypress", function (e) {
+      if (e.key === "Enter") {
+        // console.log("clicou");
+        document.getElementById("entrar").click();
+      }
+    });
+
+    firebase.auth().onAuthStateChanged((user) => {
+      if (user) {
+        _aux.Navigate("index.html");
+      }
+    });
+  },
+};
+
+const Store = {
+  //where ["uid","==","dkcnnnue77rhf7rh7"]
+  async getCollection(collection, where, order) {
+    const db = firebase.firestore();
+    let dados = "";
+
+    const dbRe = where
+      ? db.collection(collection).where(where[0], where[1], where[2])
+      : db.collection(collection);
+
+    const dbRef = order ? dbRe.orderBy(order[0], order[1]) : dbRe;
+
+    const data = await dbRef.get().then((userData) => {
+      dados = userData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      // console.log("dados", dados);
+      // const dados = userData.docs.map((doc) => doc.data());
+      let array = [];
+
+      dados.forEach((dt) => {
+        array.push(dt);
       });
-  } else {
-    //se email nulo mostra o allerta
-    email ? "" : alertar("O campo email é obrigatório", "warning");
-    //se password nula mostra o allerta
-    password ? "" : alertar("O campo palavra passe é obrigatório", "warning");
-  }
-}
+
+      // console.log("array", array);
+
+      return array;
+    });
+
+    return data;
+  },
+
+  async getDoc(collection, doc) {
+    const db = firebase.firestore();
+
+    const dbRef = db.collection(collection).doc(doc);
+
+    const DOC = await dbRef.get().then((docc) => {
+      /*         let fich = {
+          ...docc.data()
+        };
+        return fich;
+ */
+      // console.log(docc.data());
+      return docc.data();
+    });
+
+    return DOC;
+  },
+
+  async getDocWhere(collection, where, who) {
+    const db = firebase.firestore();
+    let dados = "";
+
+    const dbRef = where
+      ? db.collection(collection).where(where[0], where[1], where[2])
+      : db.collection(collection);
+
+    const data = await dbRef.get().then((userData) => {
+      dados = userData.docs.map((doc) => ({
+        ...doc.data(),
+        id: doc.id,
+      }));
+
+      return dados[0];
+    });
+
+    // console.log(data)
+    if (who) {
+      switch (who) {
+        case "id":
+          return data.id;
+          break;
+        case "name":
+          return data.name;
+          break;
+
+        default:
+          break;
+      }
+    }
+    return data;
+  },
+
+  async updateDoc(collection, doc, data) {
+    const db = firebase.firestore();
+
+    const dbRef = db.collection(collection).doc(doc);
+
+    const updated = await dbRef.update(data).then(() => {
+      return true;
+    });
+
+    return updated;
+  },
+
+  async addDoc(collection, data) {
+    const db = firebase.firestore();
+
+    const dbRef = db.collection(collection);
+
+    await dbRef.add(data).then(() => {
+      console.log(data);
+      return true;
+    });
+  },
+
+  async deleteDoc(collection, doc) {
+    const db = firebase.firestore();
+
+    const dbRef = db.collection(collection).doc(doc);
+
+    const isDel = await dbRef.delete().then(() => {
+      return true;
+    });
+
+    return isDel;
+  },
+};
+
+const _aux = {
+  Reload() {
+    window.location.reload(false);
+  },
+
+  async Navigate(url) {
+    let last = "";
+    let urlx = "";
+
+    if (!window.location.href.includes("/html")) {
+      urlx = "/index.html";
+    } else {
+      urlx = _aux.sliceTxt(window.location.href, "/html");
+    }
+
+    setTimeout(() => {
+      window.location.href = url;
+      // console.log("Mudado");
+    }, 200);
+  },
+
+  toCaptalize(string) {
+    let newString = "";
+    let stUpper = string.toLocaleUpperCase();
+
+    for (var i = 0; i < string.length; i++) {
+      i == 0 ? (newString += stUpper[i]) : (newString += string[i]);
+    }
+    // console.log(newString);
+    return newString;
+  },
+
+  async checkChangeState() {
+    await firebase.auth().onAuthStateChanged(async (user) => {
+      if (!user && !Url.path.includes("login.html")) {
+        if (Url.path.includes("index.html")) _aux.Navigate("login.html");
+        else _aux.Navigate("login.html");
+      }
+      if (Url.path.includes("login.html")) _FIRE.authLogin();
+      else {
+        html_Comp.navBar();
+      }
+    });
+  },
+
+  //Cria os alestas dentro de divs
+  //  meessage    string      //mensagem que aparecerá no alerta
+  //  type        string      //tipo de alerta
+  //                            success - para alertas de sucesso
+  //                            warning - para alertas de aviso
+  //                            danger - para alertas de erro
+  alertar(message, type) {
+    let Pai = document.querySelector(`#alert`);
+
+    // console.log(Pai);
+    let wrapper = document.createElement("div");
+    wrapper.setAttribute("class", `alert alert-${type} mt-3 alert-dismissible`);
+    wrapper.setAttribute("role", "alert");
+
+    let mensagem = document.createElement("div");
+    mensagem.innerHTML = `${message}`;
+
+    wrapper.appendChild(mensagem);
+
+    let btn = document.createElement("button");
+    btn.setAttribute("type", "button");
+    btn.setAttribute("class", "btn-close visually-hidden");
+    btn.setAttribute("data-bs-dismiss", "alert");
+    btn.setAttribute("aria-label", "Close");
+
+    wrapper.appendChild(btn);
+    Pai.appendChild(wrapper);
+
+    setTimeout(() => {
+      btn.click();
+    }, [5000]);
+  },
+};
+
+// ^////////////////////////////////////////////////////////////////////////////////////////////////////////////
