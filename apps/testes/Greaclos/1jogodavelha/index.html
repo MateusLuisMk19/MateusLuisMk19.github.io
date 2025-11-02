@@ -1,102 +1,87 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" data-bs-theme="dark">
 
 <head>
     <title>Jogo da velha</title>
     <link type="text/css" rel="stylesheet" href="style.css">
-
-    <!-- BootStrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <!-- Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.9.1/font/bootstrap-icons.css">
-    <!-- JQuery -->
     <script type="text/javascript" src="../../../../Utilities/jQuery.js"></script>
-    <!-- Js BoootStrap -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-        crossorigin="anonymous"></script>
-    <!-- my Js  -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
     <script src="brain.js" defer></script>
 </head>
 
-<body class="container pt-1">
-    <div class="container mt-5 d-flex border">
-        <a href="../index.html" class="btn btn-secondary m-1 mt-0 mb-0" title="Voltar">
-            < </a>
-                <div class="btn btn-secondary m-1 mt-0 mb-0 text-danger" title="Recomeçar" onclick="replay();">
-                    <i class="bi bi-arrow-clockwise"></i>
-                </div>
-                <h3 class="m-2 mt-0 mb-0">Jogo da velha</h3>
+<body class="container bg-dark text-light pt-1">
+    <div class="mt-5 d-flex align-items-center p-3 bg-dark border border-secondary rounded">
+        <a href="../index.html" class="btn btn-outline-light me-3">
+            <i class="bi bi-arrow-left"></i>
+        </a>
+        <button class="btn btn-outline-danger me-3" title="Recomeçar" onclick="replay();">
+            <i class="bi bi-arrow-clockwise"></i>
+        </button>
+        <h3 class="m-0">Jogo da velha</h3>
     </div>
-    <div class="d-flex justify-content-center">
-        <div class="btn btn-secondary vez" id="ps-vez" onclick="mudarVez();">O</div>
+
+    <div class="d-flex justify-content-center mt-4">
+        <div class="btn btn-outline-light vez" id="ps-vez" onclick="mudarVez();">O</div>
     </div>
+
     <div class="justify-content-center" id="Jogo">
         <div class="p-2">
-            <button type="button" class="btn btn-primary" id="Modal-win" data-bs-toggle="modal"
-                data-bs-target="#staticBackdrop">
-            </button>
+            <button type="button" class="btn btn-primary d-none" id="Modal-win" data-bs-toggle="modal" data-bs-target="#staticBackdrop"></button>
 
             <!-- Modal -->
-            <div class="modal  " id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-                aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
                 <div class="modal-dialog modal-dialog-centered modal-sm">
-                    <div class="modal-content">
+                    <div class="modal-content bg-dark">
                         <div class="modal-body">
                             <h4 class="h4" id="text-win"></h4>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-primary " onclick="replay(true)">Recomeçar</button>
-                                <button type="button" class="btn btn-secondary " id="Modal-fecho"
-                                    data-bs-dismiss="modal">Cancelar</button>
+                            <div class="modal-footer border-secondary">
+                                <button type="button" class="btn btn-primary" onclick="replay(true)">Recomeçar</button>
+                                <button type="button" class="btn btn-outline-light" id="Modal-fecho" data-bs-dismiss="modal">Cancelar</button>
                             </div>
                         </div>
-
                     </div>
                 </div>
             </div>
 
-
             <div class="container w-50 d-flex flex-row align-items-stretch seila">
-                <div class="box-jdv border" id="ps-1" onclick="jogada(1);"></div>
-                <div class=" box-jdv border" id="ps-2" onclick="jogada(2);"></div>
-                <div class=" box-jdv border" id="ps-3" onclick="jogada(3);"></div>
+                <div class="box-jdv border border-secondary" id="ps-1" onclick="jogada(1);"></div>
+                <div class="box-jdv border border-secondary" id="ps-2" onclick="jogada(2);"></div>
+                <div class="box-jdv border border-secondary" id="ps-3" onclick="jogada(3);"></div>
             </div>
-            <div class=" container w-50 d-flex flex-row align-items-stretch seila">
-                <div class="box-jdv border" id="ps-4" onclick="jogada(4);"></div>
-                <div class=" box-jdv border" id="ps-5" onclick="jogada(5);"></div>
-                <div class=" box-jdv border" id="ps-6" onclick="jogada(6);"></div>
+            <div class="container w-50 d-flex flex-row align-items-stretch seila">
+                <div class="box-jdv border border-secondary" id="ps-4" onclick="jogada(4);"></div>
+                <div class="box-jdv border border-secondary" id="ps-5" onclick="jogada(5);"></div>
+                <div class="box-jdv border border-secondary" id="ps-6" onclick="jogada(6);"></div>
             </div>
-            <div class=" container w-50 d-flex flex-row align-items-stretch seila">
-                <div class="box-jdv border" id="ps-7" onclick="jogada(7);"></div>
-                <div class=" box-jdv border" id="ps-8" onclick="jogada(8);"></div>
-                <div class=" box-jdv border" id="ps-9" onclick="jogada(9);"></div>
+            <div class="container w-50 d-flex flex-row align-items-stretch seila">
+                <div class="box-jdv border border-secondary" id="ps-7" onclick="jogada(7);"></div>
+                <div class="box-jdv border border-secondary" id="ps-8" onclick="jogada(8);"></div>
+                <div class="box-jdv border border-secondary" id="ps-9" onclick="jogada(9);"></div>
             </div>
         </div>
     </div>
+
     <div class="justify-content-center pt-5" id="Intro">
         <div class="p-2 pt-5 container w-50">
-            <h2 class="h2">Sejam Bem-Vindos ao Jogo da Velha</h2>
+            <h2 class="text-center mb-4">Sejam Bem-Vindos ao Jogo da Velha</h2>
             <form>
-                <div class="d-flex flex-row align-items-stretch mt-5">
-                    <div class="">
-                        <label for="name_x" class="form-label">Quem pretende jogar com "X"?</label><br />
-                        <input class="w-100 form-control" type="text" id="name_x" name="name_x"
-                            placeholder="Por favor digite seu nome" /><br /><br />
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <label for="name_x" class="form-label">Quem pretende jogar com "X"?</label>
+                        <input class="form-control bg-dark text-light border-secondary" type="text" id="name_x" name="name_x" placeholder="Por favor digite seu nome">
                     </div>
-                    <div class="mt-0 mb-0 m-5"></div>
-                    <div class="">
-                        <label for="name_o" class="form-label">Quem pretende jogar com "O"?</label><br />
-                        <input class="w-100 form-control" type="text" id="name_o" name="name_o"
-                            placeholder="Por favor digite seu nome" /><br /><br />
+                    <div class="col-md-6">
+                        <label for="name_o" class="form-label">Quem pretende jogar com "O"?</label>
+                        <input class="form-control bg-dark text-light border-secondary" type="text" id="name_o" name="name_o" placeholder="Por favor digite seu nome">
                     </div>
                 </div>
-                <div class="p-2 w-100">
+                <div class="mt-4">
                     <button class="btn btn-primary w-100" onclick="começarJogo()">Começar Jogo</button>
                 </div>
             </form>
         </div>
     </div>
 </body>
-
 </html>

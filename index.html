@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt" data-bs-theme="dark">
   <head>
     <meta charset="utf-8" />
     <title>Mateus Luis</title>
@@ -28,44 +28,37 @@
     <!-- <script src="JS/index.js" defer></script> -->
   </head>
 
-  <body class="container">
-    <div class="mt-5 d-flex border">
-      <h3>Projects</h3>
-    </div>
-    <div class="list-group">
-      <a
-        href="apps/wallpapers/index.html"
-        class="list-group-item list-group-item-action"
-        aria-current="true"
-      >
-        Wallpapers
-      </a>
-      <a
-        href="apps/testes/Greaclos/index.html"
-        class="list-group-item list-group-item-action"
-      >
-        Greaclos Teste</a
-      >
-      <a
-        href="apps/testes/Canvas/index.html"
-        class="list-group-item list-group-item-action"
-      >
-        Canvas</a
-      >
-      <a href="JJB/index.html" class="list-group-item list-group-item-action"
-        >JJB</a
-      >
-      <a
-        href="apps/Sup/index.html"
-        class="list-group-item list-group-item-action"
-        >Supervisão</a
-      >
+  <body class="container bg-dark text-light">
+    <div class="container py-5">
+      <div class="row mb-4">
+        <div class="col-12">
+          <h2 class="border-bottom pb-2">Meus Projetos</h2>
+        </div>
+      </div>
+      
+      <div class="row g-4">
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 bg-secondary">
+            <div class="card-body">
+              <h5 class="card-title">Wallpapers</h5>
+              <p class="card-text">Coleção de wallpapers para desktop e mobile</p>
+              <a href="apps/wallpapers/index.html" class="btn btn-primary">Ver projeto</a>
+            </div>
+          </div>
+        </div>
 
-      <a
-        href="apps/myStock/index.html"
-        class="list-group-item list-group-item-action"
-        >myStock</a
-      >
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100">
+            <div class="card-body bg-secondary">
+              <h5 class="card-title">Greaclos</h5>
+              <p class="card-text">Projeto de teste Greaclos</p>
+              <a href="apps/testes/Greaclos/index.html" class="btn btn-primary">Ver projeto</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Repita o padrão para os outros projetos -->
+      </div>
     </div>
   </body>
 </html>
