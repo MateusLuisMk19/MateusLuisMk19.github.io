@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Calculadora de TMA — Compacta</title>
+
+    <style>
+      :root {
+        --bg: #0f1724;
+        --card: #0b1220;
+        --accent: #7c3aed;
+        --muted: #9aa4b2;
+        --glass: rgba(255, 255, 255, 0.04);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        height: 100%;
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial;
+      }
+      body {
+        background: linear-gradient(180deg, #071126 0%, #071029 60%);
+        color: #e6eef8;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 18px;
+      }
+      .card {
+        width: 100%;
+        max-width: 520px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.02),
+          rgba(255, 255, 255, 0.01)
+        );
+        border-radius: 12px;
+        padding: 18px;
+        box-shadow: 0 6px 25px rgba(2, 6, 23, 0.6);
+        border: 1px solid rgba(255, 255, 255, 0.035);
+      }
+      h1 {
+        margin: 0 0 6px;
+        font-size: 18px;
+        text-align: center;
+      }
+      p.lead {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 13px;
+        text-align: center;
+      }
+      label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 600;
+        font-size: 14px;
+      }
+      textarea,
+      input {
+        width: 100%;
+        padding: 10px;
+        border-radius: 8px;
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        background: var(--glass);
+        color: inherit;
+        font-size: 14px;
+      }
+      textarea {
+        min-height: 55px;
+        resize: vertical;
+      }
+      .row {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+        align-items: center;
+        justify-content: center;
+      }
+      button {
+        padding: 9px 11px;
+        border-radius: 10px;
+        border: 0;
+        background: var(--accent);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+      }
+      button svg {
+        width: 18px;
+        height: 18px;
+      }
+      button.ghost {
+        background: transparent;
+        border: 1px solid rgba(255, 255, 255, 0.06);
+      }
+      .results {
+        margin-top: 12px;
+        padding: 10px;
+        border-radius: 10px;
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.012),
+          transparent
+        );
+        border: 1px solid rgba(255, 255, 255, 0.02);
+      }
+      .small {
+        font-size: 12px;
+        color: var(--muted);
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 10px;
+      }
+      .chip {
+        display: inline-block;
+        padding: 4px 7px;
+        border-radius: 999px;
+        background: rgba(255, 255, 255, 0.03);
+        font-weight: 600;
+        font-size: 13px;
+      }
+      @media (max-width: 420px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+      .nps {
+        padding: 7px 10px;
+        border-radius: 8px;
+        border: 0;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        background-color: darkcyan;
+        font-size: 13px;
+      }
+      #npsRem {
+        background-color: darkred;
+      }
+    </style>
+  </head>
+
+  <body
+    style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
+  >
+    <main class="card" role="main"">
+      <h1>Calculadora de TMA</h1>
+
+      <div
+        id="informHold"
+        style="
+          display: none;
+          background-color: #172039;
+          padding: 8px;
+          text-align: center;
+          cursor: pointer;
+        "
+        onclick="changeInfoContente(0)"
+      >
+        <p class="lead">
+          Cole os tempos em minutos — separados por vírgula, espaço ou nova
+          linha. Ex: <code>14</code>, <code>14.5</code>, <code>20min</code>.
+            <br>
+          Clique no botão "+" para adicionar +1 às chamadas enviadas para IQS e "-" para retirar.
+            <br>
+          Paire sobre os botões abaixo para ver suas funções.          
+        </p>
+        <p class="lead" style="color: darkkhaki;">Clique aqui para esconder esta informação e bom trabalho!</p>
+      </div>
+
+      <div
+        id="informCont"
+        style="
+          background-color: #172039;
+          padding: 8px;
+          text-align: center;
+          cursor: pointer;
+        "
+        onclick="changeInfoContente(1)"
+      >
+        <div style="font-size: 11px; font-weight: 700">
+          Clique para informação
+        </div>
+      </div>
+
+      <label for="input">Tempos (min)</label>
+      <textarea id="input" placeholder="Ex: 14, 20min, 13.5, etc."></textarea>
+
+      <div class="row">
+        <label for="npsSet" title="Adiciona +1 de NPS" style="font-size: 13px"
+          >Enviados para IQS
+        </label>
+        <div id="npsVal">00</div>
+        <button class="nps" onclick="npsDud(+1)">+</button>
+        <button class="nps" id="npsRem" onclick="npsDud(-1)">-</button>
+      </div>
+
+      <div class="row">
+        <button id="calc" title="Calcular TMA">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M9 3h6v2H9zM5 21h14M7 9h10v6H7z" />
+          </svg>
+        </button>
+
+        <button id="clear" class="ghost" title="Limpar campos">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path d="M3 6h18M9 6v12m6-12v12" />
+          </svg>
+        </button>
+
+        <button id="copy" class="ghost" title="Copiar resultado">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+
+        <button id="save" class="ghost" title="Guardar localmente">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            viewBox="0 0 24 24"
+          >
+            <path
+              d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
+            />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+        </button>
+      </div>
+
+      <section class="results" id="results" hidden>
+        <div class="small">
+          Chamadas detectadas: <span id="count" class="chip">0</span>
+        </div>
+        <div>
+          Taxa de transferência para IQS:
+          <span id="npsPercent" class="chip">0</span>%
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="small">Total (min / sec)</div>
+            <div style="display: flex">
+              <div id="totalMin" style="font-size: 16px; font-weight: 700">
+                0
+              </div>
+              <div style="font-size: 16px; margin: 0 4px">/</div>
+              <div
+                id="totalMinSec"
+                style="font-size: 16px; font-weight: 700"
+              ></div>
+            </div>
+          </div>
+          <div id="tmaSecBox" style="padding: 8px; border-radius: 5px">
+            <div class="small">TMA (segundos)</div>
+            <div id="tmaSec" style="font-size: 16px; font-weight: 700">0</div>
+          </div>
+        </div>
+
+        <div
+          style="
+            display: none;
+            margin-top: 8px;
+            font-size: 12px;
+            color: var(--muted);
+          "
+          id="formula"
+        ></div>
+      </section>
+    </main>
+
+    <div
+      style="
+        font-size: 12px;
+        color: var(--muted);
+        text-align: center;
+        display: flex;
+        margin: 10px auto;
+      "
+    >
+      <div style="margin-right: 3px">by:</div>
+      <a
+        target="_blank"
+        href="https://github.com/MateusLuisMk19"
+        style="color: var(--accent); text-decoration: none"
+      >
+        Mateus Luis</a
+      >
+    </div>
+
+    <script>
+      // -------------------------
+      // VARIÁVEIS
+      // -------------------------
+
+      const input = document.getElementById("input"),
+        calc = document.getElementById("calc"),
+        clear = document.getElementById("clear"),
+        results = document.getElementById("results"),
+        countEl = document.getElementById("count"),
+        npsPercent = document.getElementById("npsPercent"),
+        totalMinEl = document.getElementById("totalMin"),
+        totalMinSecEl = document.getElementById("totalMinSec"),
+        tmaSecEl = document.getElementById("tmaSec"),
+        formulaEl = document.getElementById("formula"),
+        copyBtn = document.getElementById("copy"),
+        saveBtn = document.getElementById("save"),
+        npsVal = document.getElementById("npsVal"),
+        tmsSecEl = document.querySelector("#tmaSec");
+
+      // -------------------------
+      // CARREGAR DADOS DO PYTHON
+      // -------------------------
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (window.pywebview) {
+          try {
+            const dados = await window.pywebview.api.carregar();
+            if (dados.tma_input) input.value = dados.tma_input;
+            if (dados.nps_val !== undefined) npsVal.textContent = dados.nps_val;
+          } catch (e) {
+            console.error("Erro ao carregar dados:", e);
+          }
+        }
+      });
+
+      // -------------------------
+      // MUDAR INFO
+      // -------------------------
+
+      function changeInfoContente(v) {
+        const hold = document.getElementById("informHold");
+        const cont = document.getElementById("informCont");
+        if (v === 0) {
+          hold.style.display = "none";
+          cont.style.display = "block";
+        } else {
+          hold.style.display = "block";
+          cont.style.display = "none";
+        }
+      }
+
+      // -------------------------
+      // NPS (SEM LOCALSTORAGE)
+      // -------------------------
+
+      async function npsDud(val) {
+        let oldVal = parseInt(npsVal.textContent) || 0;
+        let newVal = oldVal + val;
+        if (newVal < 0) {
+          alert("Não pode ser inferior a 0");
+          newVal = 0;
+        }
+        npsVal.textContent = newVal;
+
+        // salvar imediatamente
+        if (window.pywebview) {
+          await window.pywebview.api.guardar({
+            tma_input: input.value,
+            nps_val: newVal,
+          });
+        }
+      }
+
+      // -------------------------
+      // PARSE E CÁLCULO
+      // -------------------------
+
+      function parseInput(text) {
+        if (!text) return [];
+        const raw = text
+          .split(/[\n,;]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const values = [];
+        raw.forEach((chunk) => {
+          const parts = chunk.split(/\s+/).filter(Boolean);
+          parts.forEach((p) => {
+            let cleaned = p
+              .replace(/min(?:ute)?s?/i, "")
+              .replace(/m\b/i, "")
+              .replace(/,/g, ".")
+              .replace(/[^0-9.\-]/g, "");
+            if (cleaned === "") return;
+            const num = Number(cleaned);
+            if (!isNaN(num)) values.push(num);
+          });
+        });
+        return values;
+      }
+
+      function computeTMA(nums) {
+        if (!nums.length) return null;
+        const totalMin = nums.reduce((a, b) => a + b, 0);
+        const avgMin = totalMin / nums.length;
+        const tmaSec = Math.round(avgMin * 60);
+        return { totalMin, avgMin, tmaSec };
+      }
+
+      // -------------------------
+      // MOSTRAR RESULTADO
+      // -------------------------
+
+      function showResult(nums, res) {
+        results.hidden = false;
+        countEl.textContent = nums.length;
+        totalMinEl.textContent = res.totalMin.toFixed(2);
+        totalMinSecEl.textContent = Math.round(res.totalMin * 60);
+        tmaSecEl.textContent = res.tmaSec;
+
+        const nps = parseInt(npsVal.textContent) || 0;
+        const percent = nums.length
+          ? ((nps / nums.length) * 100).toFixed(1)
+          : 0;
+        npsPercent.textContent = percent;
+
+        formulaEl.textContent = `(${res.totalMin.toFixed(2)} min ÷ ${
+          nums.length
+        } chamadas) × 60 = ${res.tmaSec} segundos`;
+      }
+
+      // -------------------------
+      // MUDAR COR DO TMA
+      // -------------------------
+
+      const observer = new MutationObserver(() => {
+        let num = parseInt(tmsSecEl.textContent);
+        const box = document.querySelector("#tmaSecBox");
+
+        if (num < 550) box.style.backgroundColor = "darkgreen";
+        else if (num <= 700) box.style.backgroundColor = "#b33d18";
+        else box.style.backgroundColor = "darkred";
+      });
+
+      observer.observe(tmsSecEl, {
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+
+      // -------------------------
+      // EVENTOS
+      // -------------------------
+
+      calc.addEventListener("click", () => {
+        const nums = parseInput(input.value);
+        if (nums.length === 0) {
+          alert("Nenhum tempo válido encontrado.");
+          return;
+        }
+        const res = computeTMA(nums);
+        showResult(nums, res);
+      });
+
+      clear.addEventListener("click", async () => {
+        input.value = "";
+        npsVal.textContent = "0";
+        results.hidden = true;
+
+        if (window.pywebview) {
+          await window.pywebview.api.guardar({
+            tma_input: "",
+            nps_val: 0,
+          });
+        }
+      });
+
+      copyBtn.addEventListener("click", async () => {
+        if (results.hidden) {
+          alert("Nada para copiar.");
+          return;
+        }
+        const text = `TMA: ${tmaSecEl.textContent} segundos. ${formulaEl.textContent}`;
+        try {
+          await navigator.clipboard.writeText(text);
+          alert("Resultado copiado.");
+        } catch (e) {
+          alert("Erro ao copiar.");
+        }
+      });
+
+      saveBtn.addEventListener("click", async () => {
+        if (window.pywebview) {
+          await window.pywebview.api.guardar({
+            tma_input: input.value,
+            nps_val: parseInt(npsVal.textContent) || 0,
+          });
+          alert("Guardado localmente!");
+        }
+      });
+
+      input.addEventListener("paste", () => {
+        setTimeout(() => calc.click(), 100);
+      });
+      input.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+          calc.click();
+        }
+      });
+    </script>
+  </body>
+</html>
