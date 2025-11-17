@@ -400,7 +400,7 @@
       // PARSE E CÁLCULO
       // -------------------------
 
-      function parseInput(text) {
+     function parseInput(text) {
         if (!text) return [];
         const raw = text
           .split(/[\n,;]+/)
@@ -416,12 +416,27 @@
               .replace(/,/g, ".")
               .replace(/[^0-9.\-]/g, "");
             if (cleaned === "") return;
-            const num = Number(cleaned);
-            if (!isNaN(num)) values.push(num);
+            let num = Number(cleaned); // Mudança de const para let
+            if (isNaN(num)) return;
+            
+            // --- INÍCIO DA ALTERAÇÃO ---
+            if (num % 1 !== 0) { // Verifica se há parte decimal (ponto)
+                const integerPart = Math.floor(num);
+                // A parte decimal é multiplicada por 100 para obter o valor dos segundos
+                // Ex: 13.5 -> 0.5 * 100 = 50 segundos
+                const assumedSeconds = Math.round((num - integerPart) * 100);
+                
+                // Conversão do valor ajustado para minutos decimais
+                num = integerPart + (assumedSeconds / 60);
+            }
+            // --- FIM DA ALTERAÇÃO ---
+            
+            values.push(num);
           });
         });
         return values;
       }
+      
 
       function computeTMA(nums) {
         if (!nums.length) return null;
