@@ -401,58 +401,35 @@
       // -------------------------
 
       function parseInput(text) {
-  if (!text) return [];
-  const raw = text
-    .split(/[\n,;]+/)
-    .map((s) => s.trim())
-    .filter(Boolean);
-
-  const values = [];
-
-  raw.forEach((chunk) => {
-    const parts = chunk.split(/\s+/).filter(Boolean);
-
-    parts.forEach((p) => {
-      let cleaned = p
-        .replace(/min(?:ute)?s?/i, "")
-        .replace(/m\b/i, "")
-        .replace(/,/g, ".")
-        .replace(/[^0-9.]/g, "");
-
-      if (cleaned === "") return;
-
-      // MMSeg (M.SS)
-      if (cleaned.includes(".")) {
-        const [mStr, sStr] = cleaned.split(".");
-        const min = Number(mStr);
-        const sec = Number(sStr);
-
-        if (!isNaN(min) && !isNaN(sec)) {
-          // corrige valores como 10.99 → 11m 39s
-          const totalSec = min * 60 + sec;
-          const minConverted = totalSec / 60;
-          values.push(minConverted);
-        }
-      } else {
-        // apenas minutos inteiros
-        const num = Number(cleaned);
-        if (!isNaN(num)) values.push(num);
+        if (!text) return [];
+        const raw = text
+          .split(/[\n,;]+/)
+          .map((s) => s.trim())
+          .filter(Boolean);
+        const values = [];
+        raw.forEach((chunk) => {
+          const parts = chunk.split(/\s+/).filter(Boolean);
+          parts.forEach((p) => {
+            let cleaned = p
+              .replace(/min(?:ute)?s?/i, "")
+              .replace(/m\b/i, "")
+              .replace(/,/g, ".")
+              .replace(/[^0-9.\-]/g, "");
+            if (cleaned === "") return;
+            const num = Number(cleaned);
+            if (!isNaN(num)) values.push(num);
+          });
+        });
+        return values;
       }
-    });
-  });
-
-  return values;
-}
 
       function computeTMA(nums) {
-  if (!nums.length) return null;
-
-  const totalMin = nums.reduce((a, b) => a + b, 0);
-  const avgMin = totalMin / nums.length;
-  const tmaSec = Math.round(avgMin * 60);
-
-  return { totalMin, avgMin, tmaSec };
-}
+        if (!nums.length) return null;
+        const totalMin = nums.reduce((a, b) => a + b, 0);
+        const avgMin = totalMin / nums.length;
+        const tmaSec = Math.round(avgMin * 60);
+        return { totalMin, avgMin, tmaSec };
+      }
 
       // -------------------------
       // MOSTRAR RESULTADO
@@ -556,4 +533,4 @@
       });
     </script>
   </body>
-    </html>
+  </html>
