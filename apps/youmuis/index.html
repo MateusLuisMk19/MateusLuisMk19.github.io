@@ -187,8 +187,8 @@
   let player;
   let isPlaying = false;
   let isMuted = false;
-  let shuffle = false;
-  let loop = false;
+  let shuffle = true;
+  let loop = true;
   let updateTimer = null;
   let playlistOrder = []; // array de videoIds (ordem atual)
   let currentIndex = START_INDEX;
@@ -350,7 +350,7 @@
     });
 
     // atualiza volume inicial
-    volSlider.value = player.getVolume ? player.getVolume() : 100;
+    volSlider.value = player.getVolume ? player.getVolume() : 20;
   }
 
   // play / pause
