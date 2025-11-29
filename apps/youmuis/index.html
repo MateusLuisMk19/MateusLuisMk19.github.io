@@ -146,41 +146,39 @@
 
 <!-- UI por cima -->
 <div class="ui">
-  <div class="controls" role="region" aria-label="Controles de reprodução da playlist">
+  <div class="controls">
+    <!-- topo: título + botões principais -->
     <div class="top-row">
-      <div class="title" id="trackTitle">A carregar playlist...</div>
+      <!-- <div class="title" id="trackTitle">A carregar playlist...</div> -->
       <div class="row">
-        <button class="btn small" id="prevBtn" title="Anterior">⟲</button>
-        <button class="btn small" id="playPauseBtn" title="Play / Pause">▶</button>
-        <button class="btn small" id="nextBtn" title="Próxima">⟳</button>
+        <button class="btn" id="prevBtn">⟲</button>
+        <button class="btn" id="playPauseBtn">▶</button>
+        <button class="btn" id="nextBtn">⟳</button>
       </div>
     </div>
 
+    <!-- centro: barra de progresso -->
     <div class="center-row">
-      <div style="flex:1;">
-        <div class="progress" id="progress">
-          <div class="bar" id="progressBar"></div>
-        </div>
+      <div class="progress" id="progress">
+        <div class="bar" id="progressBar"></div>
       </div>
       <div class="time" id="timeLabel">0:00 / 0:00</div>
     </div>
 
-    <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+    <!-- baixo: volume, mute, shuffle, loop -->
+    <div class="bottom-row">
       <div class="row">
-        <button class="btn" id="muteBtn" title="Silenciar">🔊</button>
-        <label style="display:flex;align-items:center;gap:8px;margin-left:6px;">
-          <span style="font-size:13px;opacity:0.9">Vol</span>
-          <input id="vol" type="range" min="0" max="100" value="100" style="width:140px"/>
-        </label>
+        <button class="btn" id="muteBtn">🔊</button>
+        <input id="vol" type="range" min="0" max="100" value="100">
       </div>
-
       <div class="row">
-        <button class="btn" id="shuffleBtn" title="Alternar reprodução aleatória">🔀</button>
-        <button class="btn" id="loopBtn" title="Alternar repetir lista">🔁</button>
+        <button class="btn" id="shuffleBtn">🔀</button>
+        <button class="btn" id="loopBtn">🔁</button>
       </div>
     </div>
   </div>
 </div>
+
 
 <script>
   /////////////////////////////////////////////////////////////////////////////
