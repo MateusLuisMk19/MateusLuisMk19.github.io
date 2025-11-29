@@ -156,7 +156,7 @@
   <body
     style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
   >
-    <main class="card" role="main"">
+    <main class="card" role="main">
       <h1>Calculadora de TMA</h1>
 
       <div
@@ -176,6 +176,8 @@
             <br>
           Clique no botão "+" para adicionar +1 às chamadas enviadas para IQS e "-" para retirar.
             <br>
+Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
+          IQS. Ex: <code>12.3*</code>, <code>7*</code>. 
           Paire sobre os botões abaixo para ver suas funções.          
         </p>
         <p class="lead" style="color: darkkhaki;">Clique aqui para esconder esta informação e bom trabalho!</p>
@@ -191,18 +193,14 @@
         "
         onclick="changeInfoContente(1)"
       >
-        <div style="font-size: 11px; font-weight: 700">
-          Clique para informação
-        </div>
+        <div style="font-size: 11px; font-weight: 700">Clique para informação</div>
       </div>
 
       <label for="input">Tempos (min)</label>
-      <textarea id="input" placeholder="Ex: 14, 20min, 13.5, etc."></textarea>
+      <textarea id="input" placeholder="Ex: 14, 20min, 13.5, 12.4*, 2*"></textarea>
 
       <div class="row">
-        <label for="npsSet" title="Adiciona +1 de NPS" style="font-size: 13px"
-          >Enviados para IQS
-        </label>
+        <label for="npsSet" style="font-size: 13px">Enviados para IQS</label>
         <div id="npsVal">00</div>
         <button class="nps" onclick="npsDud(+1)">+</button>
         <button class="nps" id="npsRem" onclick="npsDud(-1)">-</button>
@@ -210,53 +208,32 @@
 
       <div class="row">
         <button id="calc" title="Calcular TMA">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
             <path d="M9 3h6v2H9zM5 21h14M7 9h10v6H7z" />
           </svg>
         </button>
 
         <button id="clear" class="ghost" title="Limpar campos">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path d="M3 6h18M9 6v12m6-12v12" />
           </svg>
         </button>
 
         <button id="copy" class="ghost" title="Copiar resultado">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <rect x="9" y="9" width="13" height="13" rx="2" />
             <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
           </svg>
         </button>
 
         <button disabled id="save" class="ghost" title="Guardar localmente">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            viewBox="0 0 24 24"
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path
-              d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"
-            />
+              d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
             <polyline points="17 21 17 13 7 13 7 21" />
             <polyline points="7 3 7 8 15 8" />
           </svg>
@@ -276,14 +253,9 @@
           <div>
             <div class="small">Total (min / sec)</div>
             <div style="display: flex">
-              <div id="totalMin" style="font-size: 16px; font-weight: 700">
-                0
-              </div>
+              <div id="totalMin" style="font-size: 16px; font-weight: 700">0</div>
               <div style="font-size: 16px; margin: 0 4px">/</div>
-              <div
-                id="totalMinSec"
-                style="font-size: 16px; font-weight: 700"
-              ></div>
+              <div id="totalMinSec" style="font-size: 16px; font-weight: 700"></div>
             </div>
           </div>
           <div id="tmaSecBox" style="padding: 8px; border-radius: 5px">
@@ -292,42 +264,19 @@
           </div>
         </div>
 
-        <div
-          style="
-            display: none;
-            margin-top: 8px;
-            font-size: 12px;
-            color: var(--muted);
-          "
-          id="formula"
-        ></div>
+        <div id="formula"
+          style="display: none; margin-top: 8px; font-size: 12px; color: var(--muted);">
+        </div>
       </section>
     </main>
 
-    <div
-      style="
-        font-size: 12px;
-        color: var(--muted);
-        text-align: center;
-        display: flex;
-        margin: 10px auto;
-      "
-    >
-      <div style="margin-right: 3px">by:</div>
-      <a
-        target="_blank"
-        href="https://github.com/MateusLuisMk19"
-        style="color: var(--accent); text-decoration: none"
-      >
-        Mateus Luis</a
-      >
+    <div style="font-size: 12px; color: var(--muted); text-align: center; margin: 10px auto;">
+      <span style="margin-right: 3px">by:</span>
+      <a target="_blank" href="https://github.com/MateusLuisMk19"
+        style="color: var(--accent); text-decoration: none">Mateus Luis</a>
     </div>
 
     <script>
-      // -------------------------
-      // VARIÁVEIS
-      // -------------------------
-
       const input = document.getElementById("input"),
         calc = document.getElementById("calc"),
         clear = document.getElementById("clear"),
@@ -343,9 +292,6 @@
         npsVal = document.getElementById("npsVal"),
         tmsSecEl = document.querySelector("#tmaSec");
 
-      // -------------------------
-      // CARREGAR DADOS DO PYTHON
-      // -------------------------
       document.addEventListener("DOMContentLoaded", async () => {
         if (window.pywebview) {
           try {
@@ -357,10 +303,6 @@
           }
         }
       });
-
-      // -------------------------
-      // MUDAR INFO
-      // -------------------------
 
       function changeInfoContente(v) {
         const hold = document.getElementById("informHold");
@@ -374,10 +316,6 @@
         }
       }
 
-      // -------------------------
-      // NPS (SEM LOCALSTORAGE)
-      // -------------------------
-
       async function npsDud(val) {
         let oldVal = parseInt(npsVal.textContent) || 0;
         let newVal = oldVal + val;
@@ -387,7 +325,6 @@
         }
         npsVal.textContent = newVal;
 
-        // salvar imediatamente
         if (window.pywebview) {
           await window.pywebview.api.guardar({
             tma_input: input.value,
@@ -396,82 +333,91 @@
         }
       }
 
-      // -------------------------
-      // PARSE E CÁLCULO
-      // -------------------------
-
-     function parseInput(text) {
+      /* ============================================================
+         PARSE COM SUPORTE AO ASTERISCO "*"
+         ============================================================ */
+      function parseInput(text) {
         if (!text) return [];
         const raw = text
           .split(/[\n,;]+/)
           .map((s) => s.trim())
           .filter(Boolean);
+
         const values = [];
+
         raw.forEach((chunk) => {
           const parts = chunk.split(/\s+/).filter(Boolean);
+
           parts.forEach((p) => {
+            const ignoreIQS = p.endsWith("*");
+
             let cleaned = p
+              .replace(/\*/g, "")
               .replace(/min(?:ute)?s?/i, "")
               .replace(/m\b/i, "")
               .replace(/,/g, ".")
               .replace(/[^0-9.\-]/g, "");
+
             if (cleaned === "") return;
-            let num = Number(cleaned); // Mudança de const para let
+
+            let num = Number(cleaned);
             if (isNaN(num)) return;
-            
-            // --- INÍCIO DA ALTERAÇÃO ---
-            if (num % 1 !== 0) { // Verifica se há parte decimal (ponto)
-                const integerPart = Math.floor(num);
-                // A parte decimal é multiplicada por 100 para obter o valor dos segundos
-                // Ex: 13.5 -> 0.5 * 100 = 50 segundos
-                const assumedSeconds = Math.round((num - integerPart) * 100);
-                
-                // Conversão do valor ajustado para minutos decimais
-                num = integerPart + (assumedSeconds / 60);
+
+            if (num % 1 !== 0) {
+              const integerPart = Math.floor(num);
+              const assumedSeconds = Math.round((num - integerPart) * 100);
+              num = integerPart + assumedSeconds / 60;
             }
-            // --- FIM DA ALTERAÇÃO ---
-            
-            values.push(num);
+
+            values.push({
+              value: num,
+              ignoreIQS: ignoreIQS,
+            });
           });
         });
+
         return values;
       }
-      
 
-      function computeTMA(nums) {
-        if (!nums.length) return null;
+      /* ============================================================
+         TMA COM LIST.value
+         ============================================================ */
+      function computeTMA(list) {
+        if (!list.length) return null;
+
+        const nums = list.map((x) => x.value);
+
         const totalMin = nums.reduce((a, b) => a + b, 0);
         const avgMin = totalMin / nums.length;
         const tmaSec = Math.round(avgMin * 60);
+
         return { totalMin, avgMin, tmaSec };
       }
 
-      // -------------------------
-      // MOSTRAR RESULTADO
-      // -------------------------
-
-      function showResult(nums, res) {
+      /* ============================================================
+         MOSTRAR RESULTADOS + IQS AJUSTADO
+         ============================================================ */
+      function showResult(list, res) {
         results.hidden = false;
-        countEl.textContent = nums.length;
+
+        countEl.textContent = list.length;
         totalMinEl.textContent = res.totalMin.toFixed(2);
         totalMinSecEl.textContent = Math.round(res.totalMin * 60);
         tmaSecEl.textContent = res.tmaSec;
 
         const nps = parseInt(npsVal.textContent) || 0;
-        const percent = nums.length
-          ? ((nps / nums.length) * 100).toFixed(1)
+        const validForIQS = list.filter((x) => !x.ignoreIQS).length;
+
+        const percent = validForIQS
+          ? ((nps / validForIQS) * 100).toFixed(1)
           : 0;
+
         npsPercent.textContent = percent;
 
-        formulaEl.textContent = `(${res.totalMin.toFixed(2)} min ÷ ${
-          nums.length
-        } chamadas) × 60 = ${res.tmaSec} segundos`;
+        formulaEl.textContent = `(${res.totalMin.toFixed(2)} min ÷ ${list.length} chamadas) × 60 = ${res.tmaSec} segundos`;
       }
 
-      // -------------------------
-      // MUDAR COR DO TMA
-      // -------------------------
-
+      /* Cor dinâmica */
       const observer = new MutationObserver(() => {
         let num = parseInt(tmsSecEl.textContent);
         const box = document.querySelector("#tmaSecBox");
@@ -487,18 +433,17 @@
         subtree: true,
       });
 
-      // -------------------------
-      // EVENTOS
-      // -------------------------
-
+      /* Eventos */
       calc.addEventListener("click", () => {
-        const nums = parseInput(input.value);
-        if (nums.length === 0) {
+        const list = parseInput(input.value);
+
+        if (list.length === 0) {
           alert("Nenhum tempo válido encontrado.");
           return;
         }
-        const res = computeTMA(nums);
-        showResult(nums, res);
+
+        const res = computeTMA(list);
+        showResult(list, res);
       });
 
       clear.addEventListener("click", async () => {
