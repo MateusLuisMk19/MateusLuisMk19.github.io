@@ -383,7 +383,7 @@
     } catch (e) {
       currentIndex++;
       const list = player.getPlaylist() || playlistOrder;
-      if (currentIndex >= list.length) {
+      if (currentIndex >= list.length-1) {
         if (loop) currentIndex = 0; else currentIndex = list.length - 1;
       }
       player.playVideoAt(currentIndex);
