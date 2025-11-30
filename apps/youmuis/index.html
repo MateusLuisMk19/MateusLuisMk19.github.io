@@ -206,6 +206,29 @@
   const shuffleBtn = document.getElementById('shuffleBtn');
   const loopBtn = document.getElementById('loopBtn');
 
+  let isAdPlaying = false;
+
+  function checkAds() {
+    if (!player || typeof player.getAdState !== "function") return false;
+  
+    try {
+      const adState = player.getAdState();
+  
+      if (adState === "showing") return true;
+      if (adState === "loading") return true;
+  
+      return false;
+  
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function setAdOverlay(visible) {
+    const ad = document.getElementById("adOverlay");
+    ad.style.opacity = visible ? "1" : "0";
+  }
+
   // cria o player depois que a API carregar
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
@@ -394,15 +417,45 @@
   function startUpdateLoop(){
     if (updateTimer) clearInterval(updateTimer);
     updateTimer = setInterval(() => {
-      if (!player || typeof player.getCurrentTime !== 'function') return;
+      if (!player) return;
+    
+      // --- detectar anúncio ---
+      const adNow = checkAds();
+      if (adNow && !isAdPlaying) {
+        isAdPlaying = true;
+        setAdOverlay(true);
+    
+        // desativa botões
+        playPauseBtn.disabled = true;
+        nextBtn.disabled = true;
+        prevBtn.disabled = true;
+        shuffleBtn.disabled = true;
+        loopBtn.disabled = true;
+    
+      } else if (!adNow && isAdPlaying) {
+        isAdPlaying = false;
+        setAdOverlay(false);
+    
+        // reativa botões
+        playPauseBtn.disabled = false;
+        nextBtn.disabled = false;
+        prevBtn.disabled = false;
+        shuffleBtn.disabled = false;
+        loopBtn.disabled = false;
+      }
+    
+      // se for anúncio, não mexe no progresso
+      if (isAdPlaying) return;
+    
       const dur = player.getDuration() || 0;
       const cur = player.getCurrentTime() || 0;
       const pct = dur > 0 ? (cur / dur) * 100 : 0;
       progressBar.style.width = pct + '%';
       timeLabel.textContent = formatTime(cur) + ' / ' + formatTime(dur);
-      // atualiza título do vídeo atual
+    
       updateTrackInfo();
-    }, 500);
+    }, 300);
+
   }
 
   function updateTrackInfo(){
@@ -459,5 +512,22 @@
 
   // IMPORTANT: O YouTube API chama globalmente onYouTubeIframeAPIReady, por isso colocámos essa função acima.
 </script>
+
+  <div id="adOverlay" style="
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  color:#fff;
+  font-size:24px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:99999;
+  pointer-events:none;
+  opacity:0;
+  transition:opacity .3s;">
+  Anúncio a passar…
+</div>
+
 </body>
 </html>
