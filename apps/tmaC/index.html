@@ -150,6 +150,70 @@
       #npsRem {
         background-color: darkred;
       }
+	#btnConfirmUser {
+	    margin: 0 3px;
+	    opacity: 1;
+	    transition: opacity .25s ease;
+		z-index:-1;
+	}
+
+	#btnClearUser {
+	    margin: 0 3px;
+	    opacity: 1;
+	    transition: opacity .25s ease;
+	}
+	
+.hide {
+	    opacity: 0;
+	    pointer-events: none;
+	}
+
+/* container quadrado de tamanho fixo */
+  .square {
+    width: 50px;            /* tamanho fixo */
+    height: 35px;
+    position: relative;      /* permite posicionamento absoluto dos botões */
+    background: cyan;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 2px;
+  }
+
+  /* estilo base dos botões */
+  .square button {
+    position: absolute;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+    user-select: none;
+  }
+
+  /* botão de baixo */
+  .btn-back {
+    background: rgba(255,255,255,0.08);
+    color: #fff;
+    transform: translate(-6px, 6px) scale(.98);
+    z-index: 1;
+    box-shadow: 0 4px 14px rgba(2,8,23,0.6);
+  }
+
+  /* botão de cima (visualmente sobreposto) */
+  .btn-front {
+    background: linear-gradient(90deg,#ff6b6b,#ffb86b);
+    color: #081221;
+    z-index: 2;
+  }
+
+	.disabled{
+	  pointer-events: none;   
+	  font-weight: bold;
+	  background: #2f3646;
+          color: white;
+	}
+
+
     </style>
   </head>
 
@@ -157,8 +221,17 @@
     style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
   >
     <main class="card" role="main">
-      <h1>Calculadora de TMA</h1>
-
+      <div style="display: flex; margin: 10px 0;
+        align-items: center;justify-content:space-evenly;">
+	<h1>Calculadora de TMA</h1>
+	<div style="display: flex;align-items: center; width:30%; background-color:wite">
+	   <input id="usercode" type="text">
+	   <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
+	      <button class="btn-back" id="back">Ação 1</button>
+	      <button class="btn-front" id="front">OK</button>
+	   </div>
+	</div>
+      </div>
       <div
         id="informHold"
         style="
@@ -290,7 +363,9 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
         copyBtn = document.getElementById("copy"),
         saveBtn = document.getElementById("save"),
         npsVal = document.getElementById("npsVal"),
-        tmsSecEl = document.querySelector("#tmaSec");
+        tmsSecEl = document.querySelector("#tmaSec"),
+	divBtns = document.querySelector("#divBtns"),
+	usercode = document.querySelector("#usercode");
 
       document.addEventListener("DOMContentLoaded", async () => {
         if (window.pywebview) {
@@ -491,6 +566,35 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
           calc.click();
         }
       });
+
+      usercode.addEventListener("input", (e) => {
+	    let code = e.target.value.trim();
+
+	    if (code.length >= 6) {
+	        divBtns.classList.remove("hide");
+	    } else {
+	        divBtns.classList.add("hide");
+	    }
+      });
+
+	 // JS opcional: alterna qual botão fica por cima ao clicar
+	  const front = document.getElementById('front');
+	  const back = document.getElementById('back');
+
+	  front.addEventListener('click', () => {
+	    // exemplo de ação
+	    //alert('Clicaste em Ação 2');
+	    // adicionar logica de disabled input
+	    usercode.classList.add("disabled");
+	    front.classList.add("hide");
+	  });
+
+	  back.addEventListener('click', () => {
+	    //alert('Clicaste em Ação 1');
+	    usercode.classList.remove("disabled");
+	    front.classList.remove("hide");
+	  });
+
     </script>
   </body>
   </html>
