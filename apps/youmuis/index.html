@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Background Pr</title>
+<title>Background Pr — Player com Shuffle & Loop Fix</title>
 <style>
   /* video continua no fundo */
   #player {
@@ -22,7 +22,7 @@
     display:flex;
     flex-direction:column;
     justify-content:space-between;
-    pointer-events:none; /* apenas elementos internos com pointer-events:auto recebem cliques */
+    pointer-events:none;
   }
 
   .controls {
@@ -33,7 +33,7 @@
     flex-direction:column;
     justify-content:space-between;
     pointer-events:auto;
-    background: rgba(0,0,0,0.9); /* leve transparência para visualizar o vídeo atrás */
+    background: rgba(0,0,0,0.9);
   }
 
   .top-row {
@@ -60,6 +60,7 @@
   }
 
   .btn:active { transform:scale(0.95); }
+  .btn[disabled]{opacity:0.4;pointer-events:none}
 
   .center-row {
     display:flex;
@@ -111,7 +112,6 @@
     margin-top:-4px;
   }
 
-  /* coloca os controles de baixo sempre na parte inferior da tela */
   .bottom-row {
     display:flex;
     justify-content:space-between;
@@ -120,10 +120,25 @@
     gap:16px;
   }
 
-  /* responsividade */
   @media (max-width:520px){
     .top-row { flex-direction:column; align-items:flex-start; gap:8px; }
     .center-row { flex-direction:column; gap:12px; }
+  }
+
+  /* Ad overlay */
+  #adOverlay {
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.8);
+    color:#fff;
+    font-size:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity .3s;
   }
 </style>
 
@@ -138,11 +153,14 @@
   <div class="controls">
     <!-- topo: título + botões principais -->
     <div class="top-row">
-      <!-- <div class="title" id="trackTitle">A carregar playlist...</div> -->
       <div class="row">
         <button class="btn" id="prevBtn">⟲</button>
         <button class="btn" id="playPauseBtn">▶</button>
         <button class="btn" id="nextBtn">⟳</button>
+      </div>
+      <div class="row">
+        <button class="btn" id="shuffleBtn" title="Shuffle">🔀</button>
+        <button class="btn" id="loopBtn" title="Loop">🔁</button>
       </div>
     </div>
 
@@ -154,31 +172,27 @@
       <div class="time" id="timeLabel">0:00 / 0:00</div>
     </div>
 
-    <!-- baixo: volume, mute, shuffle, loop -->
+    <!-- baixo: volume, mute -->
     <div class="bottom-row">
       <div class="row">
         <button class="btn" id="muteBtn">🔊</button>
         <input id="vol" type="range" min="0" max="100" value="100">
       </div>
-      <div class="row">
-        <button class="btn" id="shuffleBtn">🔀</button>
-        <button class="btn" id="loopBtn">🔁</button>
-      </div>
+      <div style="width:1px"></div>
     </div>
   </div>
 </div>
 
+<div id="adOverlay">Anúncio a passar…</div>
 
 <script>
   /////////////////////////////////////////////////////////////////////////////
-  // CONFIG https://www.youtube.com/watch?v=Sq0SO-bzHZE&list=PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I
-  // Substitui por uma playlist tua (IDs sem "PL" funcionam também se for playlist pública)
+  // CONFIG - substitui pela tua playlist
   const PLAYLIST_ID = 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I';
-  // Se preferires um vídeo ID para começar, define START_INDEX. Caso contrário começa no primeiro.
   const START_INDEX = 0;
   /////////////////////////////////////////////////////////////////////////////
 
-  // script da API
+  // carregar API
   let tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(tag);
@@ -187,11 +201,14 @@
   let player;
   let isPlaying = false;
   let isMuted = false;
-  let shuffle = true;
-  let loop = true;
+  let shuffle = true; // valor inicial
+  let loop = true;    // valor inicial
   let updateTimer = null;
-  let playlistOrder = []; // array de videoIds (ordem atual)
-  let currentIndex = START_INDEX;
+
+  // playlists
+  let origPlaylist = [];     // ordem original vinda do YouTube
+  let playlistOrder = [];    // ordem atual usada (podemos embaralhar aqui)
+  let currentIndex = START_INDEX; // índice dentro de playlistOrder
 
   // elementos UI
   const playPauseBtn = document.getElementById('playPauseBtn');
@@ -202,7 +219,6 @@
   const progress = document.getElementById('progress');
   const progressBar = document.getElementById('progressBar');
   const timeLabel = document.getElementById('timeLabel');
-  const trackTitle = document.getElementById('trackTitle');
   const shuffleBtn = document.getElementById('shuffleBtn');
   const loopBtn = document.getElementById('loopBtn');
 
@@ -210,15 +226,10 @@
 
   function checkAds() {
     if (!player || typeof player.getAdState !== "function") return false;
-  
     try {
       const adState = player.getAdState();
-  
-      if (adState === "showing") return true;
-      if (adState === "loading") return true;
-  
+      if (adState === "showing" || adState === "loading") return true;
       return false;
-  
     } catch (err) {
       return false;
     }
@@ -226,10 +237,11 @@
 
   function setAdOverlay(visible) {
     const ad = document.getElementById("adOverlay");
+    if (!ad) return;
     ad.style.opacity = visible ? "1" : "0";
   }
 
-  // cria o player depois que a API carregar
+  // onYouTubeIframeAPIReady é chamado pela lib do YouTube
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
       height: '100%',
@@ -237,13 +249,13 @@
       playerVars: {
         listType: 'playlist',
         list: PLAYLIST_ID,
-        autoplay: 1,         // tentativa de autoplay
-        controls: 0,         // esconde controls nativos
+        autoplay: 1,
+        controls: 0,
         rel: 0,
         modestbranding: 1,
         showinfo: 0,
         origin: location.origin,
-        mute: 1              // tenta iniciar mudo para permitir autoplay
+        mute: 1
       },
       events: {
         'onReady': onPlayerReady,
@@ -253,35 +265,42 @@
     });
   }
 
-  // quando estiver pronto
   function onPlayerReady(event) {
-    // obter a lista de reprodução completa via método da API (assincrono)
-    // getPlaylist returns array of videoIds
-    const list = player.getPlaylist();
-    if (Array.isArray(list) && list.length) {
-      playlistOrder = list.slice();
-      currentIndex = Math.min(START_INDEX, playlistOrder.length - 1);
-      player.setShuffle(false);
-      player.playVideoAt(currentIndex);
-    } else {
-      // fallback: força recarregar a lista depois de pequeno atraso
-      setTimeout(() => {
-        playlistOrder = player.getPlaylist() || [];
-        if (playlistOrder.length) {
-          currentIndex = Math.min(START_INDEX, playlistOrder.length - 1);
-          player.playVideoAt(currentIndex);
-        }
-      }, 700);
-    }
+    // tenta popular playlists (getPlaylist pode falhar no primeiro tick)
+    setTimeout(() => {
+      origPlaylist = (player.getPlaylist && player.getPlaylist()) || [];
+      if (!origPlaylist.length) {
+        // tenta novamente se vazio
+        origPlaylist = (player.getPlaylist && player.getPlaylist()) || [];
+      }
+      // copia para playlistOrder e aplica shuffle se necessário
+      playlistOrder = origPlaylist.slice();
+      if (shuffle) playlistOrder = shuffleArrayKeepingCurrent(playlistOrder, START_INDEX);
 
-    // Some browsers require muted playback to autoplay — mantemos inicialmente mudo, mas o utilizador pode desativar.
+      // garante índice seguro
+      currentIndex = Math.min(START_INDEX, playlistOrder.length - 1);
+
+      // tenta definir loop/shuffle ao player (se suportado)
+      if (typeof player.setLoop === 'function') player.setLoop(loop);
+      if (typeof player.setShuffle === 'function') player.setShuffle(shuffle);
+
+      if (playlistOrder.length) {
+        // toca no index actual (isto assegura que o player usa o playlistOrder que temos em memória)
+        player.playVideoAt(currentIndex);
+      } else {
+        // fallback: a API já deve lidar com o list param — se não, tentamos tocar de qualquer forma
+        try { player.playVideoAt(START_INDEX); } catch (e) {}
+      }
+    }, 700);
+
+    // manter mudo para permitir autoplay inicialmente
     player.mute();
     isMuted = true;
     muteBtn.textContent = '🔇';
 
-    // ligar UI
     attachUI();
     startUpdateLoop();
+    reflectButtons();
   }
 
   function onPlayerError(e){
@@ -290,10 +309,11 @@
 
   function onPlayerStateChange(e) {
     const state = e.data;
-    // estados: -1 (unstarted), 0 ended, 1 playing, 2 paused, 3 buffering, 5 cued
     if (state === YT.PlayerState.PLAYING) {
       isPlaying = true;
       playPauseBtn.textContent = '⏸';
+      // sincroniza index com a execução real do player (player.getPlaylistIndex pode ser usado)
+      syncIndexFromPlayer();
       updateTrackInfo();
     } else if (state === YT.PlayerState.PAUSED) {
       isPlaying = false;
@@ -301,15 +321,14 @@
     } else if (state === YT.PlayerState.ENDED) {
       isPlaying = false;
       playPauseBtn.textContent = '▶';
-      // se loop estiver ativo, avançar ou repetir
-      if (loop) {
-        // se for última, volta ao início; senão avança
-        next();
-      }
+      // avançar automaticamente conforme o nosso next() que respeita loop
+      next();
+    } else if (state === YT.PlayerState.BUFFERING) {
+      // nothing special
     }
   }
 
-  // UI actions
+  // UI wiring
   function attachUI(){
     playPauseBtn.addEventListener('click', togglePlayPause);
     prevBtn.addEventListener('click', prev);
@@ -346,96 +365,134 @@
       const duration = player.getDuration() || 0;
       if (duration > 0) {
         player.seekTo(duration * pct, true);
-      } else {
-        // se não houver duração, tenta aproximar usando index e playlist item durations (não disponível aqui)
       }
     });
 
     shuffleBtn.addEventListener('click', () => {
       shuffle = !shuffle;
-      shuffleBtn.style.opacity = shuffle ? '1' : '0.7';
-      // a API tem setShuffle (YouTube IFrame) nos players embutidos só para playlists definidas.
+      // se player suporta setShuffle, usa-o
       if (typeof player.setShuffle === 'function') {
-        player.setShuffle(shuffle);
-      } else {
-        // fallback: embaralhar array localmente e reproduzir
-        if (shuffle) {
-          playlistOrder = shuffleArray(player.getPlaylist() || playlistOrder);
-        } else {
-          playlistOrder = player.getPlaylist() || playlistOrder;
-        }
+        try { player.setShuffle(shuffle); } catch(e){ /* ignore */ }
       }
+      // actualiza playlistOrder mantendo o vídeo actual na mesma posição
+      origPlaylist = origPlaylist.length ? origPlaylist : (player.getPlaylist && player.getPlaylist()) || origPlaylist;
+      if (shuffle) {
+        playlistOrder = shuffleArrayKeepingCurrent(origPlaylist.slice(), getCurrentPlaylistIndexInOrig());
+      } else {
+        // volta à ordem original — atualiza currentIndex para a posição do vídeo actual na origPlaylist
+        playlistOrder = origPlaylist.slice();
+        const curVid = getCurrentVideoId();
+        const newIdx = playlistOrder.indexOf(curVid);
+        currentIndex = newIdx >= 0 ? newIdx : 0;
+      }
+      reflectButtons();
     });
 
     loopBtn.addEventListener('click', () => {
       loop = !loop;
-      loopBtn.style.opacity = loop ? '1' : '0.7';
+      if (typeof player.setLoop === 'function') {
+        try { player.setLoop(loop); } catch(e){ /* ignore */ }
+      }
+      reflectButtons();
     });
 
-    // atualiza volume inicial
-    volSlider.value = player.getVolume ? player.getVolume() : 20;
+    // set initial volume
+    try { volSlider.value = player.getVolume ? player.getVolume() : 20; } catch(e){}
   }
 
-  // play / pause
   function togglePlayPause(){
     if (!player) return;
     const state = player.getPlayerState();
     if (state === YT.PlayerState.PLAYING) {
       player.pauseVideo();
     } else {
-      // tenta dar play com som se o utilizador tiver ajustado volume > 0
       player.playVideo();
     }
   }
 
+  // retorna o id do vídeo actualmente a tocar (se possível)
+  function getCurrentVideoId() {
+    try {
+      if (!player) return null;
+      const data = player.getVideoData();
+      if (data && data.video_id) return data.video_id;
+      // fallback para playlist index
+      const idx = player.getPlaylistIndex && player.getPlaylistIndex();
+      const pl = (player.getPlaylist && player.getPlaylist()) || playlistOrder;
+      return (pl && typeof idx === 'number') ? pl[idx] : null;
+    } catch(e){ return null; }
+  }
+
+  function getCurrentPlaylistIndexInOrig(){
+    // encontra o índice do vídeo actual na origPlaylist
+    const vid = getCurrentVideoId();
+    if (!vid) return 0;
+    const idx = origPlaylist.indexOf(vid);
+    return idx >= 0 ? idx : 0;
+  }
+
+  // sincroniza currentIndex com o player (usa playlistOrder)
+  function syncIndexFromPlayer(){
+    try {
+      const vid = getCurrentVideoId();
+      if (!vid) return;
+      const idx = playlistOrder.indexOf(vid);
+      if (idx >= 0) currentIndex = idx;
+    } catch(e){}
+  }
+
   function prev(){
     if (!player) return;
-    try {
-      player.previousVideo();
-    } catch (e) {
-      // fallback: calcula index
-      currentIndex = Math.max(0, currentIndex - 1);
-      player.playVideoAt(currentIndex);
+    if (!playlistOrder.length) {
+      try { player.previousVideo(); } catch(e) {}
+      return;
     }
+    // decrementa índice
+    currentIndex = currentIndex - 1;
+    if (currentIndex < 0) {
+      if (loop) currentIndex = playlistOrder.length - 1;
+      else currentIndex = 0;
+    }
+    player.playVideoAt(currentIndex);
   }
 
   function next(){
     if (!player) return;
-    try {
-      player.nextVideo();
-    } catch (e) {
-      currentIndex++;
-      const list = player.getPlaylist() || playlistOrder;
-      if (currentIndex >= list.length-1) {
-        currentIndex = 0;
-      }
-      player.playVideoAt(currentIndex);
+    if (!playlistOrder.length) {
+      try { player.nextVideo(); } catch(e) {}
+      return;
     }
+    currentIndex = currentIndex + 1;
+    if (currentIndex >= playlistOrder.length) {
+      if (loop) currentIndex = 0;
+      else {
+        currentIndex = playlistOrder.length - 1;
+        // se não há loop e já estamos no fim, apenas para
+      }
+    }
+    player.playVideoAt(currentIndex);
   }
 
-  // update loop (tempo, progress)
+  // update loop (tempo, progress, detecção de anúncios)
   function startUpdateLoop(){
     if (updateTimer) clearInterval(updateTimer);
     updateTimer = setInterval(() => {
       if (!player) return;
-    
-      // --- detectar anúncio ---
+
+      // detectar anúncio
       const adNow = checkAds();
       if (adNow && !isAdPlaying) {
         isAdPlaying = true;
         setAdOverlay(true);
-    
         // desativa botões
         playPauseBtn.disabled = true;
         nextBtn.disabled = true;
         prevBtn.disabled = true;
         shuffleBtn.disabled = true;
         loopBtn.disabled = true;
-    
       } else if (!adNow && isAdPlaying) {
         isAdPlaying = false;
         setAdOverlay(false);
-    
         // reativa botões
         playPauseBtn.disabled = false;
         nextBtn.disabled = false;
@@ -443,33 +500,23 @@
         shuffleBtn.disabled = false;
         loopBtn.disabled = false;
       }
-    
-      // se for anúncio, não mexe no progresso
+
       if (isAdPlaying) return;
-    
-      const dur = player.getDuration() || 0;
-      const cur = player.getCurrentTime() || 0;
+
+      const dur = player.getDuration ? (player.getDuration() || 0) : 0;
+      const cur = player.getCurrentTime ? (player.getCurrentTime() || 0) : 0;
       const pct = dur > 0 ? (cur / dur) * 100 : 0;
       progressBar.style.width = pct + '%';
       timeLabel.textContent = formatTime(cur) + ' / ' + formatTime(dur);
-    
-      updateTrackInfo();
-    }, 300);
 
+      updateTrackInfo();
+      // tenta sincronizar índice regularmente
+      syncIndexFromPlayer();
+    }, 300);
   }
 
   function updateTrackInfo(){
-    if (!player || typeof player.getVideoData !== 'function') return;
-    const data = player.getVideoData();
-    if (data && data.title) {
-      trackTitle.textContent = data.title;
-    } else {
-      // tenta extrair ID e escrever algo
-      const playlist = player.getPlaylist() || playlistOrder;
-      const idx = player.getPlaylistIndex ? player.getPlaylistIndex() : currentIndex;
-      const vid = (playlist && playlist[idx]) ? playlist[idx] : '';
-      trackTitle.textContent = vid ? ('Vídeo: ' + vid) : 'A carregar...';
-    }
+    // opcional: podes adicionar título/thumbnail aqui no futuro
   }
 
   // utilitários
@@ -489,7 +536,23 @@
     return a;
   }
 
-  // fallback: se user interagir com UI, desmutar automaticamente se o volume > 0
+  // embaralha mantendo o vídeo actual (indexBase é o índice do vídeo actual na lista passada)
+  function shuffleArrayKeepingCurrent(arr, indexBase = 0){
+    if (!arr || arr.length <= 1) return arr;
+    const currentId = arr[indexBase];
+    // remove item atual
+    const rest = arr.slice(0, indexBase).concat(arr.slice(indexBase + 1));
+    const shuffled = shuffleArray(rest);
+    // coloca currentId no início
+    return [currentId].concat(shuffled);
+  }
+
+  function reflectButtons(){
+    shuffleBtn.style.opacity = shuffle ? '1' : '0.6';
+    loopBtn.style.opacity = loop ? '1' : '0.6';
+  }
+
+  // fallback: interacção do utilizador desmuta se necessário
   document.addEventListener('click', function onFirstClick(){
     if (!player) return;
     if (isMuted && volSlider.value > 0) {
@@ -497,37 +560,15 @@
       isMuted = false;
       muteBtn.textContent = '🔊';
     }
-    // só executar uma vez
     document.removeEventListener('click', onFirstClick);
   });
 
-  // expor algumas funções para debugging (opcional)
-  window._bgPlayer = {
-    playerRef: () => player,
-    next, prev, togglePlayPause
-  };
+  // debug helpers
+  window._bgPlayer = { playerRef: () => player, next, prev, togglePlayPause };
 
-  // utility: se a playlist não for reconhecida imediatamente, tenta ler info com delay:
-  // (já implementado no onPlayerReady)
-
-  // IMPORTANT: O YouTube API chama globalmente onYouTubeIframeAPIReady, por isso colocámos essa função acima.
+  // assegura que o script exporte a callback global necessária
+  window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 </script>
-
-  <div id="adOverlay" style="
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.8);
-  color:#fff;
-  font-size:24px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:99999;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .3s;">
-  Anúncio a passar…
-</div>
 
 </body>
 </html>
