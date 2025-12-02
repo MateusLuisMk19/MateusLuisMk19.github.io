@@ -173,7 +173,6 @@
     width: 50px;            /* tamanho fixo */
     height: 35px;
     position: relative;      /* permite posicionamento absoluto dos botões */
-    background: cyan;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -190,18 +189,10 @@
     user-select: none;
   }
 
-  /* botão de baixo */
-  .btn-back {
-    background: rgba(255,255,255,0.08);
-    color: #fff;
-    transform: translate(-6px, 6px) scale(.98);
-    z-index: 1;
-    box-shadow: 0 4px 14px rgba(2,8,23,0.6);
-  }
-
   /* botão de cima (visualmente sobreposto) */
   .btn-front {
-    background: linear-gradient(90deg,#ff6b6b,#ffb86b);
+	  width: 100%;
+	  height: 100%;
     color: #081221;
     z-index: 2;
   }
@@ -210,6 +201,7 @@
 	  pointer-events: none;   
 	  font-weight: bold;
 	  background: #2f3646;
+		text-align: center;
           color: white;
 	}
 
@@ -227,8 +219,18 @@
 	<div style="display: flex;align-items: center; width:30%; background-color:wite">
 	   <input id="usercode" type="text">
 	   <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
-	      <button class="btn-back" id="back">Ação 1</button>
-	      <button class="btn-front" id="front">OK</button>
+	      <button class="btn-front npsRem" id="back">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Limpar</title>
+				  <path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+		  </button>
+	      <button class="btn-front nps" id="front">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Guardar</title>
+				  <path d="M20 6L9 17l-5-5"/>
+				</svg>
+		  </button>
 	   </div>
 	</div>
       </div>
@@ -302,7 +304,7 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
           </svg>
         </button>
 
-        <button disabled id="save" class="ghost" title="Guardar localmente">
+        <button id="save" class="ghost" title="Guardar localmente">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none"
             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path
@@ -549,13 +551,19 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
       });
 
       saveBtn.addEventListener("click", async () => {
-        if (window.pywebview) {
-          await window.pywebview.api.guardar({
-            tma_input: input.value,
-            nps_val: parseInt(npsVal.textContent) || 0,
-          });
-          alert("Guardado localmente!");
-        }
+		if (!usercode.value || usercode.value.length < 5) {
+			alert("Sem user");
+			return;
+		}else if (!front.classList.contains("hide")) {
+			alert("Salve o user antes");
+			return;
+		}
+	
+		/*await window.pywebview.api.guardar({
+			tma_input: input.value,
+			nps_val: parseInt(npsVal.textContent) || 0,
+		});*/
+		alert("Guardado localmente!");
       });
 
       input.addEventListener("paste", () => {
