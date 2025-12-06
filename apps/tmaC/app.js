@@ -206,13 +206,7 @@ const input = document.getElementById("input"),
 			return;
 		}
 
-		if (confirm("Tens a certeza?")) {
-	        // usuário confirmou
-	    	saveTodayFromUI();
-	    } else {
-	        // cancelou
-	        
-		}	
+			
 		
 		
 		alert("Guardado localmente!");
@@ -244,6 +238,13 @@ const input = document.getElementById("input"),
 
 	  front.addEventListener('click', () => {
 	    // exemplo de ação
+		/*   if (confirm("Tens a certeza?")) {
+	        // usuário confirmou
+	    	saveTodayFromUI();
+	    } else {
+	        // cancelou
+	        
+		} */
 	    //alert('Clicaste em Ação 2');
 	    // adicionar logica de disabled input
 	    usercode.classList.add("disabled");
