@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora de TMA — Compacta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="card" role="main">
+    <div class="header-row">
+      <h1>Calculadora de TMA</h1>
+      <div class="user-input-wrapper">
+        <input id="usercode" type="text" placeholder="Utilizador" />
+        <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
+          <button class="btn-front npsRem" id="back">
+            <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <title>Limpar</title>
+              <path d="M18 6L6 18M6 6l12 12"/>
+            </svg>
+          </button>
+          <button class="btn-front nps" id="front">
+            <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <title>Guardar</title>
+              <path d="M20 6L9 17l-5-5"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="informHold" class="info-box" onclick="changeInfoContente(0)">
+      <p class="lead">
+        Cole os tempos em minutos — separados por vírgula, espaço ou nova linha. Ex: <code>14</code>, <code>14.5</code>, <code>20min</code>.<br>
+        Clique no botão "+" para adicionar +1 às chamadas enviadas para IQS e "-" para retirar.<br>
+        Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de IQS. Ex: <code>12.3*</code>, <code>7*</code>.
+      </p>
+      <p class="lead" style="color: darkkhaki;">Clique aqui para esconder esta informação e bom trabalho!</p>
+    </div>
+    <div id="informCont" class="info-box" onclick="changeInfoContente(1)">
+      <div class="info-trigger">Clique para informação</div>
+    </div>
+
+    <label for="input">Tempos (min)</label>
+    <textarea id="input" placeholder="Ex: 14, 20min, 13.5, 12.4*, 2*"></textarea>
+
+    <div class="row">
+      <label for="npsSet">Enviados para IQS</label>
+      <div id="npsVal">00</div>
+      <button class="nps" onclick="npsDud(+1)">+</button>
+      <button class="nps" id="npsRem" onclick="npsDud(-1)">-</button>
+    </div>
+
+    <div class="row">
+      <button id="calc" title="Calcular TMA">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M9 3h6v2H9zM5 21h14M7 9h10v6H7z"/>
+        </svg>
+      </button>
+      <button id="clear" class="ghost" title="Limpar campos">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M3 6h18M9 6v12m6-12v12"/>
+        </svg>
+      </button>
+      <button id="copy" class="ghost" title="Copiar resultado">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+      </button>
+      <button id="save" class="ghost" title="Guardar dia">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+      </button>
+    </div>
+
+    <section class="results" id="results" hidden>
+      <div class="small">Chamadas detectadas: <span id="count" class="chip">0</span></div>
+      <div>Taxa de transferência para IQS: <span id="npsPercent" class="chip">0</span>%</div>
+      <div class="grid">
+        <div>
+          <div class="small">Total (min / sec)</div>
+          <div class="flex-row">
+            <div id="totalMin" class="total">0</div>
+            <div class="separator">/</div>
+            <div id="totalMinSec" class="total"></div>
+          </div>
+        </div>
+        <div id="tmaSecBox" class="tma-box">
+          <div class="small">TMA (segundos)</div>
+          <div id="tmaSec" class="total">0</div>
+        </div>
+      </div>
+      <div id="formula" class="formula"></div>
+    </section>
+  </main>
+
+  <div class="footer">
+    <span>by:</span>
+    <a target="_blank" href="https://github.com/MateusLuisMk19">Mateus Luis</a>
+  </div>
+
+  <script type="module" src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
