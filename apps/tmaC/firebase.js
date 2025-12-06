@@ -237,3 +237,16 @@
       
     });
   }
+
+  const front = document.getElementById('front');
+  if (front) {
+  front.addEventListener('click', () => {
+      // Procurar user na bd
+  	  // exemplo de ação
+  		if (confirm("Tens a certeza?")) {
+  	       
+  	  } else {
+  	       
+  		} 
+  	  });
+   }
