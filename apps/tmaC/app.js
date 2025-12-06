@@ -1,3 +1,4 @@
+import { guardarFirebase, carregarFirebase } from './firebase.js';
 const input = document.getElementById("input"),
   calc = document.getElementById("calc"),
   clear = document.getElementById("clear"),
@@ -114,9 +115,21 @@ copyBtn.addEventListener("click", async ()=>{
 });
 
 saveBtn.addEventListener("click", async ()=>{
-  if(!usercode.value || usercode.value.length<5){ alert("Sem user"); return; }
-  else if(!front.classList.contains("hide")){ alert("Salve o user antes"); return; }
-  alert("Guardado localmente!");
+  if(!usercode.value || usercode.value.length < 5){ alert("Sem user"); return; }
+  try {
+    await guardarFirebase(usercode.value, { tma_input: input.value, nps_val: parseInt(npsVal.textContent)||0 });
+    alert("Guardado no Firestore!");
+  } catch(e) { console.error(e); alert("Erro ao guardar no Firestore"); }
+});
+
+document.addEventListener("DOMContentLoaded", async () => {
+  if(usercode.value.length>=5){
+    const dados = await carregarFirebase(usercode.value);
+    if(dados){
+      input.value = dados.tma_input || "";
+      npsVal.textContent = dados.nps_val || "0";
+    }
+  }
 });
 
 input.addEventListener("paste",()=>{ setTimeout(()=>calc.click(),100); });
