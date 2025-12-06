@@ -232,6 +232,8 @@
   if (saveBtn) {
     saveBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      saveFunc(getDailyDoc, saveTodayFromUI)
+      console.log("vamo salvar?")
+      saveFunc(getDailyDoc, saveTodayFromUI);
+      
     });
   }
