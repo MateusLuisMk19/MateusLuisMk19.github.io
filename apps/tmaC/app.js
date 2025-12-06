@@ -216,7 +216,7 @@ const input = document.getElementById("input"),
 		
 		
 		alert("Guardado localmente!");
-      });
+      };
 
       input.addEventListener("paste", () => {
         setTimeout(() => calc.click(), 100);
