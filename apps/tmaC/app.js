@@ -1,17 +1,17 @@
 const input = document.getElementById("input"),
-        calc = document.getElementById("calc"),
-        clear = document.getElementById("clear"),
-        results = document.getElementById("results"),
-        countEl = document.getElementById("count"),
-        npsPercent = document.getElementById("npsPercent"),
-        totalMinEl = document.getElementById("totalMin"),
-        totalMinSecEl = document.getElementById("totalMinSec"),
-        tmaSecEl = document.getElementById("tmaSec"),
-        formulaEl = document.getElementById("formula"),
-        copyBtn = document.getElementById("copy"),
-        saveBtn = document.getElementById("save"),
-        npsVal = document.getElementById("npsVal"),
-        tmsSecEl = document.querySelector("#tmaSec"),
+	calc = document.getElementById("calc"),
+	clear = document.getElementById("clear"),
+	results = document.getElementById("results"),
+	countEl = document.getElementById("count"),
+	npsPercent = document.getElementById("npsPercent"),
+	totalMinEl = document.getElementById("totalMin"),
+	totalMinSecEl = document.getElementById("totalMinSec"),
+	tmaSecEl = document.getElementById("tmaSec"),
+	formulaEl = document.getElementById("formula"),
+	copyBtn = document.getElementById("copy"),
+	saveBtn = document.getElementById("save"),
+	npsVal = document.getElementById("npsVal"),
+	tmsSecEl = document.querySelector("#tmaSec"),
 	divBtns = document.querySelector("#divBtns"),
 	usercode = document.querySelector("#usercode");
 
@@ -196,7 +196,8 @@ const input = document.getElementById("input"),
         }
       });
 
-      saveBtn.addEventListener("click", async () => {
+      function saveFunc (getDailyDoc, saveTodayFromUI) {
+		//Validation
 		if (!usercode.value || usercode.value.length < 5) {
 			alert("Sem user");
 			return;
@@ -204,17 +205,23 @@ const input = document.getElementById("input"),
 			alert("Salve o user antes");
 			return;
 		}
-	
-		/*await window.pywebview.api.guardar({
-			tma_input: input.value,
-			nps_val: parseInt(npsVal.textContent) || 0,
-		});*/
+
+		if (confirm("Tens a certeza?")) {
+	        // usuário confirmou
+	    	saveTodayFromUI();
+	    } else {
+	        // cancelou
+	        
+		}	
+		
+		
 		alert("Guardado localmente!");
       });
 
       input.addEventListener("paste", () => {
         setTimeout(() => calc.click(), 100);
       });
+
       input.addEventListener("keydown", (e) => {
         if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
           calc.click();
