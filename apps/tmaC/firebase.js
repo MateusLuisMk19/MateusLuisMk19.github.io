@@ -232,13 +232,6 @@
   if (saveBtn) {
     saveBtn.addEventListener("click", (ev) => {
       ev.preventDefault();
-      if (confirm("Tens a certeza?")) {
-        // usuário confirmou
-        saveTodayFromUI();
-      } else {
-        // cancelou
-        
-      }
-      
+      saveFunc(getDailyDoc, saveTodayFromUI)
     });
   }
