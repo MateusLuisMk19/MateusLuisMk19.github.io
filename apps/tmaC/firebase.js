@@ -4,12 +4,12 @@ import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/fireb
 
 // Configuração do Firebase (substituir com os teus dados)
 const firebaseConfig = {
-  apiKey: "SUA_API_KEY",
-  authDomain: "SEU_AUTH_DOMAIN",
-  projectId: "SEU_PROJECT_ID",
-  storageBucket: "SEU_STORAGE_BUCKET",
-  messagingSenderId: "SEU_MESSAGING_SENDER_ID",
-  appId: "SEU_APP_ID"
+  apiKey: "AIzaSyDNCzEEjvnlyeT2gtPPC20HJLlSe7M2-_U",
+    authDomain: "my-tma-exe.firebaseapp.com",
+    projectId: "my-tma-exe",
+    storageBucket: "my-tma-exe.firebasestorage.app",
+    messagingSenderId: "977728683930",
+    appId: "1:977728683930:web:db99a995c17929dc960423"
 };
 
 // Inicializa Firebase
