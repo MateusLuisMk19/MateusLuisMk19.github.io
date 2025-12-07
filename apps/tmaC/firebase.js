@@ -255,8 +255,10 @@
   if (front) {
     front.addEventListener('click', () => {
       // Procurar user na bd
+      console.log(usercode);
       console.log(usercode.value)
-      usercode ? console.log(await checkUserExists(usercode.value)) : console.log("none");
+      const check = await checkUserExists(usercode.value);
+      console.log(check)
      /*  if(checkUserExists(usercode)){
         if (confirm("Utilizador existente, deseja associar?")) {
              console.log("selecionado")
