@@ -250,13 +250,13 @@
   }
 
   const front = document.getElementById('front'),
-    usercode = document.querySelector("#usercode").value;
+    usercode = document.querySelector("#usercode");
 
   if (front) {
     front.addEventListener('click', () => {
       // Procurar user na bd
-      console.log(usercode)
-      usercode ? console.log(checkUserExists(usercode)) : console.log("none");
+      console.log(usercode.value)
+      usercode ? console.log(await checkUserExists(usercode.value)) : console.log("none");
      /*  if(checkUserExists(usercode)){
         if (confirm("Utilizador existente, deseja associar?")) {
              console.log("selecionado")
