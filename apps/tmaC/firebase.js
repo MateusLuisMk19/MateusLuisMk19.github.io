@@ -253,7 +253,7 @@
     usercode = document.querySelector("#usercode");
 
   if (front) {
-    front.addEventListener('click', () => {
+    front.addEventListener('click', async () => {
       // Procurar user na bd
       console.log(usercode);
       console.log(usercode.value)
@@ -282,6 +282,7 @@
       } else {
            
       }  */
-      frontClickTbtn()
+      usercode.classList.add("disabled");
+	    front.classList.add("hide");
     });
   }
