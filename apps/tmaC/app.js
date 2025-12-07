@@ -236,7 +236,7 @@ const input = document.getElementById("input"),
 	  const front = document.getElementById('front');
 	  const back = document.getElementById('back');
 
-	  front.addEventListener('click', () => {
+	  function frontClickTbtn() {
 	    // exemplo de ação
 		/*   if (confirm("Tens a certeza?")) {
 	        // usuário confirmou
@@ -249,7 +249,7 @@ const input = document.getElementById("input"),
 	    // adicionar logica de disabled input
 	    usercode.classList.add("disabled");
 	    front.classList.add("hide");
-	  });
+	  };
 
 	  back.addEventListener('click', () => {
 	    //alert('Clicaste em Ação 1');
