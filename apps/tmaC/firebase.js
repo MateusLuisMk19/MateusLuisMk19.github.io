@@ -250,7 +250,7 @@
   }
 
   const front = document.getElementById('front'),
-    usercode = document.querySelector("#usercode");
+    usercode = document.querySelector("#usercode").value;
 
   if (front) {
     front.addEventListener('click', () => {
