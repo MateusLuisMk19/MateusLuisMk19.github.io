@@ -255,8 +255,10 @@
   if (front) {
     front.addEventListener('click', () => {
       // Procurar user na bd
-      if(checkUserExists(usercode)){
-        if (confirm("Utilizador existente, usar utilizador?")) {
+      console.log(usercode)
+      console.log(checkUserExists(usercode))
+     /*  if(checkUserExists(usercode)){
+        if (confirm("Utilizador existente, deseja associar?")) {
              console.log("selecionado")
            
         } else {
@@ -270,7 +272,7 @@
              console.log("não salvo")
              
         }
-      }
+      } */
       // exemplo de ação
       /* 
       if (confirm("Tens a certeza?")) {
