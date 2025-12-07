@@ -214,6 +214,16 @@
     }
   }
 
+  async function checkUserExists(userId) {
+    if (!userId) throw new Error("userId required");
+  
+    const userRef = doc(db, "users", userId);
+    const snap = await getDoc(userRef);
+  
+    return snap.exists() ? snap.data() : null;
+  }
+
+
   // ----------------------------
   // Expor funções no global para fácil debug no console
   // ----------------------------
@@ -225,6 +235,7 @@
     appendCall,
     getDailyDoc,
     computeSummaryFromCalls,
+    checkUserExists,
   };
 
   // exemplo extra: ligar um botão de guardar existente
@@ -238,15 +249,34 @@
     });
   }
 
-  const front = document.getElementById('front');
+  const front = document.getElementById('front'),
+    usercode = document.querySelector("#usercode");
+
   if (front) {
-  front.addEventListener('click', () => {
+    front.addEventListener('click', () => {
       // Procurar user na bd
-  	  // exemplo de ação
-  		if (confirm("Tens a certeza?")) {
-  	       
-  	  } else {
-  	       
-  		} 
-  	  });
-   }
+      if(checkUserExists(usercode)){
+        if (confirm("Utilizador existente, usar utilizador?")) {
+             console.log("selecionado")
+           
+        } else {
+             console.log("não selecionado")
+             
+        }  
+      }else{
+        if (confirm("Utilizador não encontrado, deseja guardar " + usercode + "?")) {
+             console.log("salvo")
+        } else {
+             console.log("não salvo")
+             
+        }
+      }
+      // exemplo de ação
+      /* 
+      if (confirm("Tens a certeza?")) {
+           
+      } else {
+           
+      }  */
+    });
+  }
