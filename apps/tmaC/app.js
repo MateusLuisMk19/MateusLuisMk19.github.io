@@ -159,7 +159,7 @@ const input = document.getElementById("input"),
       /* Eventos */
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
-		  const chAct = list.length;
+		const chAct = list.length;
 		  
 
         if (list.length === 0) {
@@ -170,20 +170,21 @@ const input = document.getElementById("input"),
 		const res = computeTMA(list);
 		const txAct = parseFloat(npsPercent.textContent);
 
-		const rstTransfNess = chamadasNecessarias({
-		  chamadasAtuais: chAct,
-		  taxaAtual: txAct,
-		  meta: 0.701
-		});
-
-		const metaTransf = taxaFinal({
-			chamadasAtuais: chAct,
-			taxaAtual: txAct,
-			chamadasTransferidasNovas: rstTransfNess
-		  })
-
-		console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
-
+		if(txAct < 70){
+			const rstTransfNess = chamadasNecessarias({
+			  chamadasAtuais: chAct,
+			  taxaAtual: txAct,
+			  meta: 0.701
+			});
+	
+			const metaTransf = taxaFinal({
+				chamadasAtuais: chAct,
+				taxaAtual: txAct,
+				chamadasTransferidasNovas: rstTransfNess
+			  })
+	
+			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
+		}
        
         showResult(list, res);
       });
@@ -281,7 +282,7 @@ const input = document.getElementById("input"),
 		  taxaAtual,
 		  chamadasTransferidasNovas
 		}) {
-		  const transferidasAtuais = chamadasAtuais * taxaAtual;
+		  const transferidasAtuais = chamadasAtuais * taxaAtual/100;
 		
 		  return (transferidasAtuais + chamadasTransferidasNovas) /
 				 (chamadasAtuais + chamadasTransferidasNovas);
