@@ -159,7 +159,7 @@ const input = document.getElementById("input"),
       /* Eventos */
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
-		  const chAct = list.map((x) => x.value);
+		  const chAct = list.length;
 		  const txAct = parseInt(npsVal.textContent);
 
         if (list.length === 0) {
