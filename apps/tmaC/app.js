@@ -160,7 +160,7 @@ const input = document.getElementById("input"),
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
 		  const chAct = list.length;
-		  const txAct = parseInt(npsVal.textContent);
+		  const txAct = parseInt(npsPercent);
 
         if (list.length === 0) {
           alert("Nenhum tempo válido encontrado.");
@@ -170,7 +170,7 @@ const input = document.getElementById("input"),
 		  const rstTransfNess = chamadasNecessarias({
 			  chamadasAtuais: chAct,
 			  taxaAtual: txAct,
-			  meta: 0.70
+			  meta: 0.701
 			});
 
 		  const metaTransf = taxaFinal({
