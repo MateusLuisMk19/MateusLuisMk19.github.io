@@ -160,7 +160,7 @@ const input = document.getElementById("input"),
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
 		  const chAct = list.length;
-		  const txAct = parseInt(npsPercent);
+		  const txAct = parseInt(npsPercent.textContent);
 
         if (list.length === 0) {
           alert("Nenhum tempo válido encontrado.");
