@@ -160,28 +160,31 @@ const input = document.getElementById("input"),
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
 		  const chAct = list.length;
-		  const txAct = parseInt(npsPercent.textContent);
+		  
 
         if (list.length === 0) {
           alert("Nenhum tempo válido encontrado.");
           return;
         }
 
-		  const rstTransfNess = chamadasNecessarias({
-			  chamadasAtuais: chAct,
-			  taxaAtual: txAct,
-			  meta: 0.701
-			});
+		const res = computeTMA(list);
+		const txAct = parseInt(npsPercent.textContent);
 
-		  const metaTransf = taxaFinal({
-		    chamadasAtuais: chAct,
-		    taxaAtual: txAct,
-		    chamadasTransferidasNovas: rstTransfNess
+		const rstTransfNess = chamadasNecessarias({
+		  chamadasAtuais: chAct,
+		  taxaAtual: txAct,
+		  meta: 0.701
+		});
+
+		const metaTransf = taxaFinal({
+			chamadasAtuais: chAct,
+			taxaAtual: txAct,
+			chamadasTransferidasNovas: rstTransfNess
 		  })
 
-		  console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
+		console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
 
-        const res = computeTMA(list);
+       
         showResult(list, res);
       });
 
