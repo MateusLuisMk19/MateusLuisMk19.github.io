@@ -159,11 +159,27 @@ const input = document.getElementById("input"),
       /* Eventos */
       calc.addEventListener("click", () => {
         const list = parseInput(input.value);
+		  const chAct = list.map((x) => x.value);
+		  const txAct = parseInt(npsVal.textContent);
 
         if (list.length === 0) {
           alert("Nenhum tempo válido encontrado.");
           return;
         }
+
+		  const rstTransfNess = chamadasNecessarias({
+			  chamadasAtuais: chAct,
+			  taxaAtual: txAct,
+			  meta: 0.70
+			});
+
+		  const metaTransf = taxaFinal({
+		    chamadasAtuais: chAct,
+		    taxaAtual: txAct,
+		    chamadasTransferidasNovas: rstTransfNess
+		  })
+
+		  console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
 
         const res = computeTMA(list);
         showResult(list, res);
@@ -256,3 +272,27 @@ const input = document.getElementById("input"),
 	    usercode.classList.remove("disabled");
 	    front.classList.remove("hide");
 	  });
+
+	   function taxaFinal({
+		  chamadasAtuais,
+		  taxaAtual,
+		  chamadasTransferidasNovas
+		}) {
+		  const transferidasAtuais = chamadasAtuais * taxaAtual;
+		
+		  return (transferidasAtuais + chamadasTransferidasNovas) /
+				 (chamadasAtuais + chamadasTransferidasNovas);
+		}
+
+		function chamadasNecessarias({
+		  chamadasAtuais,
+		  taxaAtual,      // ex: 0.25
+		  meta            // ex: 0.70
+		}) {
+		  const transferidasAtuais = chamadasAtuais * taxaAtual;
+		
+		  const x = (meta * chamadasAtuais - transferidasAtuais) / (1 - meta);
+		
+		  return Math.ceil(x);
+		}
+
