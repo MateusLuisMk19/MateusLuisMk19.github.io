@@ -168,7 +168,7 @@ const input = document.getElementById("input"),
         }
 
 		const res = computeTMA(list);
-		const txAct = parseInt(npsPercent.textContent);
+		const txAct = parseFloat(npsPercent.textContent);
 
 		const rstTransfNess = chamadasNecessarias({
 		  chamadasAtuais: chAct,
@@ -292,7 +292,7 @@ const input = document.getElementById("input"),
 		  taxaAtual,      // ex: 0.25
 		  meta            // ex: 0.70
 		}) {
-		  const transferidasAtuais = chamadasAtuais * taxaAtual;
+		  const transferidasAtuais = chamadasAtuais * taxaAtual/100;
 		
 		  const x = (meta * chamadasAtuais - transferidasAtuais) / (1 - meta);
 		
