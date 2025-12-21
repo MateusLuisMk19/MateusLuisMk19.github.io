@@ -284,8 +284,10 @@ const input = document.getElementById("input"),
 		}) {
 		  const transferidasAtuais = chamadasAtuais * taxaAtual/100;
 		
-		  return (transferidasAtuais + chamadasTransferidasNovas) /
+		  let val = (transferidasAtuais + chamadasTransferidasNovas) /
 				 (chamadasAtuais + chamadasTransferidasNovas);
+		   
+		  return val*100;
 		}
 
 		function chamadasNecessarias({
