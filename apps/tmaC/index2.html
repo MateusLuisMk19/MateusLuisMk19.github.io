@@ -181,17 +181,20 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
         style="color: var(--accent); text-decoration: none">Mateus Luis</a>
     </div>
 
+
 	<div id="historyModal" class="modal">
-  <div class="modal-content card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-      <h2>Histórico de Registos</h2>
-      <button id="closeModal" class="ghost" style="padding: 5px 10px;">&times;</button>
-    </div>
-    <div id="historyList" class="history-list">
-      <p class="small" style="text-align: center;">A carregar dados...</p>
-    </div>
+	  <div class="modal-content card">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+	      <h2>Histórico de Registos</h2>
+	      <button id="closeModal" class="ghost" style="padding: 5px 10px;">&times;</button>
+	    </div>
+		  <div id="historyStats" class="history-stats-banner">
   </div>
-</div>
+	    <div id="historyList" class="history-list">
+	      <p class="small" style="text-align: center;">A carregar dados...</p>
+	    </div>
+	  </div>
+	</div>
 
   <script type="module" src="firebase.js"></script>
   <script src="app.js"></script>
