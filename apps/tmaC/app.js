@@ -136,7 +136,7 @@ const input = document.getElementById("input"),
           ? ((nps / validForIQS) * 100).toFixed(1)
           : 0;
 
-        npsPercent.textContent = percent;
+        npsPercent.textContent = `${percent}%`;
 
         formulaEl.textContent = `(${res.totalMin.toFixed(2)} min ÷ ${list.length} chamadas) × 60 = ${res.tmaSec} segundos`;
       }
@@ -187,8 +187,8 @@ const input = document.getElementById("input"),
 			  })
 	
 			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%");
-			npsPercentMeta.style.backgroundColor = "darkorange";
-			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf}`;
+			npsPercentMeta.style.backgroundColor = "#b33d18";
+			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf.toFixed(1)}`;
 		}
 		else{
 			npsPercentMeta.style.backgroundColor = "darkgreen";
