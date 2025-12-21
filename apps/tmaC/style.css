@@ -259,6 +259,11 @@
 	  text-align: center;
 	  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
 	}
+
+	.history-stats-banner .stat-item:nth-child(2) div {
+	  color: #ffffff;
+	  text-shadow: 0 0 10px rgba(255, 255, 255, 0.4);
+	}
 	
 	.stat-item span {
 	  font-size: 11px;
