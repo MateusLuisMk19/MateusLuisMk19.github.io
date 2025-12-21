@@ -290,7 +290,10 @@
 // Função para listar os últimos 7 dias
 async function fetchHistory(userId) {
   const historyList = document.getElementById("historyList");
+  const historyStats = document.getElementById("historyStats");
+  
   historyList.innerHTML = '<p class="small" style="text-align: center;">A procurar registos...</p>';
+  historyStats.style.display = "none"; // Esconde enquanto carrega
 
   try {
     const q = query(
@@ -301,6 +304,8 @@ async function fetchHistory(userId) {
 
     const querySnapshot = await getDocs(q);
     historyList.innerHTML = "";
+    
+    let totalTMA = 0, totalCalls = 0, totalIQS = 0, count = 0;
 
     if (querySnapshot.empty) {
       historyList.innerHTML = '<p class="small">Nenhum registo encontrado.</p>';
@@ -309,6 +314,14 @@ async function fetchHistory(userId) {
 
     querySnapshot.forEach((doc) => {
       const data = doc.data();
+      count++;
+      
+      // Somar para as médias
+      totalTMA += data.summary.tma_seconds;
+      totalCalls += data.summary.totalCalls;
+      totalIQS += data.summary.iqsPercent;
+
+      // Criar o item da lista (como já tinhas)
       const item = document.createElement("div");
       item.className = "history-item";
       item.innerHTML = `
@@ -323,6 +336,29 @@ async function fetchHistory(userId) {
       `;
       historyList.appendChild(item);
     });
+
+    // Calcular Médias
+    const avgTMA = Math.round(totalTMA / count);
+    const avgCalls = (totalCalls / count).toFixed(1);
+    const avgIQS = (totalIQS / count).toFixed(1);
+
+    // Exibir Médias no Banner
+    historyStats.style.display = "grid";
+    historyStats.innerHTML = `
+      <div class="stat-item">
+        <span>Média TMA</span>
+        <div>${avgTMA}s</div>
+      </div>
+      <div class="stat-item">
+        <span>Média Calls</span>
+        <div>${avgCalls}</div>
+      </div>
+      <div class="stat-item">
+        <span>Média IQS</span>
+        <div>${avgIQS}%</div>
+      </div>
+    `;
+
   } catch (err) {
     console.error(err);
     historyList.innerHTML = '<p class="small" style="color: darkred;">Erro ao carregar histórico.</p>';
