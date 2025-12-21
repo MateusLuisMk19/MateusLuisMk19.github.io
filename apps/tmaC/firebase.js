@@ -7,7 +7,7 @@
     getDoc,
     updateDoc,
     arrayUnion,
-    serverTimestamp, collection, getDocs, query, orderBy, limit,
+    serverTimestamp, collection, getDocs, query, orderBy, limit,where,
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   // ----------------------------
@@ -287,89 +287,90 @@
     });
   }
 
-// Função para listar os últimos 7 dias
-async function fetchHistory(userId) {
+	// Função para listar os últimos 7 dias
+	async function fetchHistory(userId, filterType = "7days") {
 	  const historyList = document.getElementById("historyList");
 	  const historyStats = document.getElementById("historyStats");
 	  
-	  // Reset e Feedback visual de carregamento
-	  historyList.innerHTML = '<p class="small" style="text-align: center;">A procurar registos...</p>';
-	  historyStats.style.display = "none"; 
+	  historyList.innerHTML = '<p class="small" style="text-align: center;">A carregar...</p>';
+	  historyStats.style.display = "none";
 	
 	  try {
-	    // Query para buscar os últimos 7 dias na subcoleção 'daily'
-	    const q = query(
-	      collection(db, "users", userId, "daily"),
-	      orderBy("date", "desc"),
-	      limit(7)
-	    );
+	    let q;
+	    const dailyRef = collection(db, "users", userId, "daily");
+	    const agora = new Date();
+	
+	    if (filterType === "7days") {
+	      // Padrão: Últimos 7 registos independente da data
+	      q = query(dailyRef, orderBy("date", "desc"), limit(7));
+	      
+	    } else if (filterType === "currentMonth") {
+	      // Mês atual: Desde o dia 1
+	      const inicioMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-01`;
+	      q = query(dailyRef, where("date", ">=", inicioMes), orderBy("date", "desc"));
+	      
+	    } else if (filterType === "lastMonth") {
+	      // Mês anterior: Entre o dia 1 e o último dia do mês passado
+	      const dataMesPassado = new Date(agora.getFullYear(), agora.getMonth() - 1, 1);
+	      const anoP = dataMesPassado.getFullYear();
+	      const mesP = String(dataMesPassado.getMonth() + 1).padStart(2, '0');
+	      
+	      const inicioMesPassado = `${anoP}-${mesP}-01`;
+	      const fimMesPassado = `${anoP}-${mesP}-31`; // Firestore tratará as strings corretamente
+	      
+	      q = query(dailyRef, 
+	        where("date", ">=", inicioMesPassado), 
+	        where("date", "<=", fimMesPassado), 
+	        orderBy("date", "desc")
+	      );
+	    }
 	
 	    const querySnapshot = await getDocs(q);
 	    historyList.innerHTML = "";
 	    
-	    // Variáveis para acumular os valores
-	    let acumuladorTMA = 0;
-	    let acumuladorCalls = 0;
-	    let acumuladorIQS = 0;
-	    let totalDias = 0;
+	    let acTMA = 0, acCalls = 0, acIQS = 0, totalDias = 0;
 	
 	    if (querySnapshot.empty) {
-	      historyList.innerHTML = '<p class="small" style="text-align: center;">Nenhum registo encontrado para este utilizador.</p>';
+	      historyList.innerHTML = '<p class="small" style="text-align: center;">Sem dados para este período.</p>';
 	      return;
 	    }
 	
 	    querySnapshot.forEach((doc) => {
 	      const data = doc.data();
 	      totalDias++;
-	      
-	      // Somar valores para as estatísticas do topo
-	      acumuladorTMA += (data.summary.tma_seconds || 0);
-	      acumuladorCalls += (data.summary.totalCalls || 0); // Total absoluto
-	      acumuladorIQS += (data.summary.iqsPercent || 0);
+	      acTMA += data.summary.tma_seconds;
+	      acCalls += data.summary.totalCalls;
+	      acIQS += data.summary.iqsPercent;
 	
-	      // Criar o card individual do dia na lista
 	      const item = document.createElement("div");
 	      item.className = "history-item";
 	      item.innerHTML = `
-	        <div style="font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; margin-bottom: 8px;">
-	          Data: ${data.date}
-	        </div>
+	        <div style="font-weight:bold; color:var(--accent); border-bottom:1px solid #333; padding-bottom:5px; margin-bottom:8px;">Data: ${data.date}</div>
 	        <div class="history-grid">
 	          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
 	          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
 	          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
-	        </div>
-	      `;
+	        </div>`;
 	      historyList.appendChild(item);
 	    });
 	
-	    // Calcular Médias (apenas para TMA e IQS)
-	    const mediaTMA = Math.round(acumuladorTMA / totalDias);
-	    const mediaIQS = (acumuladorIQS / totalDias).toFixed(1);
-	
-	    // Exibir o Banner de Estatísticas no topo do Modal
 	    historyStats.style.display = "grid";
 	    historyStats.innerHTML = `
-	      <div class="stat-item">
-	        <span>Média TMA</span>
-	        <div>${mediaTMA}s</div>
-	      </div>
-	      <div class="stat-item">
-	        <span>Total Calls</span>
-	        <div style="color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3);">${acumuladorCalls}</div>
-	      </div>
-	      <div class="stat-item">
-	        <span>Média IQS</span>
-	        <div>${mediaIQS}%</div>
-	      </div>
-	    `;
-
+	      <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
+	      <div class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
+	      <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
+	
 	  } catch (err) {
-	    console.error("Erro ao carregar histórico:", err);
-	    historyList.innerHTML = '<p class="small" style="color: #ff4d4d; text-align: center;">Erro técnico ao aceder à base de dados.</p>';
+	    console.error(err);
+	    historyList.innerHTML = '<p class="small" style="color:red;">Erro ao filtrar dados.</p>';
 	  }
 	}
-
+	
+	// Ligar o evento de mudança do Select
+	document.getElementById("historyFilter").addEventListener("change", (e) => {
+	  const userId = document.getElementById("usercode").value.trim();
+	  fetchHistory(userId, e.target.value);
+	});
 	// Lógica de abrir/fechar o Modal
 	const modal = document.getElementById("historyModal");
 	const showDaysBtn = document.getElementById("showDays");
