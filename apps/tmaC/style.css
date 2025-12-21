@@ -318,3 +318,8 @@
 	  color: #e6eef8;
 	  padding: 10px;
 	}
+	
+	.modal-content {
+	  scrollbar-width: thin;
+	  scrollbar-color: var(--accent) transparent;
+	}
