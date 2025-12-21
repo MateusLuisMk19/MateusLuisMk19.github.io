@@ -191,12 +191,16 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
 	    </div>
 
 		<div style="margin-bottom: 15px;">
-		  <label for="historyFilter" class="small">Período de visualização:</label>
-		  <select id="historyFilter" class="nps" style="width: 100%; background-color: var(--glass); border: 1px solid var(--accent); height: 35px;">
-		    <option value="7days">Últimos 7 registos</option>
-		    <option value="currentMonth">Mês Corrente</option>
-		    <option value="lastMonth">Mês Anterior</option>
-		  </select>
+		  <div class="history-filter-container">
+			  <label for="historyFilter" class="small" style="display: block; margin-bottom: 8px; opacity: 0.8;">
+				Filtrar Período
+			  </label>
+			  <select id="historyFilter">
+				<option value="7days">Últimos 7 registos</option>
+				<option value="currentMonth">Mês Corrente</option>
+				<option value="lastMonth">Mês Anterior</option>
+			  </select>
+		  </div>
 		</div>
 
 		<div id="historyStats" class="history-stats-banner"></div>
