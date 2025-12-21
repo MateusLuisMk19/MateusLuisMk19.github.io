@@ -14,6 +14,7 @@ const input = document.getElementById("input"),
 	npsVal = document.getElementById("npsVal"),
 	tmsSecEl = document.querySelector("#tmaSec"),
 	divBtns = document.querySelector("#divBtns"),
+	showDays = document.querySelector("#showDays"),
 	usercode = document.querySelector("#usercode");
 
       document.addEventListener("DOMContentLoaded", async () => {
@@ -223,6 +224,11 @@ const input = document.getElementById("input"),
           alert("Erro ao copiar.");
         }
       });
+
+	  showDays.addEventListener("click", () => {
+		  //Open modal
+		  alert("Modal")
+	  })
 
       function saveFunc (getDailyDoc, saveTodayFromUI) {
 		//Validation
