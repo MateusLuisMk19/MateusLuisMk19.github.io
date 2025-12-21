@@ -6,136 +6,209 @@
   <title>Calculadora de TMA — Compacta</title>
   <link rel="stylesheet" href="style.css" />
 </head>
-<body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0">
-  <main class="card" role="main">
-    <div style="display: flex; margin: 10px 0; align-items: center; justify-content: space-between;">
-      <h1 style="margin-left: 40px 0;">C-TMA</h1>
-      <div style="display: flex; align-items: center; width:120px; background-color:transparent">
-        <input id="usercode" type="text" placeholder="User">
-        <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
-          <button class="btn-front npsRem" id="back" title="Editar User">
-            <svg width="40" height="40" viewBox="0 0 24 24" role="img" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 6L6 18M6 6l12 12"/>
-            </svg>
-          </button>
-          <button class="btn-front nps" id="front" title="Confirmar User">
-            <svg width="40" height="40" viewBox="0 0 24 24" role="img" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20 6L9 17l-5-5"/>
-            </svg>
-          </button>
-        </div>
+ <body
+    style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
+  >
+    <main class="card" role="main">
+      <div style="display: flex; margin: 10px 0;
+        align-items: center;justify-content:space-between;">
+	<h1 style="margin-left: 40px 0;">C-TMA</h1>
+	<div style="display: flex;align-items: center; width:120px; background-color:wite">
+	   <input id="usercode" type="text">
+	   <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
+	      <button class="btn-front npsRem" id="back">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Limpar</title>
+				  <path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+		  </button>
+	      <button class="btn-front nps" id="front">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Guardar</title>
+				  <path d="M20 6L9 17l-5-5"/>
+				</svg>
+		  </button>
+	   </div>
+	</div>
       </div>
-    </div>
-
-    <div id="informHold" style="display: none; background-color: #172039; padding: 8px; text-align: center; cursor: pointer;">
-      <p class="lead">
-        Cole os tempos em minutos — separados por vírgula, espaço ou nova linha. Ex: <code>14</code>, <code>14.5</code>.<br>
-        Clique no botão "+" para adicionar +1 às chamadas enviadas para IQS.<br>
-        Adicione <code>*</code> ao tempo para que ele NÃO conte no IQS. Ex: <code>12.3*</code>.
-      </p>
-      <p class="lead" style="color: darkkhaki;">Clique aqui para esconder esta informação.</p>
-    </div>
-
-    <div id="informCont" style="background-color: #172039; padding: 8px; text-align: center; cursor: pointer;">
-      <div style="font-size: 11px; font-weight: 700">Clique para informação</div>
-    </div>
-
-    <label for="input">Tempos (min)</label>
-    <textarea id="input" placeholder="Ex: 14, 20min, 13.5, 12.4*, 2*"></textarea>
-
-    <div class="row">
-      <label for="npsSet" style="font-size: 13px">Enviados para IQS</label>
-      <div id="npsVal">0</div>
-      <button class="nps" id="npsAdd">+</button>
-      <button class="nps" id="npsMinus">-</button>
-    </div>
-
-    <div class="row">
-      <button id="calc" title="Calcular TMA">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M9 3h6v2H9zM5 21h14M7 9h10v6H7z" />
-        </svg>
-      </button>
-
-      <button id="clear" class="ghost" title="Limpar campos">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M3 6h18M9 6v12m6-12v12" />
-        </svg>
-      </button>
-
-      <button id="copy" class="ghost" title="Copiar resultado">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <rect x="9" y="9" width="13" height="13" rx="2" />
-          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-        </svg>
-      </button>
-
-      <button id="save" class="ghost" title="Guardar dia">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
-          <polyline points="17 21 17 13 7 13 7 21" />
-          <polyline points="7 3 7 8 15 8" />
-        </svg>
-      </button>
-
-      <button id="showDays" class="ghost" title="Ver dias guardados">
-        <svg viewBox="0 0 1280 755" width="22" height="22" style="fill: white;">
-          <path d="M6085 7544 c-280 -20 -371 -28 -500 -45 -1333 -173 -2702 -778 -3954 -1747 -706 -547 -1342 -1222 -1542 -1638 -106 -220 -116 -379 -32 -527 135 -240 665 -809 1193 -1283 890 -797 1896 -1440 2860 -1826 614 -246 1197 -391 1830 -454 241 -25 850 -25 1095 0 776 77 1496 289 2262 668 851 420 1700 1032 2464 1776 457 444 903 961 1006 1166 35 69 35 73 30 161 -10 181 -99 338 -388 686 -122 146 -588 617 -774 780 -720 634 -1441 1125 -2215 1508 -885 439 -1720 685 -2585 761 -121 11 -657 21 -750 14z m695 -704 c785 -69 1554 -300 2370 -710 977 -490 1957 -1234 2669 -2025 79 -88 231 -279 231 -290 0 -28 -328 -400 -571 -649 -1429 -1464 -3087 -2354 -4574 -2456 -88 -6 -205 -14 -260 -19 -106 -8 -381 1 -605 19 -1532 125 -3178 986 -4704 2460 -217 210 -606 641 -606 672 0 36 191 290 357 474 659 734 1686 1478 2653 1922 795 365 1529 559 2315 612 152 10 560 5 725 -10z"/>
-          <path d="M6175 5909 c-610 -99 -1089 -390 -1436 -872 -179 -250 -290 -518 -346 -837 -26 -149 -26 -530 0 -680 39 -223 96 -397 192 -586 260 -514 730 -895 1310 -1063 741 -214 1557 9 2105 575 141 145 276 331 315 432 23 61 35 153 29 218 -6 54 -2 73 30 165 105 295 138 585 101 886 -75 605 -440 1162 -963 1470 -251 148 -541 246 -831 282 -122 16 -436 22 -506 10z"/>
-        </svg>
-      </button>
-    </div>
-
-    <section class="results" id="results" hidden>
-      <div class="small">Chamadas detectadas: <span id="count" class="chip">0</span></div>
-      <div>
-        Taxa de transferência para IQS:<br/>
-        <div id="npsShow">
-          <span id="npsPercent" class="chip">0</span>
-          <span id="npsPercentMeta" class="chip"></span>  
-        </div>
+      <div
+        id="informHold"
+        style="
+          display: none;
+          background-color: #172039;
+          padding: 8px;
+          text-align: center;
+          cursor: pointer;
+        "
+        onclick="changeInfoContente(0)"
+      >
+        <p class="lead">
+          Cole os tempos em minutos — separados por vírgula, espaço ou nova
+          linha. Ex: <code>14</code>, <code>14.5</code>, <code>20min</code>.
+            <br>
+          Clique no botão "+" para adicionar +1 às chamadas enviadas para IQS e "-" para retirar.
+            <br>
+Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
+          IQS. Ex: <code>12.3*</code>, <code>7*</code>. 
+          Paire sobre os botões abaixo para ver suas funções.          
+        </p>
+        <p class="lead" style="color: darkkhaki;">Clique aqui para esconder esta informação e bom trabalho!</p>
       </div>
-      <div class="grid">
+
+      <div
+        id="informCont"
+        style="
+          background-color: #172039;
+          padding: 8px;
+          text-align: center;
+          cursor: pointer;
+        "
+        onclick="changeInfoContente(1)"
+      >
+        <div style="font-size: 11px; font-weight: 700">Clique para informação</div>
+      </div>
+
+      <label for="input">Tempos (min)</label>
+      <textarea id="input" placeholder="Ex: 14, 20min, 13.5, 12.4*, 2*"></textarea>
+
+      <div class="row">
+        <label for="npsSet" style="font-size: 13px">Enviados para IQS</label>
+        <div id="npsVal">00</div>
+        <button class="nps" onclick="npsDud(+1)">+</button>
+        <button class="nps" id="npsRem" onclick="npsDud(-1)">-</button>
+      </div>
+
+      <div class="row">
+        <button id="calc" title="Calcular TMA">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor"
+            stroke-width="2" viewBox="0 0 24 24">
+            <path d="M9 3h6v2H9zM5 21h14M7 9h10v6H7z" />
+          </svg>
+        </button>
+
+        <button id="clear" class="ghost" title="Limpar campos">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M3 6h18M9 6v12m6-12v12" />
+          </svg>
+        </button>
+
+        <button id="copy" class="ghost" title="Copiar resultado">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="9" y="9" width="13" height="13" rx="2" />
+            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+          </svg>
+        </button>
+
+        <button id="save" class="ghost" title="Guardar dia">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none"
+            stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path
+              d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+            <polyline points="17 21 17 13 7 13 7 21" />
+            <polyline points="7 3 7 8 15 8" />
+          </svg>
+        </button>
+
+		 <button id="showDays" class="ghost" title="Ver dias guardados">
+          <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+			 width="1280.000000pt" height="755.000000pt" viewBox="0 0 1280.000000 755.000000"
+			 preserveAspectRatio="xMidYMid meet">
+				<metadata>
+				Created by potrace 1.15, written by Peter Selinger 2001-2017
+				</metadata>
+				<g transform="translate(0.000000,755.000000) scale(0.100000,-0.100000)"
+				fill="#ffffff" stroke="none">
+				<path d="M6085 7544 c-280 -20 -371 -28 -500 -45 -1333 -173 -2702 -778 -3954
+				-1747 -706 -547 -1342 -1222 -1542 -1638 -106 -220 -116 -379 -32 -527 135
+				-240 665 -809 1193 -1283 890 -797 1896 -1440 2860 -1826 614 -246 1197 -391
+				1830 -454 241 -25 850 -25 1095 0 776 77 1496 289 2262 668 851 420 1700 1032
+				2464 1776 457 444 903 961 1006 1166 35 69 35 73 30 161 -10 181 -99 338 -388
+				686 -122 146 -588 617 -774 780 -720 634 -1441 1125 -2215 1508 -885 439
+				-1720 685 -2585 761 -121 11 -657 21 -750 14z m695 -704 c785 -69 1554 -300
+				2370 -710 977 -490 1957 -1234 2669 -2025 79 -88 231 -279 231 -290 0 -28
+				-328 -400 -571 -649 -1429 -1464 -3087 -2354 -4574 -2456 -88 -6 -205 -14
+				-260 -19 -106 -8 -381 1 -605 19 -1532 125 -3178 986 -4704 2460 -217 210
+				-606 641 -606 672 0 36 191 290 357 474 659 734 1686 1478 2653 1922 795 365
+				1529 559 2315 612 152 10 560 5 725 -10z"/>
+				<path d="M6175 5909 c-610 -99 -1089 -390 -1436 -872 -179 -250 -290 -518
+				-346 -837 -26 -149 -26 -530 0 -680 39 -223 96 -397 192 -586 260 -514 730
+				-895 1310 -1063 741 -214 1557 9 2105 575 141 145 276 331 315 432 23 61 35
+				153 29 218 -6 54 -2 73 30 165 105 295 138 585 101 886 -75 605 -440 1162
+				-963 1470 -251 148 -541 246 -831 282 -122 16 -436 22 -506 10z"/>
+				</g>
+			</svg>
+        </button>
+      </div>
+
+      <section class="results" id="results" hidden>
+        <div class="small">
+          Chamadas detectadas: <span id="count" class="chip">0</span>
+        </div>
         <div>
-          <div class="small">Total (min / sec)</div>
-          <div style="display: flex">
-            <div id="totalMin" style="font-size: 16px; font-weight: 700">0</div>
-            <div style="font-size: 16px; margin: 0 4px">/</div>
-            <div id="totalMinSec" style="font-size: 16px; font-weight: 700">0</div>
+          Taxa de transferência para IQS:<br/>
+		  <div id="npsShow">
+          	<span id="npsPercent" class="chip">0</span>
+          	<span id="npsPercentMeta" class="chip"></span>  
+		  </div>
+        </div>
+
+        <div class="grid">
+          <div>
+            <div class="small">Total (min / sec)</div>
+            <div style="display: flex">
+              <div id="totalMin" style="font-size: 16px; font-weight: 700">0</div>
+              <div style="font-size: 16px; margin: 0 4px">/</div>
+              <div id="totalMinSec" style="font-size: 16px; font-weight: 700"></div>
+            </div>
+          </div>
+          <div id="tmaSecBox" style="padding: 8px; border-radius: 5px">
+            <div class="small">TMA (segundos)</div>
+            <div id="tmaSec" style="font-size: 16px; font-weight: 700">0</div>
           </div>
         </div>
-        <div id="tmaSecBox" style="padding: 8px; border-radius: 5px">
-          <div class="small">TMA (segundos)</div>
-          <div id="tmaSec" style="font-size: 16px; font-weight: 700">0</div>
+
+        <div id="formula"
+          style="display: none; margin-top: 8px; font-size: 12px; color: var(--muted);">
         </div>
-      </div>
-      <div id="formula" style="display: none; margin-top: 8px; font-size: 12px; color: var(--muted);"></div>
-    </section>
-  </main>
+      </section>
+    </main>
 
-  <div style="font-size: 12px; color: var(--muted); text-align: center; margin: 10px auto;">
-    <span style="margin-right: 3px">by:</span>
-    <a target="_blank" href="https://github.com/MateusLuisMk19" style="color: var(--accent); text-decoration: none">Mateus Luis</a>
-  </div>
-
-  <div id="historyModal" class="modal">
-    <div class="modal-content card">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-        <h2>Histórico</h2>
-        <button id="closeModal" class="ghost" style="padding: 5px 10px;">&times;</button>
-      </div>
-      <div class="history-filter-container">
-        <label for="historyFilter" class="small">Filtrar Período</label>
-        <select id="historyFilter">
-          <option value="7days">Últimos 7 registos</option>
-          <option value="currentMonth">Mês Corrente</option>
-          <option value="lastMonth">Mês Anterior</option>
-        </select>
-      </div>
-      <div id="historyStats" class="history-stats-banner"></div>
-      <div id="historyList" class="history-list"></div>
+    <div style="font-size: 12px; color: var(--muted); text-align: center; margin: 10px auto;">
+      <span style="margin-right: 3px">by:</span>
+      <a target="_blank" href="https://github.com/MateusLuisMk19"
+        style="color: var(--accent); text-decoration: none">Mateus Luis</a>
     </div>
-  </div>
+
+	 
+
+	<div id="historyModal" class="modal">
+	  <div class="modal-content card">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+	      <h2>Histórico de Registos</h2>
+	      <button id="closeModal" class="ghost" style="padding: 5px 10px;">&times;</button>
+	    </div>
+
+		<div style="margin-bottom: 15px;">
+		  <div class="history-filter-container">
+			  <label for="historyFilter" class="small" style="display: block; margin-bottom: 8px; opacity: 0.8;">
+				Filtrar Período
+			  </label>
+			  <select id="historyFilter">
+				<option value="7days">Últimos 7 registos</option>
+				<option value="currentMonth">Mês Corrente</option>
+				<option value="lastMonth">Mês Anterior</option>
+			  </select>
+		  </div>
+		</div>
+
+		<div id="historyStats" class="history-stats-banner"></div>
+	    <div id="historyList" class="history-list">
+	      <p class="small" style="text-align: center;">A carregar dados...</p>
+	    </div>
+	  </div>
+	</div>
 
   <script type="module" src="firebase.js"></script>
   <script src="app.js"></script>
