@@ -246,3 +246,27 @@
 	  background: var(--accent);
 	  border-radius: 10px;
 	}
+
+	.history-stats-banner {
+	  display: grid;
+	  grid-template-columns: repeat(3, 1fr);
+	  gap: 10px;
+	  background: var(--accent); /* Cor de destaque */
+	  color: white;
+	  padding: 15px;
+	  border-radius: 10px;
+	  margin-bottom: 20px;
+	  text-align: center;
+	  box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3);
+	}
+	
+	.stat-item span {
+	  font-size: 11px;
+	  text-transform: uppercase;
+	  opacity: 0.9;
+	}
+	
+	.stat-item div {
+	  font-size: 18px;
+	  font-weight: 800;
+	}
