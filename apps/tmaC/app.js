@@ -186,8 +186,13 @@ const input = document.getElementById("input"),
 				chamadasTransferidasNovas: rstTransfNess
 			  })
 	
-			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
-			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf}`
+			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%");
+			npsPercentMeta.style.backgroundColor = "darkorange";
+			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf}`;
+		}
+		else{
+			npsPercentMeta.style.backgroundColor = "darkgreen";
+			npsPercentMeta.textContent = `Good Job`;
 		}
       });
 
