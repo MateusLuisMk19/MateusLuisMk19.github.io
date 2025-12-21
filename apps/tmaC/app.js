@@ -4,6 +4,7 @@ const input = document.getElementById("input"),
 	results = document.getElementById("results"),
 	countEl = document.getElementById("count"),
 	npsPercent = document.getElementById("npsPercent"),
+	npsPercentMeta = document.getElementById("npsPercentMeta"),
 	totalMinEl = document.getElementById("totalMin"),
 	totalMinSecEl = document.getElementById("totalMinSec"),
 	tmaSecEl = document.getElementById("tmaSec"),
@@ -184,6 +185,7 @@ const input = document.getElementById("input"),
 			  })
 	
 			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
+			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf}`
 		}
        
         showResult(list, res);
