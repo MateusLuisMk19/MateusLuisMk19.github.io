@@ -7,7 +7,7 @@
     getDoc,
     updateDoc,
     arrayUnion,
-    serverTimestamp,
+    serverTimestamp, collection, getDocs, query, orderBy, limit,
   } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
   // ----------------------------
@@ -286,3 +286,68 @@
 	    front.classList.add("hide");
     });
   }
+
+// Função para listar os últimos 7 dias
+async function fetchHistory(userId) {
+  const historyList = document.getElementById("historyList");
+  historyList.innerHTML = '<p class="small" style="text-align: center;">A procurar registos...</p>';
+
+  try {
+    const q = query(
+      collection(db, "users", userId, "daily"),
+      orderBy("date", "desc"),
+      limit(7)
+    );
+
+    const querySnapshot = await getDocs(q);
+    historyList.innerHTML = "";
+
+    if (querySnapshot.empty) {
+      historyList.innerHTML = '<p class="small">Nenhum registo encontrado.</p>';
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      const item = document.createElement("div");
+      item.className = "history-item";
+      item.innerHTML = `
+        <div style="font-weight: bold; color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 5px;">
+          Data: ${data.date}
+        </div>
+        <div class="history-grid">
+          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
+          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
+          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
+        </div>
+      `;
+      historyList.appendChild(item);
+    });
+  } catch (err) {
+    console.error(err);
+    historyList.innerHTML = '<p class="small" style="color: darkred;">Erro ao carregar histórico.</p>';
+  }
+}
+
+	// Lógica de abrir/fechar o Modal
+	const modal = document.getElementById("historyModal");
+	const showDaysBtn = document.getElementById("showDays");
+	const closeModal = document.getElementById("closeModal");
+	
+	showDaysBtn.onclick = () => {
+	  const userId = (document.getElementById("usercode")?.value || "").trim();
+	  if (!userId) {
+	    alert("Insira o seu código de utilizador primeiro.");
+	    return;
+	  }
+	  modal.style.display = "flex";
+	  fetchHistory(userId);
+	};
+	
+	closeModal.onclick = () => {
+	  modal.style.display = "none";
+	};
+	
+	window.onclick = (event) => {
+	  if (event.target == modal) modal.style.display = "none";
+	};
