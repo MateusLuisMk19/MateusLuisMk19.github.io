@@ -169,6 +169,8 @@ const input = document.getElementById("input"),
         }
 
 		const res = computeTMA(list);
+		showResult(list, res);
+		
 		const txAct = parseFloat(npsPercent.textContent);
 
 		if(txAct < 70){
@@ -187,8 +189,6 @@ const input = document.getElementById("input"),
 			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%")
 			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf}`
 		}
-       
-        showResult(list, res);
       });
 
       clear.addEventListener("click", async () => {
