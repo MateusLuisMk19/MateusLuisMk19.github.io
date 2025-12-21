@@ -225,11 +225,6 @@ const input = document.getElementById("input"),
         }
       });
 
-	  showDays.addEventListener("click", () => {
-		  //Open modal
-		  alert("Modal")
-	  })
-
       function saveFunc (getDailyDoc, saveTodayFromUI) {
 		//Validation
 		if (!usercode.value || usercode.value.length < 5) {
