@@ -305,35 +305,41 @@ async function fetchHistory(userId) {
     const querySnapshot = await getDocs(q);
     historyList.innerHTML = "";
     
-    let totalTMA = 0, totalCalls = 0, totalIQS = 0, count = 0;
-
-    if (querySnapshot.empty) {
-      historyList.innerHTML = '<p class="small">Nenhum registo encontrado.</p>';
-      return;
-    }
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      count++;
-      
-      // Somar para as médias
-      totalTMA += data.summary.tma_seconds;
-      totalCalls += data.summary.totalCalls;
-      totalIQS += data.summary.iqsPercent;
-
-      // Criar o item da lista (como já tinhas)
-      const item = document.createElement("div");
-      item.className = "history-item";
-      item.innerHTML = `
-        <div style="font-weight: bold; color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 5px;">
-          Data: ${data.date}
-        </div>
-        <div class="history-grid">
-          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
-          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
-          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
-        </div>
-      `;
+    let totalTMA = 0, totalCallsAcumulado = 0, totalIQS = 0, count = 0;
+	
+	querySnapshot.forEach((doc) => {
+	  const data = doc.data();
+	  count++;
+	  
+	  // Somar para as estatísticas
+	  totalTMA += data.summary.tma_seconds;
+	  totalCallsAcumulado += data.summary.totalCalls; // Aqui somamos o volume total
+	  totalIQS += data.summary.iqsPercent;
+	
+	  // ... (código de criação do history-item continua igual)
+	});
+	
+	// Cálculos finais
+	const avgTMA = count > 0 ? Math.round(totalTMA / count) : 0;
+	const avgIQS = count > 0 ? (totalIQS / count).toFixed(1) : 0;
+	// Note que aqui não dividimos as chamadas, mantemos o totalCallsAcumulado
+	
+	// Exibir no Banner (Ajuste do Label para "Total Calls")
+	historyStats.style.display = "grid";
+	historyStats.innerHTML = `
+	  <div class="stat-item">
+	    <span>Média TMA</span>
+	    <div>${avgTMA}s</div>
+	  </div>
+	  <div class="stat-item">
+	    <span>Total Calls</span>
+	    <div>${totalCallsAcumulado}</div>
+	  </div>
+	  <div class="stat-item">
+	    <span>Média IQS</span>
+	    <div>${avgIQS}%</div>
+	  </div>
+	`;
       historyList.appendChild(item);
     });
 
