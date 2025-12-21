@@ -1,7 +1,9 @@
+// Referências do DOM
 const input = document.getElementById("input"),
   calc = document.getElementById("calc"),
   clear = document.getElementById("clear"),
   copyBtn = document.getElementById("copy"),
+  saveBtn = document.getElementById("save"),
   results = document.getElementById("results"),
   countEl = document.getElementById("count"),
   npsPercent = document.getElementById("npsPercent"),
@@ -9,32 +11,32 @@ const input = document.getElementById("input"),
   totalMinEl = document.getElementById("totalMin"),
   totalMinSecEl = document.getElementById("totalMinSec"),
   tmaSecEl = document.getElementById("tmaSec"),
-  tmaSecBox = document.getElementById("tmaSecBox"), // Para as cores
+  tmaSecBox = document.getElementById("tmaSecBox"),
   npsVal = document.getElementById("npsVal"),
   usercode = document.getElementById("usercode"),
   front = document.getElementById('front'),
   back = document.getElementById('back'),
   divBtns = document.getElementById("divBtns"),
-  saveBtn = document.getElementById("save");
+  informHold = document.getElementById("informHold"),
+  informCont = document.getElementById("informCont");
 
-// --- GESTÃO DE NPS (IQS) - CORRIGIDO ---
-function npsDud(val) {
+// --- FUNÇÕES GLOBAIS (Chamadas pelo HTML) ---
+window.npsDud = function(val) {
   let current = parseInt(npsVal.textContent) || 0;
-  let newVal = Math.max(0, current + val);
-  npsVal.textContent = newVal;
-}
+  npsVal.textContent = Math.max(0, current + val);
+};
 
-document.getElementById("npsAdd").addEventListener("click", () => npsDud(1));
-document.getElementById("npsMinus").addEventListener("click", () => npsDud(-1));
+window.changeInfoContente = function(state) {
+  if (state === 0) { // Esconder
+    informHold.style.display = "none";
+    informCont.style.display = "block";
+  } else { // Mostrar
+    informHold.style.display = "block";
+    informCont.style.display = "none";
+  }
+};
 
-// --- CORES DINÂMICAS DO TMA ---
-function updateTMAColor(seconds) {
-  if (seconds < 550) tmaSecBox.style.backgroundColor = "darkgreen";
-  else if (seconds <= 700) tmaSecBox.style.backgroundColor = "#b33d18";
-  else tmaSecBox.style.backgroundColor = "darkred";
-}
-
-// --- PARSE E CÁLCULOS ---
+// --- LÓGICA DE CÁLCULO ---
 function parseInput(text) {
   if (!text) return [];
   return text.split(/[\n,;]+/).flatMap(chunk => 
@@ -70,14 +72,16 @@ calc.addEventListener("click", () => {
   tmaSecEl.textContent = tmaSec;
   npsPercent.textContent = `${percent}%`;
 
-  updateTMAColor(tmaSec);
+  // Cores do TMA
+  if (tmaSec < 550) tmaSecBox.style.backgroundColor = "darkgreen";
+  else if (tmaSec <= 700) tmaSecBox.style.backgroundColor = "#b33d18";
+  else tmaSecBox.style.backgroundColor = "darkred";
 
-  // Lógica de Meta - Mostra o número final pretendido
+  // Lógica de Meta
   if (percent < 70) {
     const meta = 0.701;
-    const nec = Math.ceil((meta * validIQS - nps) / (1 - meta));
-    const finalIQS = nps + nec;
-    npsPercentMeta.textContent = `Meta: ${finalIQS} IQS`; // Agora mostra o número
+    const finalIQS = Math.ceil((meta * validIQS - nps) / (1 - meta)) + nps;
+    npsPercentMeta.textContent = `Meta: ${finalIQS} IQS`;
     npsPercentMeta.style.backgroundColor = "#b33d18";
   } else {
     npsPercentMeta.textContent = "Good Job";
@@ -85,34 +89,27 @@ calc.addEventListener("click", () => {
   }
 });
 
-// --- BOTÕES DE ACÇÃO ---
+// --- BOTÕES ---
 clear.addEventListener("click", () => {
   input.value = "";
-  npsVal.textContent = "0";
+  npsVal.textContent = "00";
   results.hidden = true;
   tmaSecBox.style.backgroundColor = "transparent";
 });
 
 copyBtn.addEventListener("click", () => {
-  const text = `TMA: ${tmaSecEl.textContent}s | Total: ${totalMinEl.textContent}min | IQS: ${npsPercent.textContent}`;
-  const textArea = document.createElement("textarea");
-  textArea.value = text;
-  document.body.appendChild(textArea);
-  textArea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textArea);
-  alert("Copiado!");
+  const text = `TMA: ${tmaSecEl.textContent}s | IQS: ${npsPercent.textContent}`;
+  navigator.clipboard.writeText(text).then(() => alert("Copiado!"));
 });
 
-// --- LIGAÇÃO FIREBASE ---
 saveBtn.addEventListener("click", () => {
+  if (!usercode.value || !front.classList.contains("hide")) return alert("Confirme o utilizador.");
   const list = parseInput(input.value);
   const nps = parseInt(npsVal.textContent) || 0;
-  if (!usercode.value || !front.classList.contains("hide")) return alert("Confirme o utilizador.");
   if (window.firebaseTMA) window.firebaseTMA.saveTodayFromUI(list, nps);
 });
 
-// --- USER UI ---
+// Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 front.addEventListener('click', () => { usercode.classList.add("disabled"); front.classList.add("hide"); });
 back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); });
