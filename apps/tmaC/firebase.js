@@ -289,62 +289,86 @@
 
 // Função para listar os últimos 7 dias
 async function fetchHistory(userId) {
-  const historyList = document.getElementById("historyList");
-  const historyStats = document.getElementById("historyStats");
-  
-  historyList.innerHTML = '<p class="small" style="text-align: center;">A procurar registos...</p>';
-  historyStats.style.display = "none"; // Esconde enquanto carrega
-
-  try {
-    const q = query(
-      collection(db, "users", userId, "daily"),
-      orderBy("date", "desc"),
-      limit(7)
-    );
-
-    const querySnapshot = await getDocs(q);
-    historyList.innerHTML = "";
-    
-    let totalTMA = 0, totalCallsAcumulado = 0, totalIQS = 0, count = 0;
-	
-	querySnapshot.forEach((doc) => {
-	  const data = doc.data();
-	  count++;
+	  const historyList = document.getElementById("historyList");
+	  const historyStats = document.getElementById("historyStats");
 	  
-	  // Somar para as estatísticas
-	  totalTMA += data.summary.tma_seconds;
-	  totalCallsAcumulado += data.summary.totalCalls; // Aqui somamos o volume total
-	  totalIQS += data.summary.iqsPercent;
+	  // Reset e Feedback visual de carregamento
+	  historyList.innerHTML = '<p class="small" style="text-align: center;">A procurar registos...</p>';
+	  historyStats.style.display = "none"; 
 	
-	  // ... (código de criação do history-item continua igual)
-	});
+	  try {
+	    // Query para buscar os últimos 7 dias na subcoleção 'daily'
+	    const q = query(
+	      collection(db, "users", userId, "daily"),
+	      orderBy("date", "desc"),
+	      limit(7)
+	    );
 	
-	// Cálculos finais
-	const avgTMA = count > 0 ? Math.round(totalTMA / count) : 0;
-	const avgIQS = count > 0 ? (totalIQS / count).toFixed(1) : 0;
-	// Note que aqui não dividimos as chamadas, mantemos o totalCallsAcumulado
+	    const querySnapshot = await getDocs(q);
+	    historyList.innerHTML = "";
+	    
+	    // Variáveis para acumular os valores
+	    let acumuladorTMA = 0;
+	    let acumuladorCalls = 0;
+	    let acumuladorIQS = 0;
+	    let totalDias = 0;
 	
-	// Exibir no Banner (Ajuste do Label para "Total Calls")
-	historyStats.style.display = "grid";
-	historyStats.innerHTML = `
-	  <div class="stat-item">
-	    <span>Média TMA</span>
-	    <div>${avgTMA}s</div>
-	  </div>
-	  <div class="stat-item">
-	    <span>Total Calls</span>
-	    <div>${totalCallsAcumulado}</div>
-	  </div>
-	  <div class="stat-item">
-	    <span>Média IQS</span>
-	    <div>${avgIQS}%</div>
-	  </div>
-	`;
-  } catch (err) {
-    console.error(err);
-    historyList.innerHTML = '<p class="small" style="color: darkred;">Erro ao carregar histórico.</p>';
-  }
-}
+	    if (querySnapshot.empty) {
+	      historyList.innerHTML = '<p class="small" style="text-align: center;">Nenhum registo encontrado para este utilizador.</p>';
+	      return;
+	    }
+	
+	    querySnapshot.forEach((doc) => {
+	      const data = doc.data();
+	      totalDias++;
+	      
+	      // Somar valores para as estatísticas do topo
+	      acumuladorTMA += (data.summary.tma_seconds || 0);
+	      acumuladorCalls += (data.summary.totalCalls || 0); // Total absoluto
+	      acumuladorIQS += (data.summary.iqsPercent || 0);
+	
+	      // Criar o card individual do dia na lista
+	      const item = document.createElement("div");
+	      item.className = "history-item";
+	      item.innerHTML = `
+	        <div style="font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; margin-bottom: 8px;">
+	          Data: ${data.date}
+	        </div>
+	        <div class="history-grid">
+	          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
+	          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
+	          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
+	        </div>
+	      `;
+	      historyList.appendChild(item);
+	    });
+	
+	    // Calcular Médias (apenas para TMA e IQS)
+	    const mediaTMA = Math.round(acumuladorTMA / totalDias);
+	    const mediaIQS = (acumuladorIQS / totalDias).toFixed(1);
+	
+	    // Exibir o Banner de Estatísticas no topo do Modal
+	    historyStats.style.display = "grid";
+	    historyStats.innerHTML = `
+	      <div class="stat-item">
+	        <span>Média TMA</span>
+	        <div>${mediaTMA}s</div>
+	      </div>
+	      <div class="stat-item">
+	        <span>Total Calls</span>
+	        <div style="color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3);">${acumuladorCalls}</div>
+	      </div>
+	      <div class="stat-item">
+	        <span>Média IQS</span>
+	        <div>${mediaIQS}%</div>
+	      </div>
+	    `;
+
+	  } catch (err) {
+	    console.error("Erro ao carregar histórico:", err);
+	    historyList.innerHTML = '<p class="small" style="color: #ff4d4d; text-align: center;">Erro técnico ao aceder à base de dados.</p>';
+	  }
+	}
 
 	// Lógica de abrir/fechar o Modal
 	const modal = document.getElementById("historyModal");
