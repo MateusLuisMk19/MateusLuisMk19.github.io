@@ -188,6 +188,7 @@ const input = document.getElementById("input"),
 	
 			console.log(rstTransfNess+"transf necessaria, para "+metaTransf+"%");
 			npsPercentMeta.style.backgroundColor = "#b33d18";
+			npsPercentMeta.title = `Transfira mais ${rstTransfNess} chamadas`;
 			npsPercentMeta.textContent = `+ ${rstTransfNess} -> ${metaTransf.toFixed(1)}`;
 		}
 		else{
