@@ -340,31 +340,6 @@ async function fetchHistory(userId) {
 	    <div>${avgIQS}%</div>
 	  </div>
 	`;
-      historyList.appendChild(item);
-    });
-
-    // Calcular Médias
-    const avgTMA = Math.round(totalTMA / count);
-    const avgCalls = (totalCalls / count).toFixed(1);
-    const avgIQS = (totalIQS / count).toFixed(1);
-
-    // Exibir Médias no Banner
-    historyStats.style.display = "grid";
-    historyStats.innerHTML = `
-      <div class="stat-item">
-        <span>Média TMA</span>
-        <div>${avgTMA}s</div>
-      </div>
-      <div class="stat-item">
-        <span>Média Calls</span>
-        <div>${avgCalls}</div>
-      </div>
-      <div class="stat-item">
-        <span>Média IQS</span>
-        <div>${avgIQS}%</div>
-      </div>
-    `;
-
   } catch (err) {
     console.error(err);
     historyList.innerHTML = '<p class="small" style="color: darkred;">Erro ao carregar histórico.</p>';
