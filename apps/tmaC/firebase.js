@@ -161,8 +161,8 @@ async function fetchHistory(userId, filterType = "7days") {
         <span>Média IQS</span>
         <div>${(acIQS/count).toFixed(1)}%</div>
       </div>
-    `;*/
-    }
+    `;
+    }*/
   } catch (e) { 
     console.error("Erro ao carregar histórico:", err);
     // Nota: Se receberes um erro de "index required", clica no link que aparece no console do browser para criar o índice automático no Firebase.
