@@ -47,9 +47,82 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
 async function fetchHistory(userId, filterType = "7days") {
   const listEl = document.getElementById("historyList");
   const statsEl = document.getElementById("historyStats");
+
+  listEl.innerHTML = '<p class="small" style="text-align: center;">A procurar registos do mês...</p>';
+  statsEl.style.display = "none";
   
   try {
-    let q;
+    // 1. Calcular o primeiro dia do mês atual no formato YYYY-MM-DD
+    const agora = new Date();
+    const ano = agora.getFullYear();
+    const mes = String(agora.getMonth() + 1).padStart(2, '0');
+    const primeiroDiaMes = `${ano}-${mes}-01`;
+
+    // 2. Criar a Query com filtro de intervalo (where)
+    // Buscamos todos os docs onde a "date" é maior ou igual ao dia 1 deste mês
+    const { where } = await import("https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js");
+    
+    const q = query(
+      collection(db, "users", userId, "daily"),
+      where("date", ">=", primeiroDiaMes), 
+      orderBy("date", "desc")
+    );
+
+    const querySnapshot = await getDocs(q);
+    listEl.innerHTML = "";
+    
+    let acumuladorTMA = 0;
+    let acumuladorCalls = 0;
+    let acumuladorIQS = 0;
+    let totalDias = 0;
+
+    if (querySnapshot.empty) {
+      listEl.innerHTML = '<p class="small" style="text-align: center;">Nenhum registo encontrado para o mês corrente.</p>';
+      return;
+    }
+
+    querySnapshot.forEach((doc) => {
+      const data = doc.data();
+      totalDias++;
+      
+      acumuladorTMA += (data.summary.tma_seconds || 0);
+      acumuladorCalls += (data.summary.totalCalls || 0);
+      acumuladorIQS += (data.summary.iqsPercent || 0);
+
+      const item = document.createElement("div");
+      item.className = "history-item";
+      item.innerHTML = `
+        <div style="font-weight: bold; color: var(--accent); border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 5px; margin-bottom: 8px;">
+          Data: ${data.date}
+        </div>
+        <div class="history-grid">
+          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
+          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
+          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
+        </div>
+      `;
+      listEl.appendChild(item);
+    });
+
+    const mediaTMA = Math.round(acumuladorTMA / totalDias);
+    const mediaIQS = (acumuladorIQS / totalDias).toFixed(1);
+
+    statsEl.style.display = "grid";
+    statsEl.innerHTML = `
+      <div class="stat-item">
+        <span>Média TMA</span>
+        <div>${mediaTMA}s</div>
+      </div>
+      <div class="stat-item">
+        <span>Total Mensal</span>
+        <div style="color: #fff; text-shadow: 0 0 8px rgba(255,255,255,0.3);">${acumuladorCalls}</div>
+      </div>
+      <div class="stat-item">
+        <span>Média IQS</span>
+        <div>${mediaIQS}%</div>
+      </div>
+    `;
+    /*let q;
     const ref = collection(db, "users", userId, "daily");
     if (filterType === "7days") q = query(ref, orderBy("date", "desc"), limit(7));
     else {
@@ -88,9 +161,13 @@ async function fetchHistory(userId, filterType = "7days") {
         <span>Média IQS</span>
         <div>${(acIQS/count).toFixed(1)}%</div>
       </div>
-    `;
+    `;*/
     }
-  } catch (e) { console.error(e); }
+  } catch (e) { 
+    console.error("Erro ao carregar histórico:", err);
+    // Nota: Se receberes um erro de "index required", clica no link que aparece no console do browser para criar o índice automático no Firebase.
+    listEl.innerHTML = '<p class="small" style="color: #ff4d4d; text-align: center;">Erro ao carregar dados do mês.</p>';
+  }
 }
 
 // --- EXPOR PARA O WINDOW ---
