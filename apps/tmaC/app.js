@@ -124,6 +124,26 @@ function chamadasNecessarias({
   return Math.ceil(x);
 }
 
+// Controlo do FAB de Novidades
+const fabBtn = document.getElementById("fabBtn");
+const newsPanel = document.getElementById("newsPanel");
+const closeNews = document.getElementById("closeNews");
+
+fabBtn.addEventListener("click", () => {
+  newsPanel.classList.toggle("hide");
+});
+
+closeNews.addEventListener("click", () => {
+  newsPanel.classList.add("hide");
+});
+
+// Fechar se clicar fora do painel
+document.addEventListener("click", (e) => {
+  if (!document.getElementById("newsFAB").contains(e.target)) {
+    newsPanel.classList.add("hide");
+  }
+});
+
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 front.addEventListener('click', () => { usercode.classList.add("disabled"); front.classList.add("hide"); });
