@@ -1,164 +1,36 @@
 <!DOCTYPE html>
 <html lang="pt-PT">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Calculadora de TMA — Compacta</title>
-
-    <style>
-      :root {
-        --bg: #0f1724;
-        --card: #0b1220;
-        --accent: #7c3aed;
-        --muted: #9aa4b2;
-        --glass: rgba(255, 255, 255, 0.04);
-      }
-      * {
-        box-sizing: border-box;
-      }
-      html,
-      body {
-        height: 100%;
-        margin: 0;
-        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
-          Roboto, "Helvetica Neue", Arial;
-      }
-      body {
-        background: linear-gradient(180deg, #071126 0%, #071029 60%);
-        color: #e6eef8;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 18px;
-      }
-      .card {
-        width: 100%;
-        max-width: 520px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.02),
-          rgba(255, 255, 255, 0.01)
-        );
-        border-radius: 12px;
-        padding: 18px;
-        box-shadow: 0 6px 25px rgba(2, 6, 23, 0.6);
-        border: 1px solid rgba(255, 255, 255, 0.035);
-      }
-      h1 {
-        margin: 0 0 6px;
-        font-size: 18px;
-        text-align: center;
-      }
-      p.lead {
-        margin: 0 0 12px;
-        color: var(--muted);
-        font-size: 13px;
-        text-align: center;
-      }
-      label {
-        display: block;
-        margin-bottom: 6px;
-        font-weight: 600;
-        font-size: 14px;
-      }
-      textarea,
-      input {
-        width: 100%;
-        padding: 10px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.04);
-        background: var(--glass);
-        color: inherit;
-        font-size: 14px;
-      }
-      textarea {
-        min-height: 55px;
-        resize: vertical;
-      }
-      .row {
-        display: flex;
-        gap: 8px;
-        margin-top: 10px;
-        align-items: center;
-        justify-content: center;
-      }
-      button {
-        padding: 9px 11px;
-        border-radius: 10px;
-        border: 0;
-        background: var(--accent);
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-      }
-      button svg {
-        width: 18px;
-        height: 18px;
-      }
-      button.ghost {
-        background: transparent;
-        border: 1px solid rgba(255, 255, 255, 0.06);
-      }
-      .results {
-        margin-top: 12px;
-        padding: 10px;
-        border-radius: 10px;
-        background: linear-gradient(
-          180deg,
-          rgba(255, 255, 255, 0.012),
-          transparent
-        );
-        border: 1px solid rgba(255, 255, 255, 0.02);
-      }
-      .small {
-        font-size: 12px;
-        color: var(--muted);
-      }
-      .grid {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 10px;
-      }
-      .chip {
-        display: inline-block;
-        padding: 4px 7px;
-        border-radius: 999px;
-        background: rgba(255, 255, 255, 0.03);
-        font-weight: 600;
-        font-size: 13px;
-      }
-      @media (max-width: 420px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-      .nps {
-        padding: 7px 10px;
-        border-radius: 8px;
-        border: 0;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        background-color: darkcyan;
-        font-size: 13px;
-      }
-      #npsRem {
-        background-color: darkred;
-      }
-    </style>
-  </head>
-
-  <body
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Calculadora de TMA — Compacta</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+ <body
     style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
   >
     <main class="card" role="main">
-      <h1>Calculadora de TMA</h1>
-
+      <div style="display: flex; margin: 10px 0;
+        align-items: center;justify-content:space-between;">
+	<h1 style="margin-left: 40px 0;">C-TMA</h1>
+	<div style="display: flex;align-items: center; width:120px; background-color:wite">
+	   <input id="usercode" type="text">
+	   <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
+	      <button class="btn-front npsRem" id="back">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Limpar</title>
+				  <path d="M18 6L6 18M6 6l12 12"/>
+				</svg>
+		  </button>
+	      <button class="btn-front nps" id="front">
+			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+				  <title>Guardar</title>
+				  <path d="M20 6L9 17l-5-5"/>
+				</svg>
+		  </button>
+	   </div>
+	</div>
+      </div>
       <div
         id="informHold"
         style="
@@ -229,7 +101,7 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
           </svg>
         </button>
 
-        <button disabled id="save" class="ghost" title="Guardar localmente">
+        <button id="save" class="ghost" title="Guardar dia">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none"
             stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
             <path
@@ -238,6 +110,36 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
             <polyline points="7 3 7 8 15 8" />
           </svg>
         </button>
+
+		 <button id="showDays" class="ghost" title="Ver dias guardados">
+          <svg version="1.0" xmlns="http://www.w3.org/2000/svg"
+			 width="1280.000000pt" height="755.000000pt" viewBox="0 0 1280.000000 755.000000"
+			 preserveAspectRatio="xMidYMid meet">
+				<metadata>
+				Created by potrace 1.15, written by Peter Selinger 2001-2017
+				</metadata>
+				<g transform="translate(0.000000,755.000000) scale(0.100000,-0.100000)"
+				fill="#ffffff" stroke="none">
+				<path d="M6085 7544 c-280 -20 -371 -28 -500 -45 -1333 -173 -2702 -778 -3954
+				-1747 -706 -547 -1342 -1222 -1542 -1638 -106 -220 -116 -379 -32 -527 135
+				-240 665 -809 1193 -1283 890 -797 1896 -1440 2860 -1826 614 -246 1197 -391
+				1830 -454 241 -25 850 -25 1095 0 776 77 1496 289 2262 668 851 420 1700 1032
+				2464 1776 457 444 903 961 1006 1166 35 69 35 73 30 161 -10 181 -99 338 -388
+				686 -122 146 -588 617 -774 780 -720 634 -1441 1125 -2215 1508 -885 439
+				-1720 685 -2585 761 -121 11 -657 21 -750 14z m695 -704 c785 -69 1554 -300
+				2370 -710 977 -490 1957 -1234 2669 -2025 79 -88 231 -279 231 -290 0 -28
+				-328 -400 -571 -649 -1429 -1464 -3087 -2354 -4574 -2456 -88 -6 -205 -14
+				-260 -19 -106 -8 -381 1 -605 19 -1532 125 -3178 986 -4704 2460 -217 210
+				-606 641 -606 672 0 36 191 290 357 474 659 734 1686 1478 2653 1922 795 365
+				1529 559 2315 612 152 10 560 5 725 -10z"/>
+				<path d="M6175 5909 c-610 -99 -1089 -390 -1436 -872 -179 -250 -290 -518
+				-346 -837 -26 -149 -26 -530 0 -680 39 -223 96 -397 192 -586 260 -514 730
+				-895 1310 -1063 741 -214 1557 9 2105 575 141 145 276 331 315 432 23 61 35
+				153 29 218 -6 54 -2 73 30 165 105 295 138 585 101 886 -75 605 -440 1162
+				-963 1470 -251 148 -541 246 -831 282 -122 16 -436 22 -506 10z"/>
+				</g>
+			</svg>
+        </button>
       </div>
 
       <section class="results" id="results" hidden>
@@ -245,8 +147,11 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
           Chamadas detectadas: <span id="count" class="chip">0</span>
         </div>
         <div>
-          Taxa de transferência para IQS:
-          <span id="npsPercent" class="chip">0</span>%
+          Taxa de transferência para IQS:<br/>
+		  <div id="npsShow">
+          	<span id="npsPercent" class="chip">0</span>
+          	<span id="npsPercentMeta" class="chip"></span>  
+		  </div>
         </div>
 
         <div class="grid">
@@ -276,221 +181,36 @@ Adicione <code>*</code> ao tempo para que ele NÃO conte no cálculo de
         style="color: var(--accent); text-decoration: none">Mateus Luis</a>
     </div>
 
-    <script>
-      const input = document.getElementById("input"),
-        calc = document.getElementById("calc"),
-        clear = document.getElementById("clear"),
-        results = document.getElementById("results"),
-        countEl = document.getElementById("count"),
-        npsPercent = document.getElementById("npsPercent"),
-        totalMinEl = document.getElementById("totalMin"),
-        totalMinSecEl = document.getElementById("totalMinSec"),
-        tmaSecEl = document.getElementById("tmaSec"),
-        formulaEl = document.getElementById("formula"),
-        copyBtn = document.getElementById("copy"),
-        saveBtn = document.getElementById("save"),
-        npsVal = document.getElementById("npsVal"),
-        tmsSecEl = document.querySelector("#tmaSec");
+	 
 
-      document.addEventListener("DOMContentLoaded", async () => {
-        if (window.pywebview) {
-          try {
-            const dados = await window.pywebview.api.carregar();
-            if (dados.tma_input) input.value = dados.tma_input;
-            if (dados.nps_val !== undefined) npsVal.textContent = dados.nps_val;
-          } catch (e) {
-            console.error("Erro ao carregar dados:", e);
-          }
-        }
-      });
+	<div id="historyModal" class="modal">
+	  <div class="modal-content card">
+	    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+	      <h2>Histórico de Registos</h2>
+	      <button id="closeModal" class="ghost" style="padding: 5px 10px;">&times;</button>
+	    </div>
 
-      function changeInfoContente(v) {
-        const hold = document.getElementById("informHold");
-        const cont = document.getElementById("informCont");
-        if (v === 0) {
-          hold.style.display = "none";
-          cont.style.display = "block";
-        } else {
-          hold.style.display = "block";
-          cont.style.display = "none";
-        }
-      }
+		<div style="margin-bottom: 15px;">
+		  <div class="history-filter-container">
+			  <label for="historyFilter" class="small" style="display: block; margin-bottom: 8px; opacity: 0.8;">
+				Filtrar Período
+			  </label>
+			  <select id="historyFilter">
+				<option value="7days">Últimos 7 registos</option>
+				<option value="currentMonth">Mês Corrente</option>
+				<option value="lastMonth">Mês Anterior</option>
+			  </select>
+		  </div>
+		</div>
 
-      async function npsDud(val) {
-        let oldVal = parseInt(npsVal.textContent) || 0;
-        let newVal = oldVal + val;
-        if (newVal < 0) {
-          alert("Não pode ser inferior a 0");
-          newVal = 0;
-        }
-        npsVal.textContent = newVal;
+		<div id="historyStats" class="history-stats-banner"></div>
+	    <div id="historyList" class="history-list">
+	      <p class="small" style="text-align: center;">A carregar dados...</p>
+	    </div>
+	  </div>
+	</div>
 
-        if (window.pywebview) {
-          await window.pywebview.api.guardar({
-            tma_input: input.value,
-            nps_val: newVal,
-          });
-        }
-      }
-
-      /* ============================================================
-         PARSE COM SUPORTE AO ASTERISCO "*"
-         ============================================================ */
-      function parseInput(text) {
-        if (!text) return [];
-        const raw = text
-          .split(/[\n,;]+/)
-          .map((s) => s.trim())
-          .filter(Boolean);
-
-        const values = [];
-
-        raw.forEach((chunk) => {
-          const parts = chunk.split(/\s+/).filter(Boolean);
-
-          parts.forEach((p) => {
-            const ignoreIQS = p.endsWith("*");
-
-            let cleaned = p
-              .replace(/\*/g, "")
-              .replace(/min(?:ute)?s?/i, "")
-              .replace(/m\b/i, "")
-              .replace(/,/g, ".")
-              .replace(/[^0-9.\-]/g, "");
-
-            if (cleaned === "") return;
-
-            let num = Number(cleaned);
-            if (isNaN(num)) return;
-
-            if (num % 1 !== 0) {
-              const integerPart = Math.floor(num);
-              const assumedSeconds = Math.round((num - integerPart) * 100);
-              num = integerPart + assumedSeconds / 60;
-            }
-
-            values.push({
-              value: num,
-              ignoreIQS: ignoreIQS,
-            });
-          });
-        });
-
-        return values;
-      }
-
-      /* ============================================================
-         TMA COM LIST.value
-         ============================================================ */
-      function computeTMA(list) {
-        if (!list.length) return null;
-
-        const nums = list.map((x) => x.value);
-
-        const totalMin = nums.reduce((a, b) => a + b, 0);
-        const avgMin = totalMin / nums.length;
-        const tmaSec = Math.round(avgMin * 60);
-
-        return { totalMin, avgMin, tmaSec };
-      }
-
-      /* ============================================================
-         MOSTRAR RESULTADOS + IQS AJUSTADO
-         ============================================================ */
-      function showResult(list, res) {
-        results.hidden = false;
-
-        countEl.textContent = list.length;
-        totalMinEl.textContent = res.totalMin.toFixed(2);
-        totalMinSecEl.textContent = Math.round(res.totalMin * 60);
-        tmaSecEl.textContent = res.tmaSec;
-
-        const nps = parseInt(npsVal.textContent) || 0;
-        const validForIQS = list.filter((x) => !x.ignoreIQS).length;
-
-        const percent = validForIQS
-          ? ((nps / validForIQS) * 100).toFixed(1)
-          : 0;
-
-        npsPercent.textContent = percent;
-
-        formulaEl.textContent = `(${res.totalMin.toFixed(2)} min ÷ ${list.length} chamadas) × 60 = ${res.tmaSec} segundos`;
-      }
-
-      /* Cor dinâmica */
-      const observer = new MutationObserver(() => {
-        let num = parseInt(tmsSecEl.textContent);
-        const box = document.querySelector("#tmaSecBox");
-
-        if (num < 550) box.style.backgroundColor = "darkgreen";
-        else if (num <= 700) box.style.backgroundColor = "#b33d18";
-        else box.style.backgroundColor = "darkred";
-      });
-
-      observer.observe(tmsSecEl, {
-        childList: true,
-        characterData: true,
-        subtree: true,
-      });
-
-      /* Eventos */
-      calc.addEventListener("click", () => {
-        const list = parseInput(input.value);
-
-        if (list.length === 0) {
-          alert("Nenhum tempo válido encontrado.");
-          return;
-        }
-
-        const res = computeTMA(list);
-        showResult(list, res);
-      });
-
-      clear.addEventListener("click", async () => {
-        input.value = "";
-        npsVal.textContent = "0";
-        results.hidden = true;
-
-        if (window.pywebview) {
-          await window.pywebview.api.guardar({
-            tma_input: "",
-            nps_val: 0,
-          });
-        }
-      });
-
-      copyBtn.addEventListener("click", async () => {
-        if (results.hidden) {
-          alert("Nada para copiar.");
-          return;
-        }
-        const text = `TMA: ${tmaSecEl.textContent} segundos. ${formulaEl.textContent}`;
-        try {
-          await navigator.clipboard.writeText(text);
-          alert("Resultado copiado.");
-        } catch (e) {
-          alert("Erro ao copiar.");
-        }
-      });
-
-      saveBtn.addEventListener("click", async () => {
-        if (window.pywebview) {
-          await window.pywebview.api.guardar({
-            tma_input: input.value,
-            nps_val: parseInt(npsVal.textContent) || 0,
-          });
-          alert("Guardado localmente!");
-        }
-      });
-
-      input.addEventListener("paste", () => {
-        setTimeout(() => calc.click(), 100);
-      });
-      input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-          calc.click();
-        }
-      });
-    </script>
-  </body>
-  </html>
+  <script type="module" src="firebase.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
