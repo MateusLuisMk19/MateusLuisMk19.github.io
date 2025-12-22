@@ -74,7 +74,21 @@ async function fetchHistory(userId, filterType = "7days") {
     });
 
     if (count > 0) {
-      statsEl.innerHTML = `Média TMA: ${Math.round(acTMA/count)}s | Total Calls: ${acCalls} | Média IQS: ${(acIQS/count).toFixed(1)}%`;
+      statsEl.style.display = "grid";
+      statsEl.innerHTML = `
+      <div class="stat-item">
+        <span>Média TMA</span>
+        <div>${Math.round(acTMA/count)}s</div>
+      </div>
+      <div class="stat-item">
+        <span>Total Calls</span>
+        <div>${acCalls}</div>
+      </div>
+      <div class="stat-item">
+        <span>Média IQS</span>
+        <div>${(acIQS/count).toFixed(1)}%</div>
+      </div>
+    `;
     }
   } catch (e) { console.error(e); }
 }
