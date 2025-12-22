@@ -80,8 +80,13 @@ calc.addEventListener("click", () => {
   // Lógica de Meta
   if (percent < 70) {
     const meta = 0.701;
+    const txAct = parseFloat(npsPercent.textContent);
+    const list = parseInput(input.value);
+    const chAct = list.length;
     const finalIQS = Math.ceil((meta * validIQS - nps) / (1 - meta)) + nps;
-    npsPercentMeta.textContent = `+${finalIQS} para >70%`;
+
+    const chamN = chamadasNecessarias({  chamadasAtuais:chAct,  taxaAtual:txAct, meta:meta})
+    npsPercentMeta.textContent = `+${chamN} para >70%`;
     npsPercentMeta.style.backgroundColor = "#b33d18";
   } else {
     npsPercentMeta.textContent = "Good Job";
@@ -108,6 +113,16 @@ saveBtn.addEventListener("click", () => {
   const nps = parseInt(npsVal.textContent) || 0;
   if (window.firebaseTMA) window.firebaseTMA.saveTodayFromUI(list, nps);
 });
+
+function chamadasNecessarias({
+  chamadasAtuais,
+  taxaAtual,      // ex: 0.25
+  meta            // ex: 0.70
+}) {
+  const transferidasAtuais = chamadasAtuais * taxaAtual/100;
+  const x = (meta * chamadasAtuais - transferidasAtuais) / (1 - meta);
+  return Math.ceil(x);
+}
 
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
