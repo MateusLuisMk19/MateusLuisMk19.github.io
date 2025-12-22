@@ -81,7 +81,7 @@ calc.addEventListener("click", () => {
   if (percent < 70) {
     const meta = 0.701;
     const finalIQS = Math.ceil((meta * validIQS - nps) / (1 - meta)) + nps;
-    npsPercentMeta.textContent = `Meta: ${finalIQS} IQS`;
+    npsPercentMeta.textContent = `+${finalIQS} para >70%`;
     npsPercentMeta.style.backgroundColor = "#b33d18";
   } else {
     npsPercentMeta.textContent = "Good Job";
