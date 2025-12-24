@@ -127,8 +127,24 @@ document.getElementById("historyFilter").addEventListener("change", (e) => {
   const userId = document.getElementById("usercode").value.trim();
   fetchHistory(userId, e.target.value);
 });
+
+async function checkUserExists(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    // Verificamos se existe pelo menos um documento na subcoleção daily
+    const dailyRef = collection(db, "users", userId, "daily");
+    const q = query(dailyRef, limit(1));
+    const querySnapshot = await getDocs(q);
+    
+    return !querySnapshot.empty;
+  } catch (e) {
+    console.error("Erro ao verificar user:", e);
+    return false;
+  }
+}
+
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveTodayFromUI, fetchHistory };
+window.firebaseTMA = { saveTodayFromUI, fetchHistory, checkUserExists };
 
 // Listeners do Modal (IDs do seu HTML)
 document.getElementById("showDays").addEventListener("click", () => {
