@@ -146,5 +146,36 @@ document.addEventListener("click", (e) => {
 
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
-front.addEventListener('click', () => { usercode.classList.add("disabled"); front.classList.add("hide"); });
 back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); });
+front.addEventListener('click', async () => {
+    const uid = usercode.value.trim();
+    if (uid.length < 5) return;
+
+    // Feedback visual de carregamento
+    front.style.opacity = "0.5";
+    front.disabled = true;
+
+    const exists = await window.firebaseTMA.checkUserExists(uid);
+
+    if (exists) {
+        alert(`Logado como ${uid}`);
+        confirmarLogin();
+    } else {
+        const novoRegisto = confirm(`O user "${uid}" não foi encontrado na base de dados.\nDeseja criar um novo registo com este nome?`);
+        if (novoRegisto) {
+            confirmarLogin();
+        } else {
+            // Se não quiser, desbloqueia para editar
+            front.style.opacity = "1";
+            front.disabled = false;
+        }
+    }
+});
+
+function confirmarLogin() {
+    usercode.classList.add("disabled");
+    front.classList.add("hide");
+    localStorage.setItem("tma_usercode", usercode.value.trim());
+    front.style.opacity = "1";
+    front.disabled = false;
+}
