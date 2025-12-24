@@ -3887,8 +3887,42 @@ body {
   z-index: 3;
   pointer-events: all;
 }
-.element input[type="radio"].activate:checked ~ .overlay {
-  opacity: 0.75;
+/* Em vez de cobrir tudo, vamos fazer o elemento focado ganhar destaque */
+.element .activate:checked ~ .overlay {
+  opacity: 1;
+  pointer-events: all;
+  /* Removemos o fundo sólido para ver a tabela ao fundo se desejar, 
+     ou ajustamos para ocupar apenas uma parte da tela */
+  background-color: rgba(16, 19, 24, 0.9); 
+  display: flex;
+  justify-content: flex-end; /* Alinha o conteúdo à direita como um painel */
+  padding-right: 5%;
+}
+
+/* 2. Posicionamento do Conteúdo (A "Segunda Imagem") */
+.element .activate:checked ~ .overlay .content {
+  position: relative;
+  width: 30vw; /* Define uma largura de painel lateral */
+  height: 100vh;
+  margin-left: auto; /* Empurra para a direita */
+  background: #101318;
+  border-left: 2px solid currentColor;
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  transform: translateX(0); /* Garante que ele apareça */
+  transition: transform 0.5s ease;
+}
+/* 4. Fechar o foco */
+/* O label .close deve ocupar a área vazia da esquerda para permitir fechar ao clicar fora */
+.element .activate:checked ~ .overlay .close {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 70vw; /* Ocupa a área que não é o painel */
+  height: 100%;
+  cursor: pointer;
 }
 .element input[type="radio"].activate:checked ~ .square {
   z-index: 3;
