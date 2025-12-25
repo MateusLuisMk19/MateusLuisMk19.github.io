@@ -151,6 +151,18 @@ document.addEventListener("click", (e) => {
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); localStorage.removeItem("tma_usercode"); });
 input.addEventListener('change', () => { isClearORrefresh(); });
+refresh.addEventListener('click', () => {
+	const uid = usercode.value.trim();
+	const dadosHoje = await window.firebaseTMA.fetchTodayData(uid);
+
+	if (dadosHoje) {
+		// Exemplo: atualizar um contador na tela com o que já foi salvo
+		console.log("Hoje já fizeste " + dadosHoje.summary.totalCalls + " chamadas.");
+		console.log(dadosHoje)
+	}else{
+		console.log("sem dados")
+	}
+});
 front.addEventListener('click', async () => {
     const uid = usercode.value.trim();
     if (uid.length < 5) return;
