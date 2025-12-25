@@ -19,12 +19,14 @@ const db = getFirestore(app);
 async function saveTodayFromUI(rawList, npsCurrentVal) {
   const userId = document.getElementById("usercode").value.trim();
   const dateKey = new Date().toISOString().split('T')[0];
-  
+
+  console.log(rawList)
   const calls = rawList.map(r => ({
-    valueMin: Number(r.value.toFixed(3)),
-    seconds: Math.round(r.value * 60),
+    valueMin: Number(r.value),
+    seconds: (r.value * 60),
     ignoreIQS: !!r.ignoreIQS
   }));
+  console.log(calls)
 
   const payload = {
     date: dateKey,
