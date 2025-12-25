@@ -151,7 +151,7 @@ document.addEventListener("click", (e) => {
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); localStorage.removeItem("tma_usercode"); });
 input.addEventListener('change', () => { isClearORrefresh(); });
-refresh.addEventListener('click', () => {
+refresh.addEventListener('click', async () => {
 	const uid = usercode.value.trim();
 	const dadosHoje = await window.firebaseTMA.fetchTodayData(uid);
 
