@@ -147,7 +147,7 @@ document.addEventListener("click", (e) => {
 
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
-back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); });
+back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); localStorage.removeItem("tma_usercode"); });
 input.addEventListener('change', () => { isClearORrefresh(); });
 front.addEventListener('click', async () => {
     const uid = usercode.value.trim();
@@ -193,4 +193,7 @@ function isClearORrefresh(){
 	}
 }
 
-isClearORrefresh();
+document.addEventListener('DOMContentLoaded', (event) => {
+	localStorage.removeItem("tma_usercode");
+	isClearORrefresh();
+});
