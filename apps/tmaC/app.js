@@ -174,15 +174,12 @@ refresh.addEventListener('click', async () => {
 		
 		dadosHoje.calls.forEach((call)=>{
 		    input.value += `${call.valueMin.toFixed(2)}${call.ignoreIQS ? "*":""} `;
-		    iqsBk += call.ignoreIQS ? 0:1;
-		    
-		    console.log(iqsBk)
 		})
 		
-		npsVal.textContent = iqsBk;
+		npsVal.textContent = dadosHoje.summary.iqsVal;
 		isClearORrefresh();
 	}else{
-		console.log("sem dados")
+		alert("Sem dados guardados no dia de hoje")
 	}
 });
 front.addEventListener('click', async () => {
