@@ -168,9 +168,19 @@ refresh.addEventListener('click', async () => {
 	const dadosHoje = await window.firebaseTMA.fetchTodayData(uid);
 
 	if (dadosHoje) {
-		// Exemplo: atualizar um contador na tela com o que já foi salvo
-		console.log("Hoje já fizeste " + dadosHoje.summary.totalCalls + " chamadas.");
-		console.log(dadosHoje)
+		input.value = "";
+		npsVal.textContent = "0";
+		let iqsBk = 0;
+		
+		dadosHoje.calls.forEach((call)=>{
+		    input.value += `${call.valueMin.toFixed(2)}${call.ignoreIQS ? "*":""} `;
+		    iqsBk += call.ignoreIQS ? 0:1;
+		    
+		    console.log(iqsBk)
+		})
+		
+		npsVal.textContent = iqsBk;
+		isClearORrefresh();
 	}else{
 		console.log("sem dados")
 	}
