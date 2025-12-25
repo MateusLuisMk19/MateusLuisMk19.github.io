@@ -25,6 +25,7 @@ const input = document.getElementById("input"),
 window.npsDud = function(val) {
   let current = parseInt(npsVal.textContent) || 0;
   npsVal.textContent = Math.max(0, current + val);
+  isClearORrefresh();
 };
 
 window.changeInfoContente = function(state) {
