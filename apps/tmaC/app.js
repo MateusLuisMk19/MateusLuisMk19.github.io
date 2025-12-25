@@ -43,44 +43,25 @@ function parseInput(text, isToSave) {
   if (!text) return [];
   if(isToSave){
 	  return text.split(/[\n,;]+/).flatMap(chunk => {
-		console.log("1", chunk)
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
-		  console.log("2", p)
 	      const ignoreIQS = p.endsWith("*");
 	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
-		  console.log("3", cleaned)
 	      if (!cleaned) return null;
 	      let num = Number(cleaned);
-		  console.log("4", num)
-	      if (num % 1 !== 0) {
-	        const intP = Math.floor(num);
-			  console.log("5", intP)
-	        const secP = Math.round((num - intP) * 100);
-			  console.log("6", secP)
-	        num = intP + (secP / 60);
-			  console.log("7", num)
-	      }
 	      return { value: num, ignoreIQS };
 	    })}
 	  ).filter(Boolean);
   }else{
 	  return text.split(/[\n,;]+/).flatMap(chunk => {
-		console.log("1", chunk)
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
-		  console.log("2", p)
 	      const ignoreIQS = p.endsWith("*");
 	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
-		  console.log("3", cleaned)
 	      if (!cleaned) return null;
 	      let num = Number(cleaned);
-		  console.log("4", num)
 	      if (num % 1 !== 0) {
 	        const intP = Math.floor(num);
-			  console.log("5", intP)
 	        const secP = Math.round((num - intP) * 100);
-			  console.log("6", secP)
 	        num = intP + (secP / 60);
-			  console.log("7", num)
 	      }
 	      return { value: num, ignoreIQS };
 	    })}
