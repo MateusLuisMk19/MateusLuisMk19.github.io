@@ -42,17 +42,17 @@ window.changeInfoContente = function(state) {
 function parseInput(text, isToSave) {
   if (!text) return [];
   if(isToSave){
-	  return text.split(/[\n,;]+/).flatMap(chunk => {
+	  return text.split(/[\n,;]+/).flatMap(chunk => 
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
 	      const ignoreIQS = p.endsWith("*");
 	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
 	      if (!cleaned) return null;
 	      let num = Number(cleaned);
 	      return { value: num, ignoreIQS };
-	    })}
+	    })
 	  ).filter(Boolean);
   }else{
-	  return text.split(/[\n,;]+/).flatMap(chunk => {
+	  return text.split(/[\n,;]+/).flatMap(chunk => 
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
 	      const ignoreIQS = p.endsWith("*");
 	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
@@ -64,7 +64,7 @@ function parseInput(text, isToSave) {
 	        num = intP + (secP / 60);
 	      }
 	      return { value: num, ignoreIQS };
-	    })}
+	    })
 	  ).filter(Boolean);
 	}
 }
