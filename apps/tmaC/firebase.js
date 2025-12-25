@@ -143,8 +143,32 @@ async function checkUserExists(userId) {
   }
 }
 
+// --- BUSCAR DADOS DE HOJE ---
+async function fetchTodayData(userId) {
+  if (!userId) return null;
+
+  // Gera a chave da data atual no formato YYYY-MM-DD (mesmo formato usado no saveTodayFromUI)
+  const dateKey = new Date().toISOString().split('T')[0];
+  
+  try {
+    const docRef = doc(db, "users", userId, "daily", dateKey);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Dados de hoje encontrados:", docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log("Nenhum registo para o dia de hoje.");
+      return null;
+    }
+  } catch (e) {
+    console.error("Erro ao buscar dados de hoje:", e);
+    return null;
+  }
+}
+
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveTodayFromUI, fetchHistory, checkUserExists };
+window.firebaseTMA = { saveTodayFromUI, fetchHistory, checkUserExists, fetchTodayData };
 
 // Listeners do Modal (IDs do seu HTML)
 document.getElementById("showDays").addEventListener("click", () => {
