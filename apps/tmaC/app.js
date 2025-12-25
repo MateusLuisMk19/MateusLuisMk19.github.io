@@ -148,6 +148,7 @@ document.addEventListener("click", (e) => {
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); });
+input.addEventListener('change', () => { isClearORrefresh(); });
 front.addEventListener('click', async () => {
     const uid = usercode.value.trim();
     if (uid.length < 5) return;
@@ -179,6 +180,7 @@ function confirmarLogin() {
     localStorage.setItem("tma_usercode", usercode.value.trim());
     front.style.opacity = "1";
     front.disabled = false;
+	isClearORrefresh();
 }
 
 function isClearORrefresh(){
