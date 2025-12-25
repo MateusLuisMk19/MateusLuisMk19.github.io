@@ -42,7 +42,7 @@ window.changeInfoContente = function(state) {
 function parseInput(text, isToSave) {
   if (!text) return [];
   if(isToSave){
-	  return text.split(/[\n,;]+/).flatMap(chunk => 
+	  return text.split(/[\n,;]+/).flatMap(chunk => {
 		console.log("1", chunk)
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
 		  console.log("2", p)
@@ -61,10 +61,10 @@ function parseInput(text, isToSave) {
 			  console.log("7", num)
 	      }
 	      return { value: num, ignoreIQS };
-	    })
+	    })}
 	  ).filter(Boolean);
   }else{
-	  return text.split(/[\n,;]+/).flatMap(chunk => 
+	  return text.split(/[\n,;]+/).flatMap(chunk => {
 		console.log("1", chunk)
 	    chunk.split(/\s+/).filter(Boolean).map(p => {
 		  console.log("2", p)
@@ -83,7 +83,7 @@ function parseInput(text, isToSave) {
 			  console.log("7", num)
 	      }
 	      return { value: num, ignoreIQS };
-	    })
+	    })}
 	  ).filter(Boolean);
 	}
 }
