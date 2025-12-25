@@ -2,6 +2,7 @@
 const input = document.getElementById("input"),
   calc = document.getElementById("calc"),
   clear = document.getElementById("clear"),
+  refresh = document.getElementById("refresh") || document.createElement("button"),
   copyBtn = document.getElementById("copy"),
   saveBtn = document.getElementById("save"),
   results = document.getElementById("results"),
@@ -179,3 +180,18 @@ function confirmarLogin() {
     front.style.opacity = "1";
     front.disabled = false;
 }
+
+function isClearORrefresh(){
+  if(!usercode.value && !input.value){
+	    clear.style.display = "none";
+	    refresh.style.display = "block";
+	    console.log("OI")
+	}else {
+	    clear.style.display = "block"
+	    refresh.style.display = "none"
+	    console.log("AI")
+
+	}
+}
+
+isClearORrefresh();
