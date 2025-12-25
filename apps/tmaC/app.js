@@ -178,7 +178,7 @@ refresh.addEventListener('click', async () => {
 		
 		npsVal.textContent = dadosHoje.summary.iqsVal;
 		isClearORrefresh();
-		setTimeOut(()=>{
+		setTimeout(()=>{
 			calc.click()
 		},[100])
 	}else{
