@@ -102,6 +102,7 @@ clear.addEventListener("click", () => {
   npsVal.textContent = "00";
   results.hidden = true;
   tmaSecBox.style.backgroundColor = "transparent";
+  isClearORrefresh();
 });
 
 copyBtn.addEventListener("click", () => {
