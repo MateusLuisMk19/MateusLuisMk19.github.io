@@ -184,15 +184,12 @@ function confirmarLogin() {
 }
 
 function isClearORrefresh(){
-  if(!usercode.value && !input.value){
+  if(localStorage.getItem("tma_usercode") && !input.value && parseInt(npsVal.textContent) < 1){
 	    clear.style.display = "none";
 	    refresh.style.display = "block";
-	    console.log("OI")
 	}else {
 	    clear.style.display = "block"
 	    refresh.style.display = "none"
-	    console.log("AI")
-
 	}
 }
 
