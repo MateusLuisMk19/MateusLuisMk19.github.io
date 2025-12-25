@@ -178,6 +178,9 @@ refresh.addEventListener('click', async () => {
 		
 		npsVal.textContent = dadosHoje.summary.iqsVal;
 		isClearORrefresh();
+		setTimeOut(()=>{
+			calc.click()
+		},[100])
 	}else{
 		alert("Sem dados guardados no dia de hoje")
 	}
