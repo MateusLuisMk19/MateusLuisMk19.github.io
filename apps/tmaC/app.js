@@ -39,22 +39,53 @@ window.changeInfoContente = function(state) {
 };
 
 // --- LÓGICA DE CÁLCULO ---
-function parseInput(text) {
+function parseInput(text, isToSave) {
   if (!text) return [];
-  return text.split(/[\n,;]+/).flatMap(chunk => 
-    chunk.split(/\s+/).filter(Boolean).map(p => {
-      const ignoreIQS = p.endsWith("*");
-      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
-      if (!cleaned) return null;
-      let num = Number(cleaned);
-      if (num % 1 !== 0) {
-        const intP = Math.floor(num);
-        const secP = Math.round((num - intP) * 100);
-        num = intP + (secP / 60);
-      }
-      return { value: num, ignoreIQS };
-    })
-  ).filter(Boolean);
+  if(isToSave){
+	  return text.split(/[\n,;]+/).flatMap(chunk => 
+		console.log("1", chunk)
+	    chunk.split(/\s+/).filter(Boolean).map(p => {
+		  console.log("2", p)
+	      const ignoreIQS = p.endsWith("*");
+	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
+		  console.log("3", cleaned)
+	      if (!cleaned) return null;
+	      let num = Number(cleaned);
+		  console.log("4", num)
+	      if (num % 1 !== 0) {
+	        const intP = Math.floor(num);
+			  console.log("5", intP)
+	        const secP = Math.round((num - intP) * 100);
+			  console.log("6", setP)
+	        num = intP + (secP / 60);
+			  console.log("7", num)
+	      }
+	      return { value: num, ignoreIQS };
+	    })
+	  ).filter(Boolean);
+  }else{
+	  return text.split(/[\n,;]+/).flatMap(chunk => 
+		console.log("1", chunk)
+	    chunk.split(/\s+/).filter(Boolean).map(p => {
+		  console.log("2", p)
+	      const ignoreIQS = p.endsWith("*");
+	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
+		  console.log("3", cleaned)
+	      if (!cleaned) return null;
+	      let num = Number(cleaned);
+		  console.log("4", num)
+	      if (num % 1 !== 0) {
+	        const intP = Math.floor(num);
+			  console.log("5", intP)
+	        const secP = Math.round((num - intP) * 100);
+			  console.log("6", setP)
+	        num = intP + (secP / 60);
+			  console.log("7", num)
+	      }
+	      return { value: num, ignoreIQS };
+	    })
+	  ).filter(Boolean);
+	}
 }
 
 calc.addEventListener("click", () => {
@@ -112,7 +143,7 @@ copyBtn.addEventListener("click", () => {
 
 saveBtn.addEventListener("click", () => {
   if (!usercode.value || !front.classList.contains("hide")) return alert("Confirme o utilizador.");
-  const list = parseInput(input.value);
+  const list = parseInput(input.value,true);
   const nps = parseInt(npsVal.textContent) || 0;
   if (window.firebaseTMA) window.firebaseTMA.saveTodayFromUI(list, nps);
 });
