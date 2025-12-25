@@ -56,7 +56,7 @@ function parseInput(text, isToSave) {
 	        const intP = Math.floor(num);
 			  console.log("5", intP)
 	        const secP = Math.round((num - intP) * 100);
-			  console.log("6", setP)
+			  console.log("6", secP)
 	        num = intP + (secP / 60);
 			  console.log("7", num)
 	      }
@@ -78,7 +78,7 @@ function parseInput(text, isToSave) {
 	        const intP = Math.floor(num);
 			  console.log("5", intP)
 	        const secP = Math.round((num - intP) * 100);
-			  console.log("6", setP)
+			  console.log("6", secP)
 	        num = intP + (secP / 60);
 			  console.log("7", num)
 	      }
