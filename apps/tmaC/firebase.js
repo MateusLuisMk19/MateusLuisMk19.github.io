@@ -22,7 +22,8 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
 
   const calls = rawList.map(r => ({
     valueMin: Number(r.value),
-    seconds: (r.value * 60),
+    tmaCalc:r.valueToCalc,
+    seconds: (r.valueToCalc * 60),
     ignoreIQS: !!r.ignoreIQS
   }));
 
@@ -31,7 +32,7 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
     calls,
     summary: {
       totalCalls: calls.length,
-      tma_seconds: Math.round((calls.reduce((s, c) => s + c.valueMin, 0) / calls.length) * 60),
+      tma_seconds: Math.round((calls.reduce((s, c) => s + c.valueToCalc, 0) / calls.length) * 60),
       iqsPercent: +((npsCurrentVal / calls.filter(c => !c.ignoreIQS).length || 1) * 100).toFixed(1),
       iqsVal: npsCurrentVal,
       updatedAt: new Date().toISOString()
