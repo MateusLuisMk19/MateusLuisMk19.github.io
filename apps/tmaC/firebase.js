@@ -31,7 +31,7 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
     calls,
     summary: {
       totalCalls: calls.length,
-      tma_seconds: Math.round(calls.reduce((s, c) => s + c.seconds, 0) / calls.length),
+      tma_seconds: Math.round((calls.reduce((s, c) => s + c.valueMin) / calls.length) * 60),
       iqsPercent: +((npsCurrentVal / calls.filter(c => !c.ignoreIQS).length || 1) * 100).toFixed(1),
       iqsVal: npsCurrentVal,
       updatedAt: new Date().toISOString()
