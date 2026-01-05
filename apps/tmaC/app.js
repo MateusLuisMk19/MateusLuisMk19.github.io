@@ -63,7 +63,7 @@ calc.addEventListener("click", () => {
   const list = parseInput(input.value);
   if (!list.length) return alert("Insira tempos válidos.");
 
-  const totalMin = list.reduce((a, b) => a + b.value, 0);
+  const totalMin = list.reduce((a, b) => a + b.valueToCalc, 0);
   const tmaSec = Math.round((totalMin / list.length) * 60);
   const nps = parseInt(npsVal.textContent) || 0;
   const validIQS = list.filter(x => !x.ignoreIQS).length;
