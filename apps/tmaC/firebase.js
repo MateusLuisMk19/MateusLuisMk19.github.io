@@ -22,7 +22,7 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
 
   const calls = rawList.map(r => ({
     valueMin: Number(r.value),
-    tmaCalc:r.valueToCalc,
+    tmaCalc:Number(r.valueToCalc),
     seconds: (r.valueToCalc * 60),
     ignoreIQS: !!r.ignoreIQS
   }));
