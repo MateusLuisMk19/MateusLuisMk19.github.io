@@ -41,33 +41,23 @@ window.changeInfoContente = function(state) {
 // --- LÓGICA DE CÁLCULO ---
 function parseInput(text, isToSave) {
   if (!text) return [];
-  if(isToSave){
-	  return text.split(/[\n,;]+/).flatMap(chunk => 
-	    chunk.split(/\s+/).filter(Boolean).map(p => {
-	      const ignoreIQS = p.endsWith("*");
-	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
-	      if (!cleaned) return null;
-	      let num = Number(cleaned);
-	      return { value: num, ignoreIQS };
-	    })
-	  ).filter(Boolean);
-  }else{
-	  return text.split(/[\n,;]+/).flatMap(chunk => 
-	    chunk.split(/\s+/).filter(Boolean).map(p => {
-	      const ignoreIQS = p.endsWith("*");
-	      let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
-	      if (!cleaned) return null;
-	      let num = Number(cleaned);
-	      if (num % 1 !== 0) {
-	        const intP = Math.floor(num);
-	        const secP = Math.round((num - intP) * 100);
-	        num = intP + (secP / 60);
-	      }
-	      return { value: num, ignoreIQS };
-	    })
-	  ).filter(Boolean);
-	}
+  return text.split(/[\n,;]+/).flatMap(chunk => 
+	chunk.split(/\s+/).filter(Boolean).map(p => {
+	  const ignoreIQS = p.endsWith("*");
+	  let cleaned = p.replace(/\*/g, "").replace(/,/g, ".").replace(/[^0-9.]/g, "");
+	  if (!cleaned) return null;
+	  let numTC = Number(cleaned);
+	  let num = Number(cleaned);
+	  if (numTC % 1 !== 0) {
+		const intP = Math.floor(numTC);
+		const secP = Math.round((numTC - intP) * 100);
+		numTC = intP + (secP / 60);
+	  }
+	  return { value: num, valueToCalc: numTC, ignoreIQS };
+	})
+  ).filter(Boolean);	
 }
+
 
 calc.addEventListener("click", () => {
   const list = parseInput(input.value);
