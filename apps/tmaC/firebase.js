@@ -45,10 +45,30 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
   } catch (e) { alert("Erro ao guardar."); }
 }
 
+const meuIntervalo = setInterval(() => {
+    const mainDiv = document.getElementById("middle-item");
+    let spanH = document.createElement("span");
+    let divH = document.createElement("div");
+    let count = 0;
+
+    if(count%2=0){
+      spanH.textContent = "Cham. Hora";
+      divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+    }else{
+      spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
+      divH.textContent = `${acCalls}`;
+    }
+
+    mainDiv.textContent = "";
+    mainDiv.appendChild(spanH);
+    mainDiv.appendChild(divH);
+}, 3000);
+
 // --- HISTÓRICO ---
 async function fetchHistory(userId, filterType = "7days") {
   const listEl = document.getElementById("historyList");
   const statsEl = document.getElementById("historyStats");
+  const cargaHoraria = Number(document.getElementById("cargaHoraria")) || 8;
 
   listEl.innerHTML = '<p class="small" style="text-align: center;">A procurar registos do mês...</p>';
   statsEl.style.display = "none";
@@ -115,7 +135,7 @@ async function fetchHistory(userId, filterType = "7days") {
     statsEl.style.display = "grid";
     statsEl.innerHTML = `
       <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
-      <div class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
+      <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
   
   } catch (e) { 
@@ -178,11 +198,31 @@ document.getElementById("showDays").addEventListener("click", () => {
   if(uid) {
     document.getElementById("historyModal").style.display = "flex";
     fetchHistory(uid);
+
+    const meuIntervalo = setInterval(() => {
+        const mainDiv = document.getElementById("middle-item");
+        let spanH = document.createElement("span");
+        let divH = document.createElement("div");
+        let count = 0;
+    
+        if(count%2=0){
+          spanH.textContent = "Cham. Hora";
+          divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+        }else{
+          spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
+          divH.textContent = `${acCalls}`;
+        }
+    
+        mainDiv.textContent = "";
+        mainDiv.appendChild(spanH);
+        mainDiv.appendChild(divH);
+    }, 3000);    
   }
 });
 
 document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
+  clearInterval(meuIntervalo);
 });
 
 document.getElementById("historyFilter").addEventListener("change", (e) => {
