@@ -181,8 +181,6 @@ document.getElementById("showDays").addEventListener("click", () => {
   const uid = document.getElementById("usercode").value;
   if(uid) {
     document.getElementById("historyModal").style.display = "flex";
-    document.getElementById("showDays").addEventListener("click", () => {
-  
     const filter = localStorage.getItem("historyFilter") || "7days";
       
     fetchHistory(uid,filter);
