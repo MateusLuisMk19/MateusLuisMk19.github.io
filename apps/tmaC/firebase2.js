@@ -119,11 +119,7 @@ async function fetchHistory(userId, filterType = "7days") {
       <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
 
-    if(document.getElementById("historyModal").style.display == "flex"){
-      meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias)
-    }else{
-      meuIntervaloCH("end");
-    }
+    meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias);
     
   } catch (e) { 
     console.error("Erro ao carregar histórico:", err);
@@ -195,6 +191,7 @@ document.getElementById("showDays").addEventListener("click", () => {
 
 document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
+  meuIntervaloCH("end");
 });
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
