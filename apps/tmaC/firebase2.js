@@ -118,7 +118,30 @@ async function fetchHistory(userId, filterType = "7days") {
       <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
       <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
-  
+
+    if(document.getElementById("historyModal").style.display == "flex"){
+      const meuIntervalo = setInterval(() => {
+          const mainDiv = document.getElementById("middle-item");
+          let spanH = document.createElement("span");
+          let divH = document.createElement("div");
+          let count = 0;
+      
+          if(count%2==0){
+            spanH.textContent = "Cham. Hora";
+            divH.textContent = `${filter === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+          }else{
+            spanH.textContent = `${filter === '7days' ? 'Soma' : 'Total'} Calls`;
+            divH.textContent = `${acCalls}`;
+          }
+      
+          mainDiv.textContent = "";
+          mainDiv.appendChild(spanH);
+          mainDiv.appendChild(divH);
+          count+=1;
+      }, 3000); 
+    }else{
+      clearInterval(meuIntervalo);
+    }
   } catch (e) { 
     console.error("Erro ao carregar histórico:", err);
     listEl.innerHTML = '<p class="small" style="color:red;">Erro ao filtrar dados.</p>';
@@ -185,30 +208,11 @@ document.getElementById("showDays").addEventListener("click", () => {
       
     fetchHistory(uid,filter);
 
-    const meuIntervalo = setInterval(() => {
-        const mainDiv = document.getElementById("middle-item");
-        let spanH = document.createElement("span");
-        let divH = document.createElement("div");
-        let count = 0;
-    
-        if(count%2==0){
-          spanH.textContent = "Cham. Hora";
-          divH.textContent = `${filter === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
-        }else{
-          spanH.textContent = `${filter === '7days' ? 'Soma' : 'Total'} Calls`;
-          divH.textContent = `${acCalls}`;
-        }
-    
-        mainDiv.textContent = "";
-        mainDiv.appendChild(spanH);
-        mainDiv.appendChild(divH);
-        count+=1;
-    }, 3000);    
+      
   }
 });
 
 document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
-  clearInterval(meuIntervalo);
 });
 
