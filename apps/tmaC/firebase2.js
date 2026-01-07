@@ -193,9 +193,9 @@ document.getElementById("showDays").addEventListener("click", () => {
     
         if(count%2==0){
           spanH.textContent = "Cham. Hora";
-          divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+          divH.textContent = `${filter === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
         }else{
-          spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
+          spanH.textContent = `${filter === '7days' ? 'Soma' : 'Total'} Calls`;
           divH.textContent = `${acCalls}`;
         }
     
