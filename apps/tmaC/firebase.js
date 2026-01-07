@@ -129,6 +129,7 @@ async function fetchHistory(userId, filterType = "7days") {
 
 // Ligar o evento de mudança do Select
 document.getElementById("historyFilter").addEventListener("change", (e) => {
+  meuIntervaloCH("end");
   const userId = document.getElementById("usercode").value.trim();
   const filter = e.target.value;
 
@@ -196,7 +197,6 @@ document.getElementById("closeModal").addEventListener("click", () => {
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
   let count = 2;
-  clearInterval(meuIntervalo);
   
   const meuIntervalo = setInterval(() => {
       const mainDiv = document.getElementById("middle-item");
