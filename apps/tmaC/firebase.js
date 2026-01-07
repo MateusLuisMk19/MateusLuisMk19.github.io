@@ -196,6 +196,7 @@ document.getElementById("closeModal").addEventListener("click", () => {
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
   let count = 2;
+  clearInterval(meuIntervalo);
   
   const meuIntervalo = setInterval(() => {
       const mainDiv = document.getElementById("middle-item");
