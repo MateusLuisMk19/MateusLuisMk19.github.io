@@ -223,6 +223,7 @@ document.getElementById("showDays").addEventListener("click", () => {
         mainDiv.textContent = "";
         mainDiv.appendChild(spanH);
         mainDiv.appendChild(divH);
+        count+=1;
     }, 3000);    
   }
 });
