@@ -197,21 +197,21 @@ document.getElementById("closeModal").addEventListener("click", () => {
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
   let count = 2;
+  const mainDiv = document.getElementById("middle-item");
+  let spanH = document.createElement("span");
+  let divH = document.createElement("div");
   
-  const meuIntervalo = setInterval(() => {
-      const mainDiv = document.getElementById("middle-item");
-      let spanH = document.createElement("span");
-      let divH = document.createElement("div");
+  mainDiv.textContent = "";
   
+  const meuIntervalo = setInterval(() => {    
       if(count%2==0){
         spanH.textContent = "Cham. Hora";
-        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria).toFixed(1) : acCalls/(totalDias*cargaHoraria).toFixed(1)}`;  
+        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria).toFixed(2) : acCalls/(totalDias*cargaHoraria).toFixed(2)}`;  
       }else{
         spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} CHAM`;
         divH.textContent = `${acCalls}`;
       }
   
-      mainDiv.textContent = "";
       mainDiv.appendChild(spanH);
       mainDiv.appendChild(divH);
       count=count+1;
