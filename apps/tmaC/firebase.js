@@ -195,7 +195,7 @@ document.getElementById("closeModal").addEventListener("click", () => {
 });
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
-  let count = 1;
+  let count = 2;
   
   const meuIntervalo = setInterval(() => {
       const mainDiv = document.getElementById("middle-item");
@@ -214,7 +214,7 @@ function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
       mainDiv.appendChild(spanH);
       mainDiv.appendChild(divH);
       count=count+1;
-  }, 4000); 
+  }, 5000); 
 
   if(action=="end"){
     clearInterval(meuIntervalo);
