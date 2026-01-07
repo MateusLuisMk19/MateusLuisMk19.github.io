@@ -116,7 +116,7 @@ async function fetchHistory(userId, filterType = "7days") {
     statsEl.style.display = "grid";
     statsEl.innerHTML = `
       <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
-      <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} CHAM</span><div>${acCalls}</div></div>
+      <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Cham</span><div>${acCalls}</div></div>
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
 
     meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias);
@@ -198,23 +198,23 @@ document.getElementById("closeModal").addEventListener("click", () => {
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
   let count = 2;
   const mainDiv = document.getElementById("middle-item");
-  let spanH = document.createElement("span");
-  let divH = document.createElement("div");
-  
-  mainDiv.textContent = "";
-  
+    
   const meuIntervalo = setInterval(() => {    
-      if(count%2==0){
-        spanH.textContent = "Cham. Hora";
-        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria).toFixed(2) : acCalls/(totalDias*cargaHoraria).toFixed(2)}`;  
-      }else{
-        spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} CHAM`;
-        divH.textContent = `${acCalls}`;
-      }
-  
-      mainDiv.appendChild(spanH);
-      mainDiv.appendChild(divH);
-      count=count+1;
+    mainDiv.textContent = "";
+    let spanH = document.createElement("span");
+    let divH = document.createElement("div");
+    
+    if(count%2==0){
+      spanH.textContent = "Cham. Hora";
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*cargaHoraria)).toFixed(2)}`;  
+    }else{
+      spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Cham`;
+      divH.textContent = `${acCalls}`;
+    }
+
+    mainDiv.appendChild(spanH);
+    mainDiv.appendChild(divH);
+    count=count+1;
   }, 5000); 
 
   if(action=="end"){
