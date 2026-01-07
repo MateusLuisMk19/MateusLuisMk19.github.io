@@ -127,7 +127,10 @@ async function fetchHistory(userId, filterType = "7days") {
 // Ligar o evento de mudança do Select
 document.getElementById("historyFilter").addEventListener("change", (e) => {
   const userId = document.getElementById("usercode").value.trim();
-  fetchHistory(userId, e.target.value);
+  const filter = e.target.value;
+
+  localStorage.setItem("historyFilter", filter);
+  fetchHistory(userId, filter);
 });
 
 async function checkUserExists(userId) {
@@ -175,9 +178,10 @@ window.firebaseTMA = { saveTodayFromUI, fetchHistory, checkUserExists, fetchToda
 // Listeners do Modal (IDs do seu HTML)
 document.getElementById("showDays").addEventListener("click", () => {
   const uid = document.getElementById("usercode").value;
+  const filter = localStorage.getItem("historyFilter") || "7days";
   if(uid) {
     document.getElementById("historyModal").style.display = "flex";
-    fetchHistory(uid);
+    fetchHistory(uid,filter);
   }
 });
 
@@ -185,6 +189,6 @@ document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
 });
 
-document.getElementById("historyFilter").addEventListener("change", (e) => {
+/* document.getElementById("historyFilter").addEventListener("change", (e) => {
   fetchHistory(document.getElementById("usercode").value, e.target.value);
-});
+}); */
