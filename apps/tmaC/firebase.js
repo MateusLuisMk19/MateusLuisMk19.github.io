@@ -204,7 +204,7 @@ function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
   
       if(count%2==0){
         spanH.textContent = "Cham. Hora";
-        divH.textContent = `${filterType === '7days' ? Math.round(acCalls/(7*cargaHoraria)) : Math.round(acCalls/(totalDias*cargaHoraria))}`;  
+        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria).toFixed(1) : acCalls/(totalDias*cargaHoraria).toFixed(1)}`;  
       }else{
         spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} CHAM`;
         divH.textContent = `${acCalls}`;
