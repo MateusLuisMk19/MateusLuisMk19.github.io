@@ -49,6 +49,7 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
 async function fetchHistory(userId, filterType = "7days") {
   const listEl = document.getElementById("historyList");
   const statsEl = document.getElementById("historyStats");
+  const cargaHoraria = Number(document.getElementById("cargaHoraria")) || 8;
 
   listEl.innerHTML = '<p class="small" style="text-align: center;">A procurar registos do mês...</p>';
   statsEl.style.display = "none";
@@ -115,9 +116,11 @@ async function fetchHistory(userId, filterType = "7days") {
     statsEl.style.display = "grid";
     statsEl.innerHTML = `
       <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
-      <div class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
+      <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Calls</span><div>${acCalls}</div></div>
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
-  
+
+    meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias);
+    
   } catch (e) { 
     console.error("Erro ao carregar histórico:", err);
     listEl.innerHTML = '<p class="small" style="color:red;">Erro ao filtrar dados.</p>';
@@ -178,17 +181,42 @@ window.firebaseTMA = { saveTodayFromUI, fetchHistory, checkUserExists, fetchToda
 // Listeners do Modal (IDs do seu HTML)
 document.getElementById("showDays").addEventListener("click", () => {
   const uid = document.getElementById("usercode").value;
-  const filter = localStorage.getItem("historyFilter") || "7days";
   if(uid) {
     document.getElementById("historyModal").style.display = "flex";
+    const filter = localStorage.getItem("historyFilter") || "7days";
+    
     fetchHistory(uid,filter);
   }
 });
 
 document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
+  meuIntervaloCH("end");
 });
 
-/* document.getElementById("historyFilter").addEventListener("change", (e) => {
-  fetchHistory(document.getElementById("usercode").value, e.target.value);
-}); */
+function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
+  let count = 1;
+  
+  const meuIntervalo = setInterval(() => {
+      const mainDiv = document.getElementById("middle-item");
+      let spanH = document.createElement("span");
+      let divH = document.createElement("div");
+  
+      if(count%2==0){
+        spanH.textContent = "Cham. Hora";
+        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+      }else{
+        spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} CHAM`;
+        divH.textContent = `${acCalls}`;
+      }
+  
+      mainDiv.textContent = "";
+      mainDiv.appendChild(spanH);
+      mainDiv.appendChild(divH);
+      count=count+1;
+  }, 3000); 
+
+  if(action=="end"){
+    clearInterval(meuIntervalo);
+  }
+}
