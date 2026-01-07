@@ -45,25 +45,6 @@ async function saveTodayFromUI(rawList, npsCurrentVal) {
   } catch (e) { alert("Erro ao guardar."); }
 }
 
-const meuIntervalo = setInterval(() => {
-    const mainDiv = document.getElementById("middle-item");
-    let spanH = document.createElement("span");
-    let divH = document.createElement("div");
-    let count = 0;
-
-    if(count%2=0){
-      spanH.textContent = "Cham. Hora";
-      divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
-    }else{
-      spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
-      divH.textContent = `${acCalls}`;
-    }
-
-    mainDiv.textContent = "";
-    mainDiv.appendChild(spanH);
-    mainDiv.appendChild(divH);
-}, 3000);
-
 // --- HISTÓRICO ---
 async function fetchHistory(userId, filterType = "7days") {
   const listEl = document.getElementById("historyList");
