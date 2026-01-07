@@ -120,28 +120,11 @@ async function fetchHistory(userId, filterType = "7days") {
       <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
 
     if(document.getElementById("historyModal").style.display == "flex"){
-      const meuIntervalo = setInterval(() => {
-          const mainDiv = document.getElementById("middle-item");
-          let spanH = document.createElement("span");
-          let divH = document.createElement("div");
-          let count = 0;
-      
-          if(count%2==0){
-            spanH.textContent = "Cham. Hora";
-            divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
-          }else{
-            spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
-            divH.textContent = `${acCalls}`;
-          }
-      
-          mainDiv.textContent = "";
-          mainDiv.appendChild(spanH);
-          mainDiv.appendChild(divH);
-          count+=1;
-      }, 3000); 
+      meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias)
     }else{
-      clearInterval(meuIntervalo);
+      meuIntervaloCH("end");
     }
+    
   } catch (e) { 
     console.error("Erro ao carregar histórico:", err);
     listEl.innerHTML = '<p class="small" style="color:red;">Erro ao filtrar dados.</p>';
@@ -213,4 +196,30 @@ document.getElementById("showDays").addEventListener("click", () => {
 document.getElementById("closeModal").addEventListener("click", () => {
   document.getElementById("historyModal").style.display = "none";
 });
+
+function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
+  const meuIntervalo = setInterval(() => {
+      const mainDiv = document.getElementById("middle-item");
+      let spanH = document.createElement("span");
+      let divH = document.createElement("div");
+      let count = 1;
+  
+      if(count%2==0){
+        spanH.textContent = "Cham. Hora";
+        divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
+      }else{
+        spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Calls`;
+        divH.textContent = `${acCalls}`;
+      }
+  
+      mainDiv.textContent = "";
+      mainDiv.appendChild(spanH);
+      mainDiv.appendChild(divH);
+      count=count+1;
+  }, 3000); 
+
+  if(action=="end"){
+    clearInterval(meuIntervalo);
+  }
+}
 
