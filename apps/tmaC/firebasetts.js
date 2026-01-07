@@ -212,7 +212,7 @@ document.getElementById("showDays").addEventListener("click", () => {
         let divH = document.createElement("div");
         let count = 0;
     
-        if(count%2=0){
+        if(count%2==0){
           spanH.textContent = "Cham. Hora";
           divH.textContent = `${filterType === '7days' ? acCalls/(7*cargaHoraria) : acCalls/(totalDias*cargaHoraria)}`;  
         }else{
