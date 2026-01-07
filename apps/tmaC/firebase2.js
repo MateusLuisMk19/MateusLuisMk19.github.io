@@ -195,11 +195,12 @@ document.getElementById("closeModal").addEventListener("click", () => {
 });
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
+  let count = 1;
+  
   const meuIntervalo = setInterval(() => {
       const mainDiv = document.getElementById("middle-item");
       let spanH = document.createElement("span");
       let divH = document.createElement("div");
-      let count = 1;
   
       if(count%2==0){
         spanH.textContent = "Cham. Hora";
