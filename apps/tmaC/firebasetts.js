@@ -147,7 +147,10 @@ async function fetchHistory(userId, filterType = "7days") {
 // Ligar o evento de mudança do Select
 document.getElementById("historyFilter").addEventListener("change", (e) => {
   const userId = document.getElementById("usercode").value.trim();
-  fetchHistory(userId, e.target.value);
+  const filter = e.target.value;
+
+  localStorage.setItem("historyFilter", filter);
+  fetchHistory(userId, filter);
 });
 
 async function checkUserExists(userId) {
@@ -197,7 +200,11 @@ document.getElementById("showDays").addEventListener("click", () => {
   const uid = document.getElementById("usercode").value;
   if(uid) {
     document.getElementById("historyModal").style.display = "flex";
-    fetchHistory(uid);
+    document.getElementById("showDays").addEventListener("click", () => {
+  
+    const filter = localStorage.getItem("historyFilter") || "7days";
+      
+    fetchHistory(uid,filter);
 
     const meuIntervalo = setInterval(() => {
         const mainDiv = document.getElementById("middle-item");
@@ -225,6 +232,3 @@ document.getElementById("closeModal").addEventListener("click", () => {
   clearInterval(meuIntervalo);
 });
 
-document.getElementById("historyFilter").addEventListener("change", (e) => {
-  fetchHistory(document.getElementById("usercode").value, e.target.value);
-});
