@@ -222,7 +222,7 @@ function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
     mainDiv.appendChild(spanH);
     mainDiv.appendChild(divH);
     
-    count>=5 ? count=0; count=count+1; 
+    count>=5 ? count=0 : count=count+1; 
   }, 5000); 
 
   if(action=="end"){
