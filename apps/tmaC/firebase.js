@@ -196,7 +196,7 @@ document.getElementById("closeModal").addEventListener("click", () => {
 });
 
 function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
-  let count = 2;
+  let count = 0;
   const mainDiv = document.getElementById("middle-item");
     
   const meuIntervalo = setInterval(() => {    
@@ -204,17 +204,25 @@ function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
     let spanH = document.createElement("span");
     let divH = document.createElement("div");
     
-    if(count%2==0){
-      spanH.textContent = "Cham. Hora";
-      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*cargaHoraria)).toFixed(2)}`;  
-    }else{
+    if(count==0){
+      spanH.textContent = "Cham. 8Hora";
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*8)).toFixed(2)}`;  
+    }else if(count==2){
+      spanH.textContent = "Cham. 6Hora";
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*6)).toFixed(2)}`;  
+    }else if(count==4){
+      spanH.textContent = "Cham. 4Hora";
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*4)).toFixed(2)}`;  
+    }
+    else{
       spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Cham`;
       divH.textContent = `${acCalls}`;
     }
 
     mainDiv.appendChild(spanH);
     mainDiv.appendChild(divH);
-    count=count+1;
+    
+    count>=5 ? count=0; count=count+1; 
   }, 5000); 
 
   if(action=="end"){
