@@ -206,13 +206,13 @@ function meuIntervaloCH(action, filterType, acCalls, cargaHoraria, totalDias){
     
     if(count==0){
       spanH.textContent = "Cham. 8Hora";
-      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*8)).toFixed(2)}`;  
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*8)).toFixed(2) : (acCalls/(totalDias*8)).toFixed(2)}`;  
     }else if(count==2){
       spanH.textContent = "Cham. 6Hora";
-      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*6)).toFixed(2)}`;  
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*6)).toFixed(2) : (acCalls/(totalDias*6)).toFixed(2)}`;  
     }else if(count==4){
       spanH.textContent = "Cham. 4Hora";
-      divH.textContent = `${filterType === '7days' ? (acCalls/(7*cargaHoraria)).toFixed(2) : (acCalls/(totalDias*4)).toFixed(2)}`;  
+      divH.textContent = `${filterType === '7days' ? (acCalls/(7*4)).toFixed(2) : (acCalls/(totalDias*4)).toFixed(2)}`;  
     }
     else{
       spanH.textContent = `${filterType === '7days' ? 'Soma' : 'Total'} Cham`;
