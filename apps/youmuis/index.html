@@ -479,29 +479,30 @@
     updateTimer = setInterval(() => {
       if (!player) return;
 
-      // detectar anúncio
+      // --- LÓGICA DE AUTO-SKIP DE ANÚNCIOS ---
       const adNow = checkAds();
-      if (adNow && !isAdPlaying) {
-        isAdPlaying = true;
-        setAdOverlay(true);
-        // desativa botões
-        playPauseBtn.disabled = true;
-        nextBtn.disabled = true;
-        prevBtn.disabled = true;
-        shuffleBtn.disabled = true;
-        loopBtn.disabled = true;
-      } else if (!adNow && isAdPlaying) {
+      
+      if (adNow) {
+        // 1. Tenta colocar o vídeo no fim do anúncio (muitos anúncios permitem seek)
+        try {
+            const adDuration = player.getDuration();
+            if (adDuration > 0) {
+                player.seekTo(adDuration, true);
+            }
+        } catch(e) {}
+
+        if (!isAdPlaying) {
+          isAdPlaying = true;
+          setAdOverlay(true);
+          disableControls(true);
+        }
+        return; // Sai do loop para não atualizar a barra de progresso com tempo do anúncio
+      } else if (isAdPlaying) {
         isAdPlaying = false;
         setAdOverlay(false);
-        // reativa botões
-        playPauseBtn.disabled = false;
-        nextBtn.disabled = false;
-        prevBtn.disabled = false;
-        shuffleBtn.disabled = false;
-        loopBtn.disabled = false;
+        disableControls(false);
       }
-
-      if (isAdPlaying) return;
+      // ---------------------------------------
 
       const dur = player.getDuration ? (player.getDuration() || 0) : 0;
       const cur = player.getCurrentTime ? (player.getCurrentTime() || 0) : 0;
@@ -510,9 +511,17 @@
       timeLabel.textContent = formatTime(cur) + ' / ' + formatTime(dur);
 
       updateTrackInfo();
-      // tenta sincronizar índice regularmente
       syncIndexFromPlayer();
     }, 300);
+  }
+
+  // Função auxiliar para limpar o código
+  function disableControls(disabled) {
+    playPauseBtn.disabled = disabled;
+    nextBtn.disabled = disabled;
+    prevBtn.disabled = disabled;
+    shuffleBtn.disabled = disabled;
+    loopBtn.disabled = disabled;
   }
 
   function updateTrackInfo(){
