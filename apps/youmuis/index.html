@@ -92,7 +92,8 @@
         autoplay: 1,
         controls: 0,
         rel: 0,
-        mute: 1
+        mute: 1,
+        origin: window.location.origin
       },
       events: {
         'onReady': (e) => {
@@ -192,9 +193,13 @@ document.getElementById('progress').onclick = (e) => {
   }
 
   // Click inicial para ativar som (exigência dos browsers)
-  document.body.addEventListener('click', () => {
-    if(player) { player.unMute(); player.playVideo(); }
-  }, {once: true});
+  // Força o início após o primeiro clique em qualquer lugar da página
+document.body.addEventListener('click', () => {
+    if (isPlayerReady()) {
+        player.unMute();
+        player.playVideo();
+    }
+}, { once: true });
 </script>
 
 </body>
