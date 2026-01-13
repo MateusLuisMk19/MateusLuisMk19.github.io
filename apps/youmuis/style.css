@@ -1,7 +1,7 @@
 :root {
     --primary: #00c8ff;
     /* Camada escura principal */
-    --overlay-bg: rgba(0, 0, 0, 0.70); 
+    --overlay-bg: rgba(0, 0, 0, 0.85); 
   }
 
   body, html { 
