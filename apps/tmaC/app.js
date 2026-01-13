@@ -85,11 +85,10 @@ calc.addEventListener("click", () => {
   if (percent < 70) {
     const meta = 0.701;
     const txAct = parseFloat(npsPercent.textContent);
-    const list = parseInput(input.value);
-    const chAct = list.length;
     const finalIQS = Math.ceil((meta * validIQS - nps) / (1 - meta)) + nps;
 
-    const chamN = chamadasNecessarias({  chamadasAtuais:chAct,  taxaAtual:txAct, meta:meta})
+    const chamN = chamadasNecessarias({  chamadasAtuais:validIQS,  taxaAtual:txAct, meta:meta});
+	  
     npsPercentMeta.textContent = `+${chamN} para >70%`;
     npsPercentMeta.style.backgroundColor = "#b33d18";
   } else {
