@@ -3,581 +3,296 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Background Pr — Player com Shuffle & Loop Fix</title>
+<title>Pro Player — Background</title>
 <style>
-  /* video continua no fundo */
-  #player {
-    position:fixed;
-    inset:0;
-    z-index:-2;
-    pointer-events:none;
-    background:#000;
+  :root {
+    --primary: #00c8ff;
+    --bg-dark: rgba(10, 10, 10, 0.95);
+    --glass: rgba(255, 255, 255, 0.1);
   }
 
-  /* overlay agora ocupa toda a tela */
+  body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+
+  #player {
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+    background: #000;
+  }
+
   .ui {
-    position:fixed;
-    inset:0;
-    z-index:1;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    pointer-events:none;
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end; /* Controles na parte inferior como Spotify/YT Music */
+    background: linear-gradient(to bottom, transparent 40%, var(--bg-dark) 100%);
+    pointer-events: none;
   }
 
   .controls {
-    width:100%;
-    height:100%;
-    padding:0;
-    display:flex;
-    flex-direction:column;
-    justify-content:space-between;
-    pointer-events:auto;
-    background: rgba(0,0,0,0.9);
+    width: 100%;
+    padding: 20px 0;
+    pointer-events: auto;
   }
+
+  /* Informação da Faixa */
+  .track-info {
+    text-align: center;
+    color: #fff;
+    margin-bottom: 20px;
+    padding: 0 20px;
+  }
+  .track-title { font-size: 1.2rem; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 
   .top-row {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px;
+    margin-bottom: 15px;
   }
-
-  .row { display:flex; gap:10px; align-items:center; }
 
   .btn {
-    background:rgba(0,0,0,0.4);
-    border:1px solid rgba(255,255,255,0.2);
-    padding:8px 12px;
-    border-radius:10px;
-    cursor:pointer;
-    color:#fff;
-    font-size:16px;
-    user-select:none;
-    display:inline-flex;
-    align-items:center;
-    justify-content:center;
+    background: var(--glass);
+    border: 1px solid rgba(255,255,255,0.1);
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 20px;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .btn:active { transform:scale(0.95); }
-  .btn[disabled]{opacity:0.4;pointer-events:none}
+  .btn:hover { background: rgba(255,255,255,0.2); }
+  .btn:active { transform: scale(0.9); }
+  .btn.active { color: var(--primary); border-color: var(--primary); }
+  #playPauseBtn { width: 65px; height: 65px; background: #fff; color: #000; font-size: 24px; }
 
-  .center-row {
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:12px 24px;
-    gap:16px;
+  .progress-container {
+    padding: 0 30px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
   }
 
   .progress {
-    width:100%;
-    height:8px;
-    background:rgba(255,255,255,0.1);
-    border-radius:4px;
-    cursor:pointer;
-    position:relative;
+    flex-grow: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    position: relative;
   }
 
-  .progress .bar {
-    position:absolute;
-    left:0;
-    top:0;
-    height:100%;
-    background:linear-gradient(90deg, #00c8ff, #008cff);
-    width:0%;
-    border-radius:4px;
+  .bar {
+    height: 100%;
+    background: var(--primary);
+    width: 0%;
+    border-radius: 10px;
+    position: relative;
   }
 
-  .time {
-    color:#fff;
-    font-size:14px;
-    min-width:60px;
-    text-align:right;
-  }
-
-  input[type="range"] {
-    -webkit-appearance:none;
-    appearance:none;
-    height:6px;
-    border-radius:6px;
-  }
-
-  input[type="range"]::-webkit-slider-thumb {
-    -webkit-appearance:none;
-    width:14px;
-    height:14px;
-    border-radius:50%;
-    background:#fff;
-    margin-top:-4px;
-  }
+  .time { color: #aaa; font-size: 12px; min-width: 45px; }
 
   .bottom-row {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:16px 24px;
-    gap:16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 30px;
+    gap: 15px;
   }
 
-  @media (max-width:520px){
-    .top-row { flex-direction:column; align-items:flex-start; gap:8px; }
-    .center-row { flex-direction:column; gap:12px; }
-  }
+  input[type="range"] { cursor: pointer; accent-color: var(--primary); }
 
-  /* Ad overlay */
   #adOverlay {
-    position:fixed;
-    inset:0;
-    background:rgba(0,0,0,0.8);
-    color:#fff;
-    font-size:24px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    z-index:99999;
-    pointer-events:none;
-    opacity:0;
-    transition:opacity .3s;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.95);
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    font-weight: bold;
+    font-size: 1.5rem;
   }
 </style>
-
 </head>
 <body>
 
-<!-- PLAYER (YouTube IFrame API) -->
 <div id="player"></div>
 
-<!-- UI por cima -->
+<div id="adOverlay">PULANDO ANÚNCIO...</div>
+
 <div class="ui">
+  <div class="track-info">
+    <p class="track-title" id="trackTitle">A carregar playlist...</p>
+  </div>
+
   <div class="controls">
-    <!-- topo: título + botões principais -->
     <div class="top-row">
-      <div class="row">
-        <button class="btn" id="prevBtn">⟲</button>
-        <button class="btn" id="playPauseBtn">▶</button>
-        <button class="btn" id="nextBtn">⟳</button>
-      </div>
-      <div class="row">
-        <button class="btn" id="shuffleBtn" title="Shuffle">🔀</button>
-        <button class="btn" id="loopBtn" title="Loop">🔁</button>
-      </div>
+      <button class="btn" id="shuffleBtn">🔀</button>
+      <button class="btn" id="prevBtn">⏮</button>
+      <button class="btn" id="playPauseBtn">▶</button>
+      <button class="btn" id="nextBtn">⏭</button>
+      <button class="btn" id="loopBtn">🔁</button>
     </div>
 
-    <!-- centro: barra de progresso -->
-    <div class="center-row">
+    <div class="progress-container">
+      <span class="time" id="curTime">0:00</span>
       <div class="progress" id="progress">
         <div class="bar" id="progressBar"></div>
       </div>
-      <div class="time" id="timeLabel">0:00 / 0:00</div>
+      <span class="time" id="durTime">0:00</span>
     </div>
 
-    <!-- baixo: volume, mute -->
     <div class="bottom-row">
-      <div class="row">
-        <button class="btn" id="muteBtn">🔊</button>
-        <input id="vol" type="range" min="0" max="100" value="100">
-      </div>
-      <div style="width:1px"></div>
+      <button class="btn" id="muteBtn" style="width:40px;height:40px;font-size:16px">🔊</button>
+      <input id="vol" type="range" min="0" max="100" value="100">
     </div>
   </div>
 </div>
 
-<div id="adOverlay">Anúncio a passar…</div>
-
 <script>
-  /////////////////////////////////////////////////////////////////////////////
-  // CONFIG - substitui pela tua playlist
   const PLAYLIST_ID = 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I';
-  const START_INDEX = 0;
-  /////////////////////////////////////////////////////////////////////////////
+  let player, updateTimer;
+  let isMuted = true;
+  let isShuffle = true;
+  let isLoop = true;
 
-  // carregar API
+  // Carregar API
   let tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(tag);
 
-  // variáveis
-  let player;
-  let isPlaying = false;
-  let isMuted = false;
-  let shuffle = true; // valor inicial
-  let loop = true;    // valor inicial
-  let updateTimer = null;
-
-  // playlists
-  let origPlaylist = [];     // ordem original vinda do YouTube
-  let playlistOrder = [];    // ordem atual usada (podemos embaralhar aqui)
-  let currentIndex = START_INDEX; // índice dentro de playlistOrder
-
-  // elementos UI
-  const playPauseBtn = document.getElementById('playPauseBtn');
-  const prevBtn = document.getElementById('prevBtn');
-  const nextBtn = document.getElementById('nextBtn');
-  const volSlider = document.getElementById('vol');
-  const muteBtn = document.getElementById('muteBtn');
-  const progress = document.getElementById('progress');
-  const progressBar = document.getElementById('progressBar');
-  const timeLabel = document.getElementById('timeLabel');
-  const shuffleBtn = document.getElementById('shuffleBtn');
-  const loopBtn = document.getElementById('loopBtn');
-
-  let isAdPlaying = false;
-
-  function checkAds() {
-    if (!player || typeof player.getAdState !== "function") return false;
-    try {
-      const adState = player.getAdState();
-      if (adState === "showing" || adState === "loading") return true;
-      return false;
-    } catch (err) {
-      return false;
-    }
-  }
-
-  function setAdOverlay(visible) {
-    const ad = document.getElementById("adOverlay");
-    if (!ad) return;
-    ad.style.opacity = visible ? "1" : "0";
-  }
-
-  // onYouTubeIframeAPIReady é chamado pela lib do YouTube
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      height: '100%',
-      width: '100%',
+      height: '100%', width: '100%',
       playerVars: {
-        listType: 'playlist',
-        list: PLAYLIST_ID,
-        autoplay: 1,
-        controls: 0,
-        rel: 0,
-        modestbranding: 1,
-        showinfo: 0,
-        origin: location.origin,
-        mute: 1
+        listType: 'playlist', list: PLAYLIST_ID,
+        autoplay: 1, controls: 0, disablekb: 1, rel: 0, mute: 1
       },
       events: {
         'onReady': onPlayerReady,
-        'onStateChange': onPlayerStateChange,
-        'onError': onPlayerError
+        'onStateChange': onPlayerStateChange
       }
     });
   }
 
   function onPlayerReady(event) {
-    // tenta popular playlists (getPlaylist pode falhar no primeiro tick)
-    setTimeout(() => {
-      origPlaylist = (player.getPlaylist && player.getPlaylist()) || [];
-      if (!origPlaylist.length) {
-        // tenta novamente se vazio
-        origPlaylist = (player.getPlaylist && player.getPlaylist()) || [];
-      }
-      // copia para playlistOrder e aplica shuffle se necessário
-      playlistOrder = origPlaylist.slice();
-      if (shuffle) playlistOrder = shuffleArrayKeepingCurrent(playlistOrder, START_INDEX);
-
-      // garante índice seguro
-      currentIndex = Math.min(START_INDEX, playlistOrder.length - 1);
-
-      // tenta definir loop/shuffle ao player (se suportado)
-      if (typeof player.setLoop === 'function') player.setLoop(loop);
-      if (typeof player.setShuffle === 'function') player.setShuffle(shuffle);
-
-      if (playlistOrder.length) {
-        // toca no index actual (isto assegura que o player usa o playlistOrder que temos em memória)
-        player.playVideoAt(currentIndex);
-      } else {
-        // fallback: a API já deve lidar com o list param — se não, tentamos tocar de qualquer forma
-        try { player.playVideoAt(START_INDEX); } catch (e) {}
-      }
-    }, 700);
-
-    // manter mudo para permitir autoplay inicialmente
-    player.mute();
-    isMuted = true;
-    muteBtn.textContent = '🔇';
-
-    attachUI();
-    startUpdateLoop();
-    reflectButtons();
-  }
-
-  function onPlayerError(e){
-    console.warn('YouTube player error', e);
+    player.setShuffle(isShuffle);
+    player.setLoop(isLoop);
+    updateUIStates();
+    startLoop();
   }
 
   function onPlayerStateChange(e) {
-    const state = e.data;
-    if (state === YT.PlayerState.PLAYING) {
-      isPlaying = true;
-      playPauseBtn.textContent = '⏸';
-      // sincroniza index com a execução real do player (player.getPlaylistIndex pode ser usado)
-      syncIndexFromPlayer();
-      updateTrackInfo();
-    } else if (state === YT.PlayerState.PAUSED) {
-      isPlaying = false;
-      playPauseBtn.textContent = '▶';
-    } else if (state === YT.PlayerState.ENDED) {
-      isPlaying = false;
-      playPauseBtn.textContent = '▶';
-      // avançar automaticamente conforme o nosso next() que respeita loop
-      next();
-    } else if (state === YT.PlayerState.BUFFERING) {
-      // nothing special
-    }
-  }
-
-  // UI wiring
-  function attachUI(){
-    playPauseBtn.addEventListener('click', togglePlayPause);
-    prevBtn.addEventListener('click', prev);
-    nextBtn.addEventListener('click', next);
-
-    muteBtn.addEventListener('click', () => {
-      if (!player) return;
-      if (isMuted) {
-        player.unMute();
-        isMuted = false;
-        muteBtn.textContent = '🔊';
-      } else {
-        player.mute();
-        isMuted = true;
-        muteBtn.textContent = '🔇';
-      }
-    });
-
-    volSlider.addEventListener('input', (e) => {
-      const v = parseInt(e.target.value,10);
-      if (!player) return;
-      player.setVolume(v);
-      if (v === 0) {
-        isMuted = true; player.mute(); muteBtn.textContent='🔇';
-      } else {
-        if (isMuted) { player.unMute(); isMuted=false; muteBtn.textContent='🔊' }
-      }
-    });
-
-    progress.addEventListener('click', (ev) => {
-      if (!player || typeof player.getDuration !== 'function') return;
-      const rect = progress.getBoundingClientRect();
-      const pct = Math.max(0, Math.min(1, (ev.clientX - rect.left) / rect.width));
-      const duration = player.getDuration() || 0;
-      if (duration > 0) {
-        player.seekTo(duration * pct, true);
-      }
-    });
-
-    shuffleBtn.addEventListener('click', () => {
-      shuffle = !shuffle;
-      // se player suporta setShuffle, usa-o
-      if (typeof player.setShuffle === 'function') {
-        try { player.setShuffle(shuffle); } catch(e){ /* ignore */ }
-      }
-      // actualiza playlistOrder mantendo o vídeo actual na mesma posição
-      origPlaylist = origPlaylist.length ? origPlaylist : (player.getPlaylist && player.getPlaylist()) || origPlaylist;
-      if (shuffle) {
-        playlistOrder = shuffleArrayKeepingCurrent(origPlaylist.slice(), getCurrentPlaylistIndexInOrig());
-      } else {
-        // volta à ordem original — atualiza currentIndex para a posição do vídeo actual na origPlaylist
-        playlistOrder = origPlaylist.slice();
-        const curVid = getCurrentVideoId();
-        const newIdx = playlistOrder.indexOf(curVid);
-        currentIndex = newIdx >= 0 ? newIdx : 0;
-      }
-      reflectButtons();
-    });
-
-    loopBtn.addEventListener('click', () => {
-      loop = !loop;
-      if (typeof player.setLoop === 'function') {
-        try { player.setLoop(loop); } catch(e){ /* ignore */ }
-      }
-      reflectButtons();
-    });
-
-    // set initial volume
-    try { volSlider.value = player.getVolume ? player.getVolume() : 20; } catch(e){}
-  }
-
-  function togglePlayPause(){
-    if (!player) return;
-    const state = player.getPlayerState();
-    if (state === YT.PlayerState.PLAYING) {
-      player.pauseVideo();
+    const btn = document.getElementById('playPauseBtn');
+    const title = document.getElementById('trackTitle');
+    
+    if (e.data === YT.PlayerState.PLAYING) {
+      btn.innerHTML = '⏸';
+      const videoData = player.getVideoData();
+      title.innerText = videoData.title;
     } else {
-      player.playVideo();
+      btn.innerHTML = '▶';
+    }
+
+    if (e.data === YT.PlayerState.ENDED && isLoop && !isShuffle) {
+        // Fallback manual para loop se a API falhar
+        player.playVideoAt(player.getPlaylistIndex());
     }
   }
 
-  // retorna o id do vídeo actualmente a tocar (se possível)
-  function getCurrentVideoId() {
-    try {
-      if (!player) return null;
-      const data = player.getVideoData();
-      if (data && data.video_id) return data.video_id;
-      // fallback para playlist index
-      const idx = player.getPlaylistIndex && player.getPlaylistIndex();
-      const pl = (player.getPlaylist && player.getPlaylist()) || playlistOrder;
-      return (pl && typeof idx === 'number') ? pl[idx] : null;
-    } catch(e){ return null; }
-  }
+  function startLoop() {
+    setInterval(() => {
+      if (!player || !player.getCurrentTime) return;
 
-  function getCurrentPlaylistIndexInOrig(){
-    // encontra o índice do vídeo actual na origPlaylist
-    const vid = getCurrentVideoId();
-    if (!vid) return 0;
-    const idx = origPlaylist.indexOf(vid);
-    return idx >= 0 ? idx : 0;
-  }
-
-  // sincroniza currentIndex com o player (usa playlistOrder)
-  function syncIndexFromPlayer(){
-    try {
-      const vid = getCurrentVideoId();
-      if (!vid) return;
-      const idx = playlistOrder.indexOf(vid);
-      if (idx >= 0) currentIndex = idx;
-    } catch(e){}
-  }
-
-  function prev(){
-    if (!player) return;
-    if (!playlistOrder.length) {
-      try { player.previousVideo(); } catch(e) {}
-      return;
-    }
-    // decrementa índice
-    currentIndex = currentIndex - 1;
-    if (currentIndex < 0) {
-      if (loop) currentIndex = playlistOrder.length - 1;
-      else currentIndex = 0;
-    }
-    player.playVideoAt(currentIndex);
-  }
-
-  function next(){
-    if (!player) return;
-    if (!playlistOrder.length) {
-      try { player.nextVideo(); } catch(e) {}
-      return;
-    }
-    currentIndex = currentIndex + 1;
-    if (currentIndex >= playlistOrder.length) {
-      if (loop) currentIndex = 0;
-      else {
-        currentIndex = playlistOrder.length - 1;
-        // se não há loop e já estamos no fim, apenas para
-      }
-    }
-    player.playVideoAt(currentIndex);
-  }
-
-  // update loop (tempo, progress, detecção de anúncios)
-  function startUpdateLoop(){
-    if (updateTimer) clearInterval(updateTimer);
-    updateTimer = setInterval(() => {
-      if (!player) return;
-
-      // --- LÓGICA DE AUTO-SKIP DE ANÚNCIOS ---
-      const adNow = checkAds();
+      // Ad Skip Logic
+      const ad = document.getElementById("adOverlay");
+      const isAd = player.getAdState && (player.getAdState() > 0);
       
-      if (adNow) {
-        // 1. Tenta colocar o vídeo no fim do anúncio (muitos anúncios permitem seek)
-        try {
-            const adDuration = player.getDuration();
-            if (adDuration > 0) {
-                player.seekTo(adDuration, true);
-            }
-        } catch(e) {}
-
-        if (!isAdPlaying) {
-          isAdPlaying = true;
-          setAdOverlay(true);
-          disableControls(true);
-        }
-        return; // Sai do loop para não atualizar a barra de progresso com tempo do anúncio
-      } else if (isAdPlaying) {
-        isAdPlaying = false;
-        setAdOverlay(false);
-        disableControls(false);
+      if (isAd) {
+        ad.style.opacity = "1";
+        player.seekTo(player.getDuration(), true);
+      } else {
+        ad.style.opacity = "0";
       }
-      // ---------------------------------------
 
-      const dur = player.getDuration ? (player.getDuration() || 0) : 0;
-      const cur = player.getCurrentTime ? (player.getCurrentTime() || 0) : 0;
-      const pct = dur > 0 ? (cur / dur) * 100 : 0;
-      progressBar.style.width = pct + '%';
-      timeLabel.textContent = formatTime(cur) + ' / ' + formatTime(dur);
-
-      updateTrackInfo();
-      syncIndexFromPlayer();
-    }, 300);
+      // Update Progress
+      const cur = player.getCurrentTime();
+      const dur = player.getDuration();
+      if (dur > 0) {
+        const pct = (cur / dur) * 100;
+        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('curTime').innerText = formatTime(cur);
+        document.getElementById('durTime').innerText = formatTime(dur);
+      }
+    }, 500);
   }
 
-  // Função auxiliar para limpar o código
-  function disableControls(disabled) {
-    playPauseBtn.disabled = disabled;
-    nextBtn.disabled = disabled;
-    prevBtn.disabled = disabled;
-    shuffleBtn.disabled = disabled;
-    loopBtn.disabled = disabled;
+  // Event Listeners
+  document.getElementById('playPauseBtn').onclick = () => {
+    player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
+  };
+
+  document.getElementById('nextBtn').onclick = () => player.nextVideo();
+  document.getElementById('prevBtn').onclick = () => player.previousVideo();
+
+  document.getElementById('shuffleBtn').onclick = () => {
+    isShuffle = !isShuffle;
+    player.setShuffle(isShuffle);
+    updateUIStates();
+  };
+
+  document.getElementById('loopBtn').onclick = () => {
+    isLoop = !isLoop;
+    player.setLoop(isLoop);
+    updateUIStates();
+  };
+
+  document.getElementById('vol').oninput = (e) => {
+    player.setVolume(e.target.value);
+    player.unMute();
+    document.getElementById('muteBtn').innerText = e.target.value > 0 ? '🔊' : '🔇';
+  };
+
+  document.getElementById('progress').onclick = (e) => {
+    const rect = e.currentTarget.getBoundingClientRect();
+    const pct = (e.clientX - rect.left) / rect.width;
+    player.seekTo(player.getDuration() * pct, true);
+  };
+
+  function updateUIStates() {
+    document.getElementById('shuffleBtn').classList.toggle('active', isShuffle);
+    document.getElementById('loopBtn').classList.toggle('active', isLoop);
   }
 
-  function updateTrackInfo(){
-    // opcional: podes adicionar título/thumbnail aqui no futuro
+  function formatTime(s) {
+    let m = Math.floor(s / 60);
+    s = Math.floor(s % 60);
+    return m + ":" + (s < 10 ? '0' + s : s);
   }
 
-  // utilitários
-  function formatTime(t){
-    t = Math.max(0, Math.floor(t));
-    const m = Math.floor(t / 60);
-    const s = t % 60;
-    return m + ':' + (s < 10 ? '0' : '') + s;
-  }
-
-  function shuffleArray(arr){
-    const a = arr.slice();
-    for (let i = a.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [a[i], a[j]] = [a[j], a[i]];
+  // Ativa áudio no primeiro clique (restrição do browser)
+  document.body.onclick = () => {
+    if (player && isMuted) {
+        player.unMute();
+        player.setVolume(50);
+        document.getElementById('vol').value = 50;
+        isMuted = false;
     }
-    return a;
-  }
-
-  // embaralha mantendo o vídeo actual (indexBase é o índice do vídeo actual na lista passada)
-  function shuffleArrayKeepingCurrent(arr, indexBase = 0){
-    if (!arr || arr.length <= 1) return arr;
-    const currentId = arr[indexBase];
-    // remove item atual
-    const rest = arr.slice(0, indexBase).concat(arr.slice(indexBase + 1));
-    const shuffled = shuffleArray(rest);
-    // coloca currentId no início
-    return [currentId].concat(shuffled);
-  }
-
-  function reflectButtons(){
-    shuffleBtn.style.opacity = shuffle ? '1' : '0.6';
-    loopBtn.style.opacity = loop ? '1' : '0.6';
-  }
-
-  // fallback: interacção do utilizador desmuta se necessário
-  document.addEventListener('click', function onFirstClick(){
-    if (!player) return;
-    if (isMuted && volSlider.value > 0) {
-      player.unMute();
-      isMuted = false;
-      muteBtn.textContent = '🔊';
-    }
-    document.removeEventListener('click', onFirstClick);
-  });
-
-  // debug helpers
-  window._bgPlayer = { playerRef: () => player, next, prev, togglePlayPause };
-
-  // assegura que o script exporte a callback global necessária
-  window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+  };
 </script>
-
 </body>
 </html>
