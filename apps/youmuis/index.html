@@ -14,6 +14,10 @@
 <div class="black-overlay">
   
   <div class="ui-content">
+    <div class="playlist-selector">
+      <select id="playlistSelect"></select>
+    </div>
+    
     <div class="track-info">
       <h1 class="track-title" id="trackTitle">A carregar...</h1>
     </div>
@@ -45,26 +49,55 @@
 </div>
 
 <script>
-  const PLAYLIST_ID = 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I';
-  let player, isShuffle = true, isLoop = true;
-
-  // Carregar API YouTube
-  let tag = document.createElement('script');
-  tag.src = "https://www.youtube.com/iframe_api";
-  document.head.appendChild(tag);
-
+  const PLAYLISTS_ID = [
+    { name: "Ale", id: 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I' },
+    { name: "8D", id: 'PL4Nzei3ISixLfnoCCW-0i60CSUvdIkYPJ' }
+  ];
+  
+  let player;
+  let isShuffle = true;
+  let isLoop = true;
+  
+  // 1. Povoar a Select Box mal a página carrega
+  const select = document.getElementById('playlistSelect');
+  PLAYLISTS_ID.forEach((pl, index) => {
+    let opt = document.createElement('option');
+    opt.value = pl.id;
+    opt.innerText = pl.name;
+    select.appendChild(opt);
+  });
+  
+  // 2. Evento de mudança de playlist
+  select.addEventListener('change', (e) => {
+    const newPlaylistId = e.target.value;
+    if (player && player.loadPlaylist) {
+      player.loadPlaylist({
+        list: newPlaylistId,
+        listType: 'playlist',
+        index: 0,
+        startSeconds: 0
+      });
+      // Forçar shuffle se estiver ativo
+      if (isShuffle) player.setShuffle(true);
+    }
+  });
+  
   function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
-      height: '100%', width: '100%',
+      height: '100%',
+      width: '100%',
       playerVars: {
-        listType: 'playlist', list: PLAYLIST_ID,
-        autoplay: 1, controls: 0, disablekb: 1, rel: 0, mute: 1
+        listType: 'playlist',
+        list: PLAYLISTS_ID[0].id, // Carrega a primeira por defeito
+        autoplay: 1,
+        controls: 0,
+        rel: 0,
+        mute: 1
       },
       events: {
         'onReady': (e) => {
           player.setShuffle(isShuffle);
           player.setLoop(isLoop);
-          updateUIState();
           startUpdateTimer();
         },
         'onStateChange': onPlayerStateChange
