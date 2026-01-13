@@ -18,6 +18,21 @@
       select.appendChild(opt);
   });
 
+    // 2. Evento de mudança de playlist
+    select.addEventListener('change', (e) => {
+      const newPlaylistId = e.target.value;
+      if (player && player.loadPlaylist) {
+        player.loadPlaylist({
+          list: newPlaylistId,
+          listType: 'playlist',
+          index: 0,
+          startSeconds: 0
+        });
+        // Forçar shuffle se estiver ativo
+        if (isShuffle) player.setShuffle(true);
+      }
+    });
+
   // Carregar API YouTube
   let tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
