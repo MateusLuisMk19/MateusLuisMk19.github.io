@@ -88,9 +88,11 @@ calc.addEventListener("click", () => {
     const finalIQS = Math.ceil((meta * validIQS - nps) / (1 - meta)) + nps;
 
     const chamN = chamadasNecessarias({  chamadasAtuais:validIQS,  taxaAtual:txAct, meta:meta});
-	  
-    npsPercentMeta.textContent = `+${chamN} para >70%`;
-    npsPercentMeta.style.backgroundColor = "#b33d18";
+
+	if(chamN != 0){
+	    npsPercentMeta.textContent = `+${chamN} para >70%`;
+	    npsPercentMeta.style.backgroundColor = "#b33d18";
+	}
   } else {
     npsPercentMeta.textContent = "Good Job";
     npsPercentMeta.style.backgroundColor = "darkgreen";
