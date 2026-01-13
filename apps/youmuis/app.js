@@ -32,28 +32,37 @@ const PLAYLISTS_ID = [
   });
   
   function onYouTubeIframeAPIReady() {
+    // Certifique-se que o array existe antes de tentar carregar
+    if (!PLAYLISTS_ID || PLAYLISTS_ID.length === 0) return;
+
     player = new YT.Player('player', {
-      height: '100%',
-      width: '100%',
-      playerVars: {
-        listType: 'playlist',
-        list: PLAYLISTS_ID[0].id, // Carrega a primeira por defeito
-        autoplay: 1,
-        controls: 0,
-        rel: 0,
-        mute: 1,
-        origin: window.location.origin
-      },
-      events: {
-        'onReady': (e) => {
-          player.setShuffle(isShuffle);
-          player.setLoop(isLoop);
-          startUpdateTimer();
+        height: '100%',
+        width: '100%',
+        playerVars: {
+            listType: 'playlist',
+            list: PLAYLISTS_ID[0].id,
+            autoplay: 1,
+            controls: 0,
+            mute: 1,
+            enablejsapi: 1
         },
-        'onStateChange': onPlayerStateChange
-      }
+        events: {
+            'onReady': (event) => {
+                console.log("Player pronto!");
+                document.body.classList.add('player-ready');
+                
+                // Tenta dar play imediatamente (pode falhar silenciosamente por causa do browser)
+                event.target.playVideo();
+                
+                player.setShuffle(isShuffle);
+                player.setLoop(isLoop);
+                startUpdateTimer();
+            },
+            'onStateChange': onPlayerStateChange,
+            'onError': (e) => console.error("Erro no Player:", e.data)
+        }
     });
-  }
+}
 
   function onPlayerStateChange(e) {
     if (e.data === YT.PlayerState.PLAYING) {
