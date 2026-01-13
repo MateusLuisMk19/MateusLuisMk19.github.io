@@ -3,174 +3,160 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Pro Player — Background</title>
+<title>Background Player — Black Edition</title>
 <style>
   :root {
     --primary: #00c8ff;
-    --bg-dark: rgba(10, 10, 10, 0.95);
-    --glass: rgba(255, 255, 255, 0.1);
+    /* Camada escura principal */
+    --overlay-bg: rgba(0, 0, 0, 0.85); 
   }
 
-  body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+  body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; background: #000; font-family: sans-serif; }
 
+  /* Video no fundo */
   #player {
     position: fixed;
     inset: 0;
-    z-index: -2;
+    z-index: -1;
     pointer-events: none;
-    background: #000;
   }
 
-  .ui {
+  /* Camada Escura Total */
+  .black-overlay {
     position: fixed;
     inset: 0;
+    background: var(--overlay-bg);
     z-index: 1;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end; /* Controles na parte inferior como Spotify/YT Music */
-    background: linear-gradient(to bottom, transparent 40%, var(--bg-dark) 100%);
-    pointer-events: none;
+    justify-content: space-between;
+    pointer-events: auto; /* Permite clicar nos botões */
   }
 
-  .controls {
-    width: 100%;
-    padding: 20px 0;
-    pointer-events: auto;
-  }
-
-  /* Informação da Faixa */
-  .track-info {
-    text-align: center;
-    color: #fff;
-    margin-bottom: 20px;
-    padding: 0 20px;
-  }
-  .track-title { font-size: 1.2rem; font-weight: bold; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-  .top-row {
+  /* Conteúdo da UI */
+  .ui-content {
+    height: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
-    gap: 30px;
-    margin-bottom: 15px;
+    padding: 20px;
+    gap: 40px;
+  }
+
+  .track-info { text-align: center; color: #fff; }
+  .track-title { font-size: 1.5rem; margin: 0; opacity: 0.9; }
+
+  .controls-main {
+    display: flex;
+    align-items: center;
+    gap: 25px;
   }
 
   .btn {
-    background: var(--glass);
+    background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.1);
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    cursor: pointer;
     color: #fff;
-    font-size: 20px;
+    cursor: pointer;
+    border-radius: 12px;
+    padding: 15px;
     transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
-  .btn:hover { background: rgba(255,255,255,0.2); }
-  .btn:active { transform: scale(0.9); }
+  .btn:hover { background: rgba(255,255,255,0.15); border-color: var(--primary); }
   .btn.active { color: var(--primary); border-color: var(--primary); }
-  #playPauseBtn { width: 65px; height: 65px; background: #fff; color: #000; font-size: 24px; }
-
-  .progress-container {
-    padding: 0 30px;
-    display: flex;
-    align-items: center;
-    gap: 15px;
+  
+  #playPauseBtn { 
+    width: 80px; height: 80px; 
+    border-radius: 50%; 
+    font-size: 30px; 
+    background: #fff; 
+    color: #000; 
   }
 
-  .progress {
-    flex-grow: 1;
-    height: 6px;
-    background: rgba(255,255,255,0.2);
-    border-radius: 10px;
+  /* Barra de Progresso */
+  .progress-box { width: 100%; max-width: 500px; }
+  .progress-bg {
+    width: 100%; height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 3px;
     cursor: pointer;
-    position: relative;
+    margin-bottom: 10px;
+  }
+  .progress-fill {
+    height: 100%; background: var(--primary);
+    width: 0%; border-radius: 3px; transition: width 0.1s linear;
+  }
+  .time-info {
+    display: flex; justify-content: space-between;
+    color: #666; font-size: 12px;
   }
 
-  .bar {
-    height: 100%;
-    background: var(--primary);
-    width: 0%;
-    border-radius: 10px;
-    position: relative;
-  }
-
-  .time { color: #aaa; font-size: 12px; min-width: 45px; }
-
-  .bottom-row {
+  /* Volume no fundo */
+  .bottom-bar {
+    padding: 30px;
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 15px 30px;
     gap: 15px;
   }
 
-  input[type="range"] { cursor: pointer; accent-color: var(--primary); }
+  input[type="range"] { accent-color: var(--primary); width: 120px; }
 
   #adOverlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.95);
-    color: var(--primary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 10000;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.5s;
-    font-weight: bold;
-    font-size: 1.5rem;
+    position: fixed; inset: 0; z-index: 9999;
+    background: #000; color: #fff;
+    display: none; align-items: center; justify-content: center;
+    font-size: 20px;
   }
 </style>
 </head>
 <body>
 
 <div id="player"></div>
+<div id="adOverlay">A ignorar anúncio...</div>
 
-<div id="adOverlay">PULANDO ANÚNCIO...</div>
+<div class="black-overlay">
+  
+  <div class="ui-content">
+    <div class="track-info">
+      <h1 class="track-title" id="trackTitle">A carregar...</h1>
+    </div>
 
-<div class="ui">
-  <div class="track-info">
-    <p class="track-title" id="trackTitle">A carregar playlist...</p>
-  </div>
-
-  <div class="controls">
-    <div class="top-row">
-      <button class="btn" id="shuffleBtn">🔀</button>
+    <div class="controls-main">
+      <button class="btn" id="shuffleBtn" title="Shuffle">🔀</button>
       <button class="btn" id="prevBtn">⏮</button>
       <button class="btn" id="playPauseBtn">▶</button>
       <button class="btn" id="nextBtn">⏭</button>
-      <button class="btn" id="loopBtn">🔁</button>
+      <button class="btn" id="loopBtn" title="Loop">🔁</button>
     </div>
 
-    <div class="progress-container">
-      <span class="time" id="curTime">0:00</span>
-      <div class="progress" id="progress">
-        <div class="bar" id="progressBar"></div>
+    <div class="progress-box">
+      <div class="progress-bg" id="progress">
+        <div class="progress-fill" id="progressBar"></div>
       </div>
-      <span class="time" id="durTime">0:00</span>
-    </div>
-
-    <div class="bottom-row">
-      <button class="btn" id="muteBtn" style="width:40px;height:40px;font-size:16px">🔊</button>
-      <input id="vol" type="range" min="0" max="100" value="100">
+      <div class="time-info">
+        <span id="curTime">0:00</span>
+        <span id="durTime">0:00</span>
+      </div>
     </div>
   </div>
+
+  <div class="bottom-bar">
+    <span style="color:#fff; font-size: 14px;">Vol:</span>
+    <input id="vol" type="range" min="0" max="100" value="100">
+  </div>
+
 </div>
 
 <script>
   const PLAYLIST_ID = 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I';
-  let player, updateTimer;
-  let isMuted = true;
-  let isShuffle = true;
-  let isLoop = true;
+  let player, isShuffle = true, isLoop = true;
 
-  // Carregar API
+  // Carregar API YouTube
   let tag = document.createElement('script');
   tag.src = "https://www.youtube.com/iframe_api";
   document.head.appendChild(tag);
@@ -183,97 +169,76 @@
         autoplay: 1, controls: 0, disablekb: 1, rel: 0, mute: 1
       },
       events: {
-        'onReady': onPlayerReady,
+        'onReady': (e) => {
+          player.setShuffle(isShuffle);
+          player.setLoop(isLoop);
+          updateUIState();
+          startUpdateTimer();
+        },
         'onStateChange': onPlayerStateChange
       }
     });
   }
 
-  function onPlayerReady(event) {
-    player.setShuffle(isShuffle);
-    player.setLoop(isLoop);
-    updateUIStates();
-    startLoop();
-  }
-
   function onPlayerStateChange(e) {
-    const btn = document.getElementById('playPauseBtn');
-    const title = document.getElementById('trackTitle');
-    
     if (e.data === YT.PlayerState.PLAYING) {
-      btn.innerHTML = '⏸';
-      const videoData = player.getVideoData();
-      title.innerText = videoData.title;
+      document.getElementById('playPauseBtn').innerText = '⏸';
+      document.getElementById('trackTitle').innerText = player.getVideoData().title;
     } else {
-      btn.innerHTML = '▶';
-    }
-
-    if (e.data === YT.PlayerState.ENDED && isLoop && !isShuffle) {
-        // Fallback manual para loop se a API falhar
-        player.playVideoAt(player.getPlaylistIndex());
+      document.getElementById('playPauseBtn').innerText = '▶';
     }
   }
 
-  function startLoop() {
+  function startUpdateTimer() {
     setInterval(() => {
       if (!player || !player.getCurrentTime) return;
 
-      // Ad Skip Logic
-      const ad = document.getElementById("adOverlay");
+      // Lógica de Anúncios
       const isAd = player.getAdState && (player.getAdState() > 0);
-      
-      if (isAd) {
-        ad.style.opacity = "1";
-        player.seekTo(player.getDuration(), true);
-      } else {
-        ad.style.opacity = "0";
-      }
+      document.getElementById("adOverlay").style.display = isAd ? "flex" : "none";
+      if (isAd) player.seekTo(player.getDuration(), true);
 
-      // Update Progress
+      // Progresso
       const cur = player.getCurrentTime();
       const dur = player.getDuration();
       if (dur > 0) {
-        const pct = (cur / dur) * 100;
-        document.getElementById('progressBar').style.width = pct + '%';
+        document.getElementById('progressBar').style.width = (cur / dur * 100) + '%';
         document.getElementById('curTime').innerText = formatTime(cur);
         document.getElementById('durTime').innerText = formatTime(dur);
       }
     }, 500);
   }
 
-  // Event Listeners
+  // Controlos
   document.getElementById('playPauseBtn').onclick = () => {
     player.getPlayerState() === 1 ? player.pauseVideo() : player.playVideo();
   };
-
   document.getElementById('nextBtn').onclick = () => player.nextVideo();
   document.getElementById('prevBtn').onclick = () => player.previousVideo();
-
+  
   document.getElementById('shuffleBtn').onclick = () => {
     isShuffle = !isShuffle;
     player.setShuffle(isShuffle);
-    updateUIStates();
+    updateUIState();
   };
 
   document.getElementById('loopBtn').onclick = () => {
     isLoop = !isLoop;
     player.setLoop(isLoop);
-    updateUIStates();
+    updateUIState();
   };
 
   document.getElementById('vol').oninput = (e) => {
     player.setVolume(e.target.value);
     player.unMute();
-    document.getElementById('muteBtn').innerText = e.target.value > 0 ? '🔊' : '🔇';
   };
 
   document.getElementById('progress').onclick = (e) => {
     const rect = e.currentTarget.getBoundingClientRect();
-    const pct = (e.clientX - rect.left) / rect.width;
-    player.seekTo(player.getDuration() * pct, true);
+    player.seekTo(player.getDuration() * ((e.clientX - rect.left) / rect.width), true);
   };
 
-  function updateUIStates() {
+  function updateUIState() {
     document.getElementById('shuffleBtn').classList.toggle('active', isShuffle);
     document.getElementById('loopBtn').classList.toggle('active', isLoop);
   }
@@ -284,15 +249,11 @@
     return m + ":" + (s < 10 ? '0' + s : s);
   }
 
-  // Ativa áudio no primeiro clique (restrição do browser)
-  document.body.onclick = () => {
-    if (player && isMuted) {
-        player.unMute();
-        player.setVolume(50);
-        document.getElementById('vol').value = 50;
-        isMuted = false;
-    }
-  };
+  // Click inicial para ativar som (exigência dos browsers)
+  document.body.addEventListener('click', () => {
+    if(player) { player.unMute(); player.playVideo(); }
+  }, {once: true});
 </script>
+
 </body>
 </html>
