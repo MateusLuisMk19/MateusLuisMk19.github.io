@@ -5,17 +5,18 @@
   
   const PLAYLIST_ID = 'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I';
   const PLAYLISTS_ID = [
-    {name:'Papion',id:'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I'},
-    {name:'8d music',id:'PL4Nzei3ISixLfnoCCW-0i60CSUvdIkYPJ'},
-    {name:'Fast',id:'PLWgr15WyLScLye42da0Her6f9-6zvZ5Ns&si=4qP307bheXo_WW17'}
+    {title:"Papillon", name:'papion',id:'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I'},
+    {title:"8D musics",name:'8dmusic',id:'PL4Nzei3ISixLfnoCCW-0i60CSUvdIkYPJ'},
+    {title:"To run musics",name:'fast',id:'PLWgr15WyLScLye42da0Her6f9-6zvZ5Ns&si=4qP307bheXo_WW17'}
   ];
   let player, isShuffle = true, isLoop = true;
 
   const select = document.getElementById('playlistSelect');
-    PLAYLISTS_ID.forEach(pl => {
+
+  PLAYLISTS_ID.forEach(pl => {
       let opt = document.createElement('option');
       opt.value = pl.id;
-      opt.innerText = pl.name;
+      opt.innerText = pl.title;
       select.appendChild(opt);
   });
 
@@ -43,7 +44,7 @@
     player = new YT.Player('player', {
       height: '100%', width: '100%',
       playerVars: {
-        listType: 'playlist', list: PLAYLISTS_ID[0].id,
+        listType: 'playlist', list: PLAYLISTS_ID[2].id,
         autoplay: 1, controls: 0, disablekb: 1, rel: 0, mute: 1
       },
       events: {
