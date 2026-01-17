@@ -7,7 +7,7 @@
   const PLAYLISTS_ID = [
     {title:"Papillon", name:'papion',id:'PLaF8FbChcxg6wfsLJqVkrD19oqKdvmv7I'},
     {title:"8D musics",name:'8dmusic',id:'PL4Nzei3ISixLfnoCCW-0i60CSUvdIkYPJ'},
-    {title:"To run musics",name:'fast',id:'PLWgr15WyLScLye42da0Her6f9-6zvZ5Ns&si=4qP307bheXo_WW17'}
+    {title:"To run musics",name:'fast',id:'PLWgr15WyLScLye42da0Her6f9-6zvZ5Ns'}
   ];
   let player, isShuffle = true, isLoop = true;
 
