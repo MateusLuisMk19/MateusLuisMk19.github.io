@@ -220,3 +220,32 @@ textarea {
   .gridd { grid-template-columns: 1fr; }
   .grid { grid-template-columns: 1fr 1fr; }
 }
+
+/* === CONTAINER PAI COM SCROLL === */
+.grid-wrapper {
+  height: 320px;          /* ajusta conforme o layout */
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding-right: 4px;     /* espaço para scrollbar não colar no conteúdo */
+}
+
+/* scrollbar discreta (WebKit) */
+.grid-wrapper::-webkit-scrollbar {
+  width: 6px;
+}
+
+.grid-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.grid-wrapper::-webkit-scrollbar-thumb {
+  background-color: #2a2f3a;
+  border-radius: 4px;
+}
+
+/* Firefox */
+.grid-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #2a2f3a transparent;
+}
