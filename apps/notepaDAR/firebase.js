@@ -16,7 +16,7 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // --- SALVAR ---
-async function saveTodayFromUI(rawList, npsCurrentVal) {
+async function saveTypeFromUI(color, type, subtype, dar) {
   const userId = document.getElementById("usercode").value.trim();
 
   // Tratamendo de dados
@@ -56,4 +56,4 @@ async function checkUserExists(userId) {
 
 
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveTodayFromUI, checkUserExists };
+window.firebaseTMA = { saveTypeFromUI, checkUserExists };
