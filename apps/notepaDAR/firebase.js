@@ -20,6 +20,7 @@ async function saveTypeFromUI(color, type, subtype, dar) {
   const userId = document.getElementById("usercode").value.trim();
 
   // Tratamendo de dados
+  console.log(userId);
 
   const payload = {
     color: "#987364",
@@ -31,6 +32,8 @@ async function saveTypeFromUI(color, type, subtype, dar) {
       r: "",
     }
   };
+
+  console.log(payload);
 
   try {
     await setDoc(doc(db, "users", userId), payload);
