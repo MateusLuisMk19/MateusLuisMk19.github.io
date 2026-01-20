@@ -46,8 +46,7 @@ async function checkUserExists(userId) {
   try {
     const userRef = doc(db, "users", userId);
     // Verificamos se existe pelo menos um documento na subcoleção daily
-    const dailyRef = collection(db, "users", userId, "daily");
-    const q = query(dailyRef, limit(1));
+    const q = query(userRef, limit(1));
     const querySnapshot = await getDocs(q);
     
     return !querySnapshot.empty;
