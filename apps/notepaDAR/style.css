@@ -223,7 +223,7 @@ textarea {
 
 /* === CONTAINER PAI COM SCROLL === */
 .grid-wrapper {
-  height: 320px;          /* ajusta conforme o layout */
+  height: 150px;          /* ajusta conforme o layout */
   overflow-y: auto;
   overflow-x: hidden;
 
