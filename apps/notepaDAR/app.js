@@ -28,9 +28,13 @@ document.addEventListener("click", (e) => {
 // Interface User
 usercode.addEventListener("input", (e) => divBtns.classList.toggle("hide", e.target.value.length < 5));
 
-back.addEventListener('click', () => { usercode.classList.remove("disabled"); front.classList.remove("hide"); localStorage.removeItem("tma_usercode"); });
-
-input.addEventListener('change', () => { isClearORrefresh(); });
+back.addEventListener('click', () => { 
+	usercode.classList.remove("disabled"); front.classList.remove("hide"); 
+	front.style.display = "flex";
+    	front.disabled = false;
+	front.style.opacity = "1";
+	localStorage.removeItem("tma_usercode"); 
+});
 
 front.addEventListener('click', async () => {
     const uid = usercode.value.trim();
@@ -40,7 +44,9 @@ front.addEventListener('click', async () => {
     front.style.opacity = "0.5";
     front.disabled = true;
 
-    const exists = await window.firebaseTMA.checkUserExists(uid);
+    const exists = false;
+
+    // await window.firebaseTMA.checkUserExists(uid);
 
     if (exists) {
         alert(`Logado como ${uid}`);
@@ -59,11 +65,10 @@ front.addEventListener('click', async () => {
 
 function confirmarLogin() {
     usercode.classList.add("disabled");
-    front.classList.add("hide");
     localStorage.setItem("usercode", usercode.value.trim());
-    front.style.opacity = "1";
+    front.style.display = "none";
     front.disabled = false;
-	isClearORrefresh();
+    
 }
 
 document.addEventListener('DOMContentLoaded', (event) => {
