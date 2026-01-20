@@ -2,7 +2,8 @@
 const usercode = document.getElementById("usercode"),
   front = document.getElementById('front'),
   back = document.getElementById('back'),
-  divBtns = document.getElementById("divBtns");
+  divBtns = document.getElementById("divBtns"),
+  saveBtn = document.getElementById("btn-save");
 
 
 // Controlo do FAB de Novidades
@@ -68,6 +69,13 @@ function confirmarLogin() {
     front.disabled = false;
     
 }
+
+saveBtn.addEventListener('click', () => {
+	// tratamento de dados
+	
+	if (window.firebaseTMA) window.firebaseTMA.saveTypeFromUI();
+})
+
 
 document.addEventListener('DOMContentLoaded', (event) => {
 	localStorage.removeItem("usercode");
