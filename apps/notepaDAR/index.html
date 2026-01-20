@@ -6,56 +6,53 @@
   <title>NotePedar</title>
   <link rel="stylesheet" href="style.css" />
 </head>
- <body
-    style="display: flex; flex-direction: column; min-height: 100vh; margin: 0"
-  >
+ <body style="display: flex; flex-direction: column; min-height: 100vh; margin: 0">
     <main class="card" role="main">
       <div style="display: flex; margin: 10px 0; align-items: center;justify-content:space-between;">
-		<h1 style="margin-left: 40px 0;">NOTEPE<span style="color: #4F7CFF">DAR</span></h1>
+			<h1 style="margin-left: 40px 0;">NOTEPE<span style="color: #4F7CFF">DAR</span></h1>
 
-<div style="display: flex;align-items: center; width:120px; background-color:wite">
-	   <input id="usercode" type="text" placeholder="User">
-	   <div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
-	      <button class="btn-back" id="back">
-			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				  <title>Limpar</title>
-				  <path d="M18 6L6 18M6 6l12 12"/>
-				</svg>
-		  </button>
-	      <button class="btn-front" id="front">
-			  <svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-				  <title>Guardar</title>
-				  <path d="M20 6L9 17l-5-5"/>
-				</svg>
-		  </button>
-	   </div>
-	</div>
-      </div>
+			<div style="display: flex;align-items: center; width:120px; background-color:wite">
+	   			<input id="usercode" type="text" placeholder="User">
+		   		<div id="divBtns" class="square hide" aria-label="Caixa com botões sobrepostos">
+		      		<button class="btn-back" id="back">
+						<svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Limpar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						  <title>Limpar</title>
+						  <path d="M18 6L6 18M6 6l12 12"/>
+						</svg>
+			  		</button>
+					<button class="btn-front" id="front">
+					  	<svg width="40" height="40" viewBox="0 0 24 24" role="img" aria-label="Guardar" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+						  <title>Guardar</title>
+						  <path d="M20 6L9 17l-5-5"/>
+						</svg>
+					</button>
+		   		</div>
+			</div>
+      	</div>
 
 		<div>
-		 <div class="gridd" style="margin: 8px 0">
-			<input type="text" placeholder="NIF"/>
-			<input type="text" placeholder="N Serviço"/>
-			<input type="text" placeholder="Nome"/>
-			<input type="text" placeholder="Telemovel"/>
-		 </div>
-		 <div class="row" style="margin: 8px 0">
-		  <span>D</span>	
-		  <textarea class="textareaSmall" placeholder="Descrição"></textarea>
-		 </div>
-		
-		 <div class="row" style="margin: 8px 0">
-		  <span>A</span>	
-		  <textarea placeholder="Analise"></textarea>
-		 </div>
-		
-		 <div class="row" style="margin: 8px 0">
-		  <span>R</span>	
-		  <input type="text" placeholder="Resolução" />
-		 </div>
-		
+			 <div class="gridd" style="margin: 8px 0">
+				<input id="nif" type="text" placeholder="NIF"/>
+				<input id="nserv" type="text" placeholder="N Serviço"/>
+				<input id="name" type="text" placeholder="Nome"/>
+				<input id="tel" type="text" placeholder="Telemovel"/>
+			 </div>
+			
+			 <div class="row" style="margin: 8px 0">
+				<span>D</span>	
+				<textarea id="desc" class="textareaSmall" placeholder="Descrição"></textarea>
+			 </div>
+			
+			 <div class="row" style="margin: 8px 0">
+				<span>A</span>	
+				<textarea id="analise" placeholder="Analise"></textarea>
+			 </div>
+			
+			 <div class="row" style="margin: 8px 0">
+				<span>R</span>	
+				<input id="resol" type="text" placeholder="Resolução" />
+			 </div>
 		</div>
-		
 		      
 		<div class="row" style="margin: 20px 0">
 		  <!-- Copiar para SOL -->
@@ -80,7 +77,6 @@
 		      <path d="M4 6h16v12H4z"></path>
 		      <path d="M4 6l8 7 8-7"></path>
 		    </svg>
-		    
 		  </button>
 		
 		  <!-- Fit Size Text -->
@@ -90,7 +86,6 @@
 		      <path d="M7 8h10v2H7z"></path>
 		      <path d="M9 12h6v2H9z"></path>
 		    </svg>
-		    
 		  </button>
 		
 		  <!-- Salvar Tipo -->
@@ -99,7 +94,6 @@
 		      <path d="M5 4h14v16H5z"></path>
 		      <path d="M7 4v6h10V4"></path>
 		    </svg>
-		    
 		  </button>
 		
 		  <!-- Limpar -->
@@ -109,40 +103,34 @@
 		      <path d="M7 6l1 14h8l1-14"></path>
 		      <path d="M9 6V4h6v2"></path>
 		    </svg>
-		    
 		  </button>
 		</div>
 		
-<div class="grid-wrapper">
-		<div class="grid dense">
-		  <div class="bridge-item" data-status="no-signal">
-		    <span class="bridge-title">Sem TV</span>
-		    <span class="bridge-desc">Sem sinal</span>
-		  </div>
+		<div class="grid-wrapper">
+			<div class="grid dense">
+				<div class="bridge-item" data-status="no-signal">
+		    		<span class="bridge-title">Sem TV</span>
+		    		<span class="bridge-desc">Sem sinal</span>
+		  		</div>
 		
-		  
+				<div class="bridge-item" data-status="no-services">
+					<span class="bridge-title">Sem serviços</span>
+				</div>
 		
-		  <div class="bridge-item" data-status="no-services">
-		    <span class="bridge-title">Sem serviços</span>
-		  </div>
-		
-		 
-		  <div class="bridge-item" data-status="no-services">
-		    <span class="bridge-title">Sem serviços</span>
-		  </div>
-		
-		  <div class="bridge-item" data-status="loss-signal">
-		    <span class="bridge-title">Loss of Signal</span>
-		  </div>
-		
-		  <div class="bridge-item" data-status="connected-no-internet">
-		    <span class="bridge-title">Ligado</span>
-		    <span class="bridge-desc">Sem internet</span>
-		  </div>
+				<div class="bridge-item" data-status="no-services">
+					<span class="bridge-title">Sem serviços</span>
+				</div>
+				
+				<div class="bridge-item" data-status="loss-signal">
+					<span class="bridge-title">Loss of Signal</span>
+				</div>
+				
+				<div class="bridge-item" data-status="connected-no-internet">
+					<span class="bridge-title">Ligado</span>
+					<span class="bridge-desc">Sem internet</span>
+				</div>
+			</div>
 		</div>
-</div>
-
-		
   </main>
 
   <div style="font-size: 12px; color: var(--muted); text-align: center; margin: 10px auto;">
@@ -150,7 +138,6 @@
      <a target="_blank" href="https://github.com/MateusLuisMk19" style="color: var(--accent); text-decoration: none">Mateus Luis</a>
   </div>
 	
-  
   <div id="newsFAB" class="fab-container">
     <button id="fabBtn" class="fab" title="Novidades">
      <span class="fab-icon">?</span>
