@@ -85,13 +85,13 @@ saveBtn.addEventListener('click', () => {
 
 clearBtn.addEventListener('click', () => {
 	// tratamento de dados
-	fr_nserv = "";
-	fr_name = "";
-	fr_tel = "";
-	fr_desc = "";
-	fr_nif = "";
-	fr_analise = "";
-	fr_Resol = ""
+	fr_nserv.value = "";
+	fr_name.value = "";
+	fr_tel.value = "";
+	fr_desc.value = "";
+	fr_nif.value = "";
+	fr_analise.value = "";
+	fr_Resol.value = "";
 })
 
 
