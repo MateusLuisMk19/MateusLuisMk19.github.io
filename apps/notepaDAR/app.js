@@ -3,8 +3,15 @@ const usercode = document.getElementById("usercode"),
   front = document.getElementById('front'),
   back = document.getElementById('back'),
   divBtns = document.getElementById("divBtns"),
-  saveBtn = document.getElementById("btn-save");
-
+  clearBtn = document.getElementById("btn-clear"),
+  saveBtn = document.getElementById("btn-save"),
+  fr_nserv = document.getElementById("nserv"),
+  fr_name = document.getElementById("name"),
+  fr_tel = document.getElementById("tel"),
+  fr_desc = document.getElementById("desc"),
+  fr_nif = document.getElementById("nif"),
+  fr_analise = document.getElementById("analise"),
+  fr_Resol = document.getElementById("resol");
 
 // Controlo do FAB de Novidades
 const fabBtn = document.getElementById("fabBtn");
@@ -74,6 +81,17 @@ saveBtn.addEventListener('click', () => {
 	// tratamento de dados
 	
 	if (window.firebaseTMA) window.firebaseTMA.saveTypeFromUI();
+})
+
+clearBtn.addEventListener('click', () => {
+	// tratamento de dados
+	fr_nserv = "";
+	fr_name = "";
+	fr_tel = "";
+	fr_desc = "";
+	fr_nif = "";
+	fr_analise = "";
+	fr_Resol = ""
 })
 
 
