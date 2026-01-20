@@ -249,3 +249,58 @@ textarea {
   scrollbar-width: thin;
   scrollbar-color: #2a2f3a transparent;
 }
+
+.hide {
+  color: #666;            /* Cor do texto */
+  cursor: not-allowed;    /* Cursor de "não permitido" */
+  opacity: 0.5;           /* Transparência */
+  pointer-events: none;  /* Garante que não haja interação */
+}
+
+/* container quadrado de tamanho fixo */
+.square {
+  width: 50px;            /* tamanho fixo */
+  height: 35px;
+  position: relative;      /* permite posicionamento absoluto dos botões */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 2px;
+}
+
+/* estilo base dos botões */
+.square button {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  border-radius: 8px;
+  font-weight: 800;
+  cursor: pointer;
+  transition: transform .18s ease, box-shadow .18s ease, opacity .18s ease;
+  user-select: none;
+  display:flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* botão de cima (visualmente sobreposto) */
+.btn-front {
+  color: #081221;
+  background: darkcyan;
+  z-index: 2;
+}
+
+.btn-back {
+  color: #081221;
+  background: darkred;
+  z-index: 1;
+}
+
+.disabled{
+  pointer-events: none;   
+  font-weight: bold;
+  background: #2f3646;
+  text-align: center;
+  color: white;
+}
+
