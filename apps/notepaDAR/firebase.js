@@ -33,7 +33,7 @@ async function saveTypeFromUI(color, type, subtype, dar) {
   };
 
   try {
-    await setDoc(doc(db, "users", userId), payload, { merge: true });
+    await setDoc(doc(db, "users", userId), payload);
     alert("Guardado com sucesso!");
   } catch (e) { alert("Erro ao guardar."); }
 }
