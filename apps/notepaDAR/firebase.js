@@ -15,87 +15,45 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// --- HISTÓRICO ---
-async function fetchHistory(userId, filterType = "7days") {
-  const listEl = document.getElementById("historyList");
-  const statsEl = document.getElementById("historyStats");
-  const cargaHoraria = Number(document.getElementById("cargaHoraria")) || 8;
+// --- SALVAR ---
+async function saveTodayFromUI(rawList, npsCurrentVal) {
+  const userId = document.getElementById("usercode").value.trim();
 
-  listEl.innerHTML = '<p class="small" style="text-align: center;">A procurar registos do mês...</p>';
-  statsEl.style.display = "none";
-  
+  // Tratamendo de dados
+
+  const payload = {
+    color: "#987364",
+    type: "Sem tv",
+    subtype: "Por favor aguarde",
+    dar: {
+      d: "",
+      a: "",
+      r: "",
+    }
+  };
+
   try {
-    let q;
+    await setDoc(doc(db, "users", userId), payload, { merge: true });
+    alert("Guardado com sucesso!");
+  } catch (e) { alert("Erro ao guardar."); }
+}
+
+
+async function checkUserExists(userId) {
+  try {
+    const userRef = doc(db, "users", userId);
+    // Verificamos se existe pelo menos um documento na subcoleção daily
     const dailyRef = collection(db, "users", userId, "daily");
-    const agora = new Date();
-
-    if (filterType === "7days") {
-      // Padrão: Últimos 7 registos independente da data
-      q = query(dailyRef, orderBy("date", "desc"), limit(7));
-      
-    } else if (filterType === "currentMonth") {
-      // Mês atual: Desde o dia 1
-      const inicioMes = `${agora.getFullYear()}-${String(agora.getMonth() + 1).padStart(2, '0')}-01`;
-      q = query(dailyRef, where("date", ">=", inicioMes), orderBy("date", "desc"));
-      
-    } else if (filterType === "lastMonth") {
-      // Mês anterior: Entre o dia 1 e o último dia do mês passado
-      const dataMesPassado = new Date(agora.getFullYear(), agora.getMonth() - 1, 1);
-      const anoP = dataMesPassado.getFullYear();
-      const mesP = String(dataMesPassado.getMonth() + 1).padStart(2, '0');
-      
-      const inicioMesPassado = `${anoP}-${mesP}-01`;
-      const fimMesPassado = `${anoP}-${mesP}-31`; // Firestore tratará as strings corretamente
-      
-      q = query(dailyRef, 
-        where("date", ">=", inicioMesPassado), 
-        where("date", "<=", fimMesPassado), 
-        orderBy("date", "desc")
-      );
-    }
-
+    const q = query(dailyRef, limit(1));
     const querySnapshot = await getDocs(q);
-    listEl.innerHTML = "";
     
-    let acTMA = 0, acCalls = 0, acIQS = 0, totalDias = 0;
-
-    if (querySnapshot.empty) {
-      listEl.innerHTML = '<p class="small" style="text-align: center;">Sem dados para este período.</p>';
-      return;
-    }
-
-    querySnapshot.forEach((doc) => {
-      const data = doc.data();
-      totalDias++;
-      acTMA += data.summary.tma_seconds;
-      acCalls += data.summary.totalCalls;
-      acIQS += data.summary.iqsPercent;
-
-      const item = document.createElement("div");
-      item.className = "history-item";
-      item.innerHTML = `
-        <div style="font-weight:bold; color:var(--accent); border-bottom:1px solid #333; padding-bottom:5px; margin-bottom:8px;">Data: ${data.date}</div>
-        <div class="history-grid">
-          <div><span class="small">TMA:</span><br/><strong>${data.summary.tma_seconds}s</strong></div>
-          <div><span class="small">Calls:</span><br/><strong>${data.summary.totalCalls}</strong></div>
-          <div><span class="small">IQS:</span><br/><strong>${data.summary.iqsPercent}%</strong></div>
-        </div>`;
-      listEl.appendChild(item);
-    });
-
-    statsEl.style.display = "grid";
-    statsEl.innerHTML = `
-      <div class="stat-item"><span>Média TMA</span><div>${Math.round(acTMA/totalDias)}s</div></div>
-      <div id="middle-item" class="stat-item"><span>${filterType === '7days' ? 'Soma' : 'Total'} Cham</span><div>${acCalls}</div></div>
-      <div class="stat-item"><span>Média IQS</span><div>${(acIQS/totalDias).toFixed(1)}%</div></div>`;
-
-    meuIntervaloCH("start", filterType, acCalls, cargaHoraria, totalDias);
-    
-  } catch (e) { 
-    console.error("Erro ao carregar histórico:", err);
-    listEl.innerHTML = '<p class="small" style="color:red;">Erro ao filtrar dados.</p>';
+    return !querySnapshot.empty;
+  } catch (e) {
+    console.error("Erro ao verificar user:", e);
+    return false;
   }
 }
 
+
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { fetchHistory };
+window.firebaseTMA = { saveTodayFromUI, checkUserExists };
