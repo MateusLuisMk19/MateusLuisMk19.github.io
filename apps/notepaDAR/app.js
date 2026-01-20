@@ -44,9 +44,7 @@ front.addEventListener('click', async () => {
     front.style.opacity = "0.5";
     front.disabled = true;
 
-    const exists = false;
-
-    // await window.firebaseTMA.checkUserExists(uid);
+    const exists = await window.firebaseTMA.checkUserExists(uid);
 
     if (exists) {
         alert(`Logado como ${uid}`);
