@@ -45,9 +45,9 @@ async function saveTypeFromUI(color, type, subtype, dar) {
 async function checkUserExists(userId) {
   try {
     const userRef = doc(db, "users", userId);
-    // Verificamos se existe pelo menos um documento na subcoleção daily
-    const q = query(userRef, limit(1));
-    const querySnapshot = await getDocs(q);
+    
+    const querySnapshot = await getDoc(userRef);
+    console.log(querySnapshot);
     
     return !querySnapshot.empty;
   } catch (e) {
