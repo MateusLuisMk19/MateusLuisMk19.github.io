@@ -3,6 +3,7 @@ const usercode = document.getElementById("usercode"),
   front = document.getElementById('front'),
   back = document.getElementById('back'),
   divBtns = document.getElementById("divBtns"),
+  cp_btn = document.getElementById("btn-cp"),
   clearBtn = document.getElementById("btn-clear"),
   saveBtn = document.getElementById("btn-save"),
   fr_nserv = document.getElementById("nserv"),
@@ -76,6 +77,24 @@ function confirmarLogin() {
     front.disabled = false;
     
 }
+
+cp_btn.addEventListener('click', () => {
+    // Captura os elementos pelos IDs
+    const desc = fr_desc.value;
+    const analise = fr_analise.value;
+    const resol = fr_Resol.value;
+
+    // Monta a string formatada
+    const textoParaCopiar = `D: ${desc}\nA: ${analise}\nR: ${resol}`;
+
+    // Usa a Clipboard API para copiar
+    navigator.clipboard.writeText(textoParaCopiar).then(() => {
+        alert("Copiado com sucesso!");
+    }).catch(err => {
+        console.error("Erro ao copiar: ", err);
+        alert("Erro ao copiar para a área de transferência.");
+    });
+})
 
 saveBtn.addEventListener('click', () => {
 	// tratamento de dados
