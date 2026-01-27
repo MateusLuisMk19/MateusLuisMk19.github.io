@@ -70,6 +70,23 @@ front.addEventListener('click', async () => {
     }
 });
 
+const generateId = (length = 25) => {
+  // Garantimos que o limite não ultrapasse 25
+  const actualLength = Math.min(length, 25);
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  
+  // Usando Crypto API para maior segurança
+  const randomValues = new Uint32Array(actualLength);
+  window.crypto.getRandomValues(randomValues);
+
+  for (let i = 0; i < actualLength; i++) {
+    result += chars.charAt(randomValues[i] % chars.length);
+  }
+
+  return result;
+};
+
 function confirmarLogin() {
     usercode.classList.add("disabled");
     localStorage.setItem("usercode", usercode.value.trim());
@@ -105,7 +122,8 @@ saveBtn.addEventListener('click', () => {
 		console.log("sem dados");
 		return
 	}
-	
+
+	const noteId = generateId();
 	const dar = {
 		d: fr_desc,
 		a: fr_analise,
@@ -116,7 +134,7 @@ saveBtn.addEventListener('click', () => {
 	let type = "Sem tv"; //fr_desc resume
 	let subtype = "Sem sinal"; //fr_desc resume cause
 	
-	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar);
+	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
 })
 
 clearBtn.addEventListener('click', () => {
