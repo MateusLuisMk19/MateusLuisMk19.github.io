@@ -70,21 +70,35 @@ front.addEventListener('click', async () => {
     }
 });
 
-const generateId = (length = 25) => {
-  // Garantimos que o limite não ultrapasse 25
+const generateUniqueId = async (length = 25) => {
   const actualLength = Math.min(length, 25);
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
   
-  // Usando Crypto API para maior segurança
-  const randomValues = new Uint32Array(actualLength);
-  window.crypto.getRandomValues(randomValues);
+  let isUnique = false;
+  let finalId = '';
 
-  for (let i = 0; i < actualLength; i++) {
-    result += chars.charAt(randomValues[i] % chars.length);
+  while (!isUnique) {
+    let result = '';
+    const randomValues = new Uint32Array(actualLength);
+    window.crypto.getRandomValues(randomValues);
+
+    for (let i = 0; i < actualLength; i++) {
+      result += chars.charAt(randomValues[i] % chars.length);
+    }
+
+    // Verifica no Firebase se o ID já existe
+    // Assume-se que checkNoteExists retorna true se existir e false se não
+    const exists = await window.firebaseTMA.checkNoteExists(result);
+
+    if (!exists) {
+      finalId = result;
+      isUnique = true;
+    } else {
+      console.warn(`Colisão detectada para o ID: ${result}. Tentando novamente...`);
+    }
   }
 
-  return result;
+  return finalId;
 };
 
 function confirmarLogin() {
@@ -123,7 +137,7 @@ saveBtn.addEventListener('click', () => {
 		return
 	}
 
-	const noteId = generateId();
+	const noteId = await generateUniqueId();
 	const dar = {
 		d: fr_desc,
 		a: fr_analise,
