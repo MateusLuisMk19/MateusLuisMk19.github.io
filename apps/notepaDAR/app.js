@@ -90,11 +90,11 @@ const generateUniqueId = async (length = 25) => {
     // Assume-se que checkNoteExists retorna true se existir e false se não
     const exists = await window.firebaseTMA.checkNoteExists(result);
 
-    if (!exists) {
-      finalId = result;
-      isUnique = true;
+    if (exists) {
+ 		console.warn(`Colisão detectada para o ID: ${result}. Tentando novamente...`);
     } else {
-      console.warn(`Colisão detectada para o ID: ${result}. Tentando novamente...`);
+		finalId = result;
+    	isUnique = true;
     }
   }
 
