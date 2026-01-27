@@ -139,9 +139,9 @@ saveBtn.addEventListener('click', async () => {
 
 	const noteId = await generateUniqueId();
 	const dar = {
-		d: fr_desc,
-		a: fr_analise,
-		r: fr_Resol,
+		d: fr_desc.value,
+		a: fr_analise.value,
+		r: fr_Resol.value,
 	};
 
 	// IA resuming
