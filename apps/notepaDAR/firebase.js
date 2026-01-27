@@ -16,27 +16,25 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 // --- SALVAR ---
-async function saveTypeFromUI(color, type, subtype, dar) {
+async function saveNoteFromUI(color, type, subtype, dar) {
   const userId = document.getElementById("usercode").value.trim();
 
   // Tratamendo de dados
   console.log(userId);
 
   const payload = {
-    color: "#987364",
-    type: "Sem tv",
-    subtype: "Por favor aguarde",
-    dar: {
-      d: "",
-      a: "",
-      r: "",
-    }
+    color: color,
+    type: type,
+    subtype: subtype,
+    dar: dar,
+    uid: userId ? userId : "all"
   };
 
   console.log(payload);
 
   try {
-    await setDoc(doc(db, "users", userId), payload);
+    //await setDoc(doc(db, "users", userId), payload);
+    await setDoc(doc(db, "notes"), payload);
     alert("Guardado com sucesso!");
   } catch (e) { alert("Erro ao guardar."); }
 }
@@ -58,4 +56,4 @@ async function checkUserExists(userId) {
 
 
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveTypeFromUI, checkUserExists };
+window.firebaseTMA = { saveNoteFromUI, checkUserExists };
