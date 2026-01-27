@@ -30,7 +30,7 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
     uid: userId ? userId : "all"
   };
 
-  console.log(payload);
+  console.log(payload, noteId);
 
   try {
     //await setDoc(doc(db, "users", userId), payload);
