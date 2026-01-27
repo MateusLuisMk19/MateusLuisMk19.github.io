@@ -46,6 +46,8 @@ async function checkUserExists(userId) {
     
     const querySnapshot = await getDoc(userRef);
     console.log(querySnapshot);
+    console.log("data",querySnapshot.data());
+    console.log("data",querySnapshot.data);
     
     return !querySnapshot.empty;
   } catch (e) {
