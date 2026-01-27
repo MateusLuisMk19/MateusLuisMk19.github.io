@@ -46,8 +46,6 @@ async function checkUserExists(userId) {
     
     const querySnapshot = await getDoc(userRef);
     console.log(querySnapshot);
-    console.log("data",querySnapshot.data());
-    console.log("data",querySnapshot.data);
     
     return !querySnapshot.empty;
   } catch (e) {
@@ -63,7 +61,7 @@ async function checkNoteExists(noteId) {
     const querySnapshot = await getDoc(noteRef);
     console.log(querySnapshot);
     
-    return !querySnapshot.empty;
+    return !!querySnapshot.data();
   } catch (e) {
     console.error("Erro ao verificar user:", e);
     return false;
