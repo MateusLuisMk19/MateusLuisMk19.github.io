@@ -77,6 +77,9 @@ function confirmarLogin() {
     front.disabled = false;
     
 }
+/***********************************************/
+/******** Barra de Botões Função ***************/
+/***********************************************/
 
 cp_btn.addEventListener('click', () => {
     // Captura os elementos pelos IDs
@@ -98,8 +101,22 @@ cp_btn.addEventListener('click', () => {
 
 saveBtn.addEventListener('click', () => {
 	// tratamento de dados
+	if(!fr_desc || !fr_analise || !fr_Resol){
+		console.log("sem dados");
+		return
+	}
 	
-	if (window.firebaseTMA) window.firebaseTMA.saveTypeFromUI();
+	const dar = {
+		d: fr_desc,
+		a: fr_analise,
+		r: fr_Resol,
+	};
+
+	// IA resuming
+	let type = "Sem tv"; //fr_desc resume
+	let subtype = "Sem sinal"; //fr_desc resume cause
+	
+	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar);
 })
 
 clearBtn.addEventListener('click', () => {
