@@ -130,7 +130,7 @@ cp_btn.addEventListener('click', () => {
     });
 })
 
-saveBtn.addEventListener('click', () => {
+saveBtn.addEventListener('click', async () => {
 	// tratamento de dados
 	if(!fr_desc || !fr_analise || !fr_Resol){
 		console.log("sem dados");
