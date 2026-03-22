@@ -41,13 +41,14 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
 
 // BUSCAR    
 async function fetchSaveList(uid) {
+  let UID_ = "";
   const userId = document.getElementById("usercode").value.trim();
   if (!uid) return null;
 
-  if (uid) userId = uid;
+  uid ? UID_ = uid : UID_ = userId; 
 
   try {
-    const docRef = doc(db, "notes").where("uid","==",uid);
+    const docRef = doc(db, "notes").where("uid","==",UID_);
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
