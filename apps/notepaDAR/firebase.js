@@ -39,6 +39,27 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
   } catch (e) { alert("Erro ao guardar."); }
 }
 
+// BUSCAR    
+async function fetchSaveList(userId) {
+  if (!userId) return null;
+
+  try {
+    const docRef = doc(db, "notes", userId);
+    const docSnap = await getDoc(docRef);
+
+    if (docSnap.exists()) {
+      console.log("Dados encontrados:", docSnap.data());
+      return docSnap.data();
+    } else {
+      console.log("Nenhum registo para o dia de hoje.");
+      return null;
+    }
+  } catch (e) {
+    console.error("Erro ao buscar dados de hoje:", e);
+    return null;
+  }
+}
+
 
 async function checkUserExists(userId) {
   try {
@@ -70,4 +91,4 @@ async function checkNoteExists(noteId) {
 
 
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists };
+window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists, fetchSaveList };
