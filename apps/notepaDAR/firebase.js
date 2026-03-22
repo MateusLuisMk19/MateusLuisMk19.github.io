@@ -43,37 +43,39 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
 async function fetchSaveList(uid) {
   // 1. Lógica de prioridade do UID
   const userIdInput = document.getElementById("usercode")?.value.trim();
-  const finalUid = uid || userIdInput;
+  const finalUID = uid || userIdInput;
 
-  // Se não houver UID de nenhuma fonte, sai da função
-  if (!finalUid) {
+  if (!finalUID) {
     console.warn("Nenhum UID fornecido.");
     return null;
   }
 
   try {
-    // 2. Criar uma query para procurar no campo "uid" dentro da coleção "notes"
+    // 2. Referência à coleção e criação da Query
     const notesRef = collection(db, "notes");
-    const q = query(notesRef, where("uid", "==", finalUid));
+    const q = query(notesRef, where("uid", "==", finalUID));
 
-    // 3. Executar a query
+    // 3. Execução da consulta
     const querySnapshot = await getDocs(q);
 
     if (!querySnapshot.empty) {
-      // Como uid deve ser único, pegamos o primeiro resultado
-      const docData = querySnapshot.docs[0].data();
-      console.log("Dados encontrados:", docData);
-      return docData;
+      // Mapeia os documentos encontrados para um array
+      const notes = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log("Notas encontradas:", notes);
+      return notes; // Retorna a lista de notas
     } else {
-      console.log("Nenhum registo encontrado para este UID.");
-      return null;
+      console.log("Nenhuma nota encontrada para este UID.");
+      return []; // Retorna array vazio se não houver resultados
     }
   } catch (e) {
-    console.error("Erro ao buscar dados:", e);
+    console.error("Erro ao buscar notas:", e);
     return null;
   }
 }
-
 
 async function checkUserExists(userId) {
   try {
