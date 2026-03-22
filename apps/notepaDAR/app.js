@@ -197,7 +197,7 @@ saveBtn.addEventListener('click', async () => {
 async function loadSaveList(){
 	save_list.innerHTML = "";
 
-	const data = window.firebaseTMA ? await window.firebaseTMA.fetchSaveList();
+	const data = window.firebaseTMA ? await window.firebaseTMA.fetchSaveList() : "Empty";
 
 	console.log("data:", data)
 
@@ -218,4 +218,5 @@ clearBtn.addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', (event) => {
 	localStorage.removeItem("usercode");
+	loadSaveList();
 });
