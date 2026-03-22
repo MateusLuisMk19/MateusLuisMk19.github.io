@@ -40,9 +40,11 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
 }
 
 // BUSCAR    
-async function fetchSaveList() {
+async function fetchSaveList(uid) {
   const userId = document.getElementById("usercode").value.trim();
-  if (!userId) return null;
+  if (!uid) return null;
+
+  if (uid) userId = uid;
 
   try {
     const docRef = doc(db, "notes", userId);
