@@ -40,7 +40,8 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
 }
 
 // BUSCAR    
-async function fetchSaveList(userId) {
+async function fetchSaveList() {
+  const userId = document.getElementById("usercode").value.trim();
   if (!userId) return null;
 
   try {
