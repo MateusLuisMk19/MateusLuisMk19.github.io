@@ -47,7 +47,7 @@ async function fetchSaveList(uid) {
   if (uid) userId = uid;
 
   try {
-    const docRef = doc(db, "notes", userId);
+    const docRef = doc(db, "notes");
     const docSnap = await getDoc(docRef);
 
     if (docSnap.exists()) {
