@@ -198,9 +198,21 @@ async function loadSaveList(uid){
 	const finalUid = uid || "all";
 	save_list.innerHTML = "";
 
-	const data = await window.firebaseTMA.fetchSaveList(finalUid);
+	const notas = await window.firebaseTMA.fetchSaveList(finalUid);
 
-	console.log("data:", data)
+	console.log("data:", notas)
+	
+	notas.forEach((nota) =>{
+		let card = document.createElement("div");
+		card.classList.add("bridge-item");
+		card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
+		card.setAttribute("data-status", no-signal);
+		card.innerHTML = `<span class="bridge-title">${nota.type}</span>
+		    		<span class="bridge-desc">${nota.subtype}</span>`;
+
+		
+		save_list.append(card)
+	});
 }
 
 clearBtn.addEventListener('click', () => {
