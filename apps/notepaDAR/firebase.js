@@ -41,25 +41,35 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
 
 // BUSCAR    
 async function fetchSaveList(uid) {
-  let UID_ = "";
-  const userId = document.getElementById("usercode").value.trim();
-  if (!uid) return null;
+  // 1. Lógica de prioridade do UID
+  const userIdInput = document.getElementById("usercode")?.value.trim();
+  const finalUid = uid || userIdInput;
 
-  uid ? UID_ = uid : UID_ = userId; 
+  // Se não houver UID de nenhuma fonte, sai da função
+  if (!finalUid) {
+    console.warn("Nenhum UID fornecido.");
+    return null;
+  }
 
   try {
-    const docRef = doc(db, "notes").where("uid","==",UID_);
-    const docSnap = await getDoc(docRef);
+    // 2. Criar uma query para procurar no campo "uid" dentro da coleção "notes"
+    const notesRef = collection(db, "notes");
+    const q = query(notesRef, where("uid", "==", finalUid));
 
-    if (docSnap.exists()) {
-      console.log("Dados encontrados:", docSnap.data());
-      return docSnap.data();
+    // 3. Executar a query
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Como uid deve ser único, pegamos o primeiro resultado
+      const docData = querySnapshot.docs[0].data();
+      console.log("Dados encontrados:", docData);
+      return docData;
     } else {
-      console.log("Nenhum registo para o dia de hoje.");
+      console.log("Nenhum registo encontrado para este UID.");
       return null;
     }
   } catch (e) {
-    console.error("Erro ao buscar dados de hoje:", e);
+    console.error("Erro ao buscar dados:", e);
     return null;
   }
 }
