@@ -3,6 +3,7 @@ const usercode = document.getElementById("usercode"),
   front = document.getElementById('front'),
   back = document.getElementById('back'),
   divBtns = document.getElementById("divBtns"),
+  save_list = document.getElementById("save-list"),
   cp_btn = document.getElementById("btn-cp"),
   cp_email = document.getElementById("btn-cp-email"),
   cp_transf = document.getElementById("btn-cp-transf"),
@@ -192,6 +193,16 @@ saveBtn.addEventListener('click', async () => {
 	
 	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
 })
+
+async function loadSaveList(){
+	save_list.innerHTML = "";
+
+	const data = window.firebaseTMA ? await window.firebaseTMA.fetchSaveList();
+
+	console.log("data:", data)
+
+	
+}
 
 clearBtn.addEventListener('click', () => {
 	// tratamento de dados
