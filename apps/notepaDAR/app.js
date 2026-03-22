@@ -197,7 +197,7 @@ saveBtn.addEventListener('click', async () => {
 async function loadSaveList(){
 	save_list.innerHTML = "";
 
-	const data = window.firebaseTMA ? await window.firebaseTMA.fetchSaveList() : "Empty";
+	const data = await window.firebaseTMA.fetchSaveList;
 
 	console.log("data:", data)
 
