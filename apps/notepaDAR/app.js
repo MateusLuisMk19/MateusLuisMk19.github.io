@@ -4,6 +4,8 @@ const usercode = document.getElementById("usercode"),
   back = document.getElementById('back'),
   divBtns = document.getElementById("divBtns"),
   cp_btn = document.getElementById("btn-cp"),
+  cp_email = document.getElementById("btn-cp-email"),
+  cp_transf = document.getElementById("btn-cp-transf"),
   clearBtn = document.getElementById("btn-clear"),
   saveBtn = document.getElementById("btn-save"),
   fr_nserv = document.getElementById("nserv"),
@@ -120,6 +122,46 @@ cp_btn.addEventListener('click', () => {
 
     // Monta a string formatada
     const textoParaCopiar = `D: ${desc}\nA: ${analise}\nR: ${resol}`;
+
+    // Usa a Clipboard API para copiar
+    navigator.clipboard.writeText(textoParaCopiar).then(() => {
+        alert("Copiado com sucesso!");
+    }).catch(err => {
+        console.error("Erro ao copiar: ", err);
+        alert("Erro ao copiar para a área de transferência.");
+    });
+})
+
+cp_transf.addEventListener('click', () => {
+    // Captura os elementos pelos IDs
+    const name = fr_name.value;
+    const desc = fr_desc.value;
+    const analise = fr_analise.value;
+    const resol = fr_Resol.value;
+
+    // Monta a string formatada
+    const textoParaCopiar = `Nome: ${name}\n\nD: ${desc}\nA: ${analise}\nR: ${resol}`;
+
+    // Usa a Clipboard API para copiar
+    navigator.clipboard.writeText(textoParaCopiar).then(() => {
+        alert("Copiado com sucesso!");
+    }).catch(err => {
+        console.error("Erro ao copiar: ", err);
+        alert("Erro ao copiar para a área de transferência.");
+    });
+})
+
+cp_email.addEventListener('click', () => {
+    // Captura os elementos pelos IDs
+    const name = fr_name.value;
+    const nserv = fr_nserv.value;
+    const contt = fr_tel.value;
+    const desc = fr_desc.value;
+    const analise = fr_analise.value;
+    const resol = fr_Resol.value;
+
+    // Monta a string formatada
+    const textoParaCopiar = `Nome: ${name}\nNum Serviço: ${nserv}\nContacto: ${contt}\n\nD: ${desc}\nA: ${analise}\nR: ${resol}`;
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
