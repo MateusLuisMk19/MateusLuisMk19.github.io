@@ -216,7 +216,7 @@ clearBtn.addEventListener('click', () => {
 })
 
 
-document.addEventListener('DOMContentLoaded', (event) => {
+document.addEventListener('DOMContentLoaded', async (event) => {
 	localStorage.removeItem("usercode");
-	loadSaveList();
+	await loadSaveList();
 });
