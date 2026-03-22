@@ -104,12 +104,12 @@ const generateUniqueId = async (length = 25) => {
   return finalId;
 };
 
-function confirmarLogin() {
+async function confirmarLogin() {
     usercode.classList.add("disabled");
     localStorage.setItem("usercode", usercode.value.trim());
     front.style.display = "none";
     front.disabled = false;
-    
+    await loadSaveList()
 }
 /***********************************************/
 /******** Barra de Botões Função ***************/
@@ -195,7 +195,7 @@ saveBtn.addEventListener('click', async () => {
 })
 
 async function loadSaveList(uid){
-	const finalUid = uid || "all";
+	const finalUid = uid ? "all" : "";
 	save_list.innerHTML = "";
 
 	const notas = await window.firebaseTMA.fetchSaveList(finalUid);
@@ -229,5 +229,5 @@ clearBtn.addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', async (event) => {
 	localStorage.removeItem("usercode");
-	await loadSaveList();
+	await loadSaveList(true);
 });
