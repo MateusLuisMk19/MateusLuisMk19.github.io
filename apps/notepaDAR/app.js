@@ -194,14 +194,13 @@ saveBtn.addEventListener('click', async () => {
 	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
 })
 
-async function loadSaveList(){
+async function loadSaveList(uid){
+	const finalUid = uid || "all";
 	save_list.innerHTML = "";
 
-	const data = await window.firebaseTMA.fetchSaveList;
+	const data = await window.firebaseTMA.fetchSaveList(finalUid);
 
 	console.log("data:", data)
-
-	
 }
 
 clearBtn.addEventListener('click', () => {
