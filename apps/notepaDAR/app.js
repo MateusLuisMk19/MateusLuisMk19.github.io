@@ -8,6 +8,7 @@ const usercode = document.getElementById("usercode"),
   cp_email = document.getElementById("btn-cp-email"),
   cp_transf = document.getElementById("btn-cp-transf"),
   clearBtn = document.getElementById("btn-clear"),
+  abbreviateBtn = document.getElementById("btn-clear"),
   saveBtn = document.getElementById("btn-save"),
   fr_nserv = document.getElementById("nserv"),
   fr_name = document.getElementById("name"),
@@ -21,6 +22,139 @@ const usercode = document.getElementById("usercode"),
 const fabBtn = document.getElementById("fabBtn");
 const newsPanel = document.getElementById("newsPanel");
 const closeNews = document.getElementById("closeNews");
+const dicionarioAbreviaturas = [
+  { "Abreviatura": "ab", "Descritivo": "Acesso básico" },
+  { "Abreviatura": "ad", "Descritivo": "Alteração diversa (requisição)" },
+  { "Abreviatura": "Agt", "Descritivo": "Agente" },
+  { "Abreviatura": "Alt", "Descritivo": "Alteração" },
+  { "Abreviatura": "AN", "Descritivo": "Alteração de número" },
+  { "Abreviatura": "AT", "Descritivo": "Área de Tratamento" },
+  { "Abreviatura": "avr", "Descritivo": "Avaria" },
+  { "Abreviatura": "Barr", "Descritivo": "Barramento" },
+  { "Abreviatura": "BD", "Descritivo": "Base de Dados" },
+  { "Abreviatura": "BO", "Descritivo": "Backoffice" },
+  { "Abreviatura": "c/", "Descritivo": "Com" },
+  { "Abreviatura": "CA", "Descritivo": "Contacto alternativo" },
+  { "Abreviatura": "camp", "Descritivo": "Campanha" },
+  { "Abreviatura": "Carreg", "Descritivo": "Carregamento" },
+  { "Abreviatura": "CC", "Descritivo": "Classe Comercial" },
+  { "Abreviatura": "Cham", "Descritivo": "chamadas" },
+  { "Abreviatura": "Chq", "Descritivo": "Cheque" },
+  { "Abreviatura": "Clt", "Descritivo": "Cliente" },
+  { "Abreviatura": "COM", "Descritivo": "Comutação" },
+  { "Abreviatura": "CPE/HN", "Descritivo": "Customer Premises Equipment/HomeNetwork" },
+  { "Abreviatura": "cont", "Descritivo": "continuação" },
+  { "Abreviatura": "CP7", "Descritivo": "Código Postal" },
+  { "Abreviatura": "CT", "Descritivo": "classe técnica" },
+  { "Abreviatura": "Ct", "Descritivo": "contencioso" },
+  { "Abreviatura": "CV", "Descritivo": "Coding violations" },
+  { "Abreviatura": "DC", "Descritivo": "Delegação de Competências" },
+  { "Abreviatura": "DD", "Descritivo": "Débito Direto" },
+  { "Abreviatura": "Desc", "Descritivo": "Desconto" },
+  { "Abreviatura": "DU", "Descritivo": "Dia(s) Útil (eis)" },
+  { "Abreviatura": "DLP", "Descritivo": "Data Limite de Pagamento" },
+  { "Abreviatura": "DN", "Descritivo": "Data de Nascimento" },
+  { "Abreviatura": "DL ou dwn", "Descritivo": "Download" },
+  { "Abreviatura": "DRA", "Descritivo": "Disaster Recovery Application" },
+  { "Abreviatura": "DVL", "Descritivo": "Desligar volta a ligar" },
+  { "Abreviatura": "Enc", "Descritivo": "Encomenda" },
+  { "Abreviatura": "Equip", "Descritivo": "Equipamento" },
+  { "Abreviatura": "ET", "Descritivo": "Equipa Técnica" },
+  { "Abreviatura": "Ext", "Descritivo": "Extensão" },
+  { "Abreviatura": "fat", "Descritivo": "Fatura / Faturação" },
+  { "Abreviatura": "FE", "Descritivo": "Fatura Eletrónica" },
+  { "Abreviatura": "FF", "Descritivo": "Field Force" },
+  { "Abreviatura": "FID", "Descritivo": "Fidelização" },
+  { "Abreviatura": "FGW", "Descritivo": "FiberGateway" },
+  { "Abreviatura": "FO", "Descritivo": "Frontoffice" },
+  { "Abreviatura": "FR", "Descritivo": "Factory Reset" },
+  { "Abreviatura": "H", "Descritivo": "Horário" },
+  { "Abreviatura": "HSI", "Descritivo": "High Speed Internet" },
+  { "Abreviatura": "Inf", "Descritivo": "Informar / informação" },
+  { "Abreviatura": "HGW", "Descritivo": "HomeGateway" },
+  { "Abreviatura": "infra", "Descritivo": "Infraestrutura" },
+  { "Abreviatura": "IT", "Descritivo": "Internet no Telemóvel" },
+  { "Abreviatura": "LA", "Descritivo": "Lista Amarela" },
+  { "Abreviatura": "LAN", "Descritivo": "Local Area Network" },
+  { "Abreviatura": "LAT", "Descritivo": "Localização área tecnológica" },
+  { "Abreviatura": "LEDs", "Descritivo": "Luzes (light-emitting diode)" },
+  { "Abreviatura": "lj", "Descritivo": "Loja" },
+  { "Abreviatura": "LR", "Descritivo": "Linha de rede" },
+  { "Abreviatura": "MB", "Descritivo": "Multibanco" },
+  { "Abreviatura": "MC", "Descritivo": "Mudança de casa" },
+  { "Abreviatura": "MR", "Descritivo": "Margens de ruído" },
+  { "Abreviatura": "mm", "Descritivo": "mesmo/a" },
+  { "Abreviatura": "MMS", "Descritivo": "Mensagem Multimédia" },
+  { "Abreviatura": "n", "Descritivo": "não" },
+  { "Abreviatura": "NC", "Descritivo": "Nota de crédito" },
+  { "Abreviatura": "nc", "Descritivo": "nunca" },
+  { "Abreviatura": "net", "Descritivo": "Internet" },
+  { "Abreviatura": "NI", "Descritivo": "Nova instalação" },
+  { "Abreviatura": "nok", "Descritivo": "Not ok" },
+  { "Abreviatura": "nuv", "Descritivo": "Número único de venda" },
+  { "Abreviatura": "Obg", "Descritivo": "Obrigada(o)" },
+  { "Abreviatura": "OOP", "Descritivo": "Outro operador" },
+  { "Abreviatura": "OV", "Descritivo": "Ordem de venda" },
+  { "Abreviatura": "p/", "Descritivo": "Para/ por" },
+  { "Abreviatura": "PA", "Descritivo": "Participação de Avaria" },
+  { "Abreviatura": "PAA", "Descritivo": "Proposta de Acordo Adesão" },
+  { "Abreviatura": "Pagmt", "Descritivo": "Pagamento" },
+  { "Abreviatura": "PD", "Descritivo": "Ponto de Distribuição" },
+  { "Abreviatura": "PDO", "Descritivo": "Ponto de Distribuição Óptico" },
+  { "Abreviatura": "Pdd", "Descritivo": "Pedido" },
+  { "Abreviatura": "pds", "Descritivo": "Ponto de situação" },
+  { "Abreviatura": "pf", "Descritivo": "Por favor" },
+  { "Abreviatura": "PPP", "Descritivo": "Plano pagamento prestações" },
+  { "Abreviatura": "PPP", "Descritivo": "Pós Pagos" },
+  { "Abreviatura": "PPS", "Descritivo": "pré Pagos" },
+  { "Abreviatura": "prob", "Descritivo": "problema" },
+  { "Abreviatura": "Prt", "Descritivo": "Pretende" },
+  { "Abreviatura": "PSU", "Descritivo": "Power Supply Unit (fonte de alimentação)" },
+  { "Abreviatura": "pts", "Descritivo": "Pontos" },
+  { "Abreviatura": "PW", "Descritivo": "password" },
+  { "Abreviatura": "q", "Descritivo": "Que" },
+  { "Abreviatura": "qd", "Descritivo": "quando" },
+  { "Abreviatura": "qq", "Descritivo": "Qualquer" },
+  { "Abreviatura": "rap", "Descritivo": "Crédito (no âmbito de \"responder à primeira\")" },
+  { "Abreviatura": "RE", "Descritivo": "Responsável equipa" },
+  { "Abreviatura": "recfg", "Descritivo": "Reconfigurar" },
+  { "Abreviatura": "recfg bbras", "Descritivo": "Reconfigurar bbras" },
+  { "Abreviatura": "Recl", "Descritivo": "Reclamação" },
+  { "Abreviatura": "Ref. MB", "Descritivo": "Referência Multibanco" },
+  { "Abreviatura": "reg", "Descritivo": "Registo" },
+  { "Abreviatura": "Req", "Descritivo": "Requisição" },
+  { "Abreviatura": "Ret", "Descritivo": "Retirar / retirada" },
+  { "Abreviatura": "RAD", "Descritivo": "Rede de Acesso de Distribuição" },
+  { "Abreviatura": "RAL", "Descritivo": "Rede de Acesso Local" },
+  { "Abreviatura": "RIC", "Descritivo": "Rede interna cliente" },
+  { "Abreviatura": "RT", "Descritivo": "Relatório Técnico" },
+  { "Abreviatura": "s/", "Descritivo": "Sem" },
+  { "Abreviatura": "SFT", "Descritivo": "Serviço fixo telefónico" },
+  { "Abreviatura": "STB", "Descritivo": "Set Top Box" },
+  { "Abreviatura": "sinc", "Descritivo": "sincronismo" },
+  { "Abreviatura": "Sit", "Descritivo": "Situação" },
+  { "Abreviatura": "sms", "Descritivo": "mensagem" },
+  { "Abreviatura": "Sol", "Descritivo": "Solicitação" },
+  { "Abreviatura": "STBHE", "Descritivo": "Set Top Box High End" },
+  { "Abreviatura": "STBLE", "Descritivo": "Set Top Box Low End" },
+  { "Abreviatura": "Sup", "Descritivo": "Supervisor" },
+  { "Abreviatura": "tarif", "Descritivo": "Tarifário" },
+  { "Abreviatura": "Tb", "Descritivo": "Também" },
+  { "Abreviatura": "TB", "Descritivo": "Transferência bancária" },
+  { "Abreviatura": "tel", "Descritivo": "Telefone" },
+  { "Abreviatura": "Tip", "Descritivo": "tipificação" },
+  { "Abreviatura": "tlm", "Descritivo": "Telemóvel" },
+  { "Abreviatura": "TME", "Descritivo": "Teste de Medidas Elétricas" },
+  { "Abreviatura": "Transf", "Descritivo": "Transferência" },
+  { "Abreviatura": "Unl", "Descritivo": "Unlimited" },
+  { "Abreviatura": "Upg", "Descritivo": "Upgrade" },
+  { "Abreviatura": "UL", "Descritivo": "Upload" },
+  { "Abreviatura": "VD", "Descritivo": "venda dinheiro" },
+  { "Abreviatura": "VM", "Descritivo": "Voice mail" },
+  { "Abreviatura": "WAN", "Descritivo": "Wide Area Network" },
+  { "Abreviatura": "WR", "Descritivo": "Waiting Ring" },
+  { "Abreviatura": "Y", "Descritivo": "Crédito excepcional" }
+];
 
 fabBtn.addEventListener("click", () => {
   newsPanel.classList.toggle("hide");
@@ -213,6 +347,41 @@ async function loadSaveList(uid){
 		
 		save_list.append(card)
 	});
+}
+
+/**
+ * Substitui descrições completas pelas suas abreviaturas.
+ */
+function abreviarTexto(texto) {
+  let textoFinal = texto;
+  
+  // Ordenamos do maior descritivo para o menor para evitar substituições parciais incorretas
+  const listaOrdenada = [...dicionarioAbreviaturas].sort((a, b) => 
+    b.Descritivo.length - a.Descritivo.length
+  );
+
+  listaOrdenada.forEach(item => {
+    // Criamos uma expressão regular para encontrar a palavra exata (case insensitive)
+    const regex = new RegExp(`\\b${item.Descritivo}\\b`, 'gi');
+    textoFinal = textoFinal.replace(regex, item.Abreviatura);
+  });
+
+  return textoFinal;
+}
+
+/**
+ * Substitui abreviaturas pelas descrições completas.
+ */
+function expandirTexto(texto) {
+  let textoFinal = texto;
+
+  dicionarioAbreviaturas.forEach(item => {
+    // Procura pela abreviatura como palavra isolada
+    const regex = new RegExp(`\\b${item.Abreviatura}\\b`, 'g');
+    textoFinal = textoFinal.replace(regex, item.Descritivo);
+  });
+
+  return textoFinal;
 }
 
 clearBtn.addEventListener('click', () => {
