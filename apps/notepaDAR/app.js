@@ -330,8 +330,8 @@ saveBtn.addEventListener('click', async () => {
 
 fitBtn.addEventListener('click', () => {
 	// tratamento de dados
-	const fitDescText = abreviarTexto(fr_desc.value);
-	const fitAnaText = abreviarTexto(fr_analise.value);
+	let fitDescText = abreviarTexto(fr_desc.value);
+	let fitAnaText = abreviarTexto(fr_analise.value);
 
 	if(!fitDescText) fitDescText = expandirTexto(fr_desc.value);
 	if(!fitAnaText) fitAnaText = expandirTexto(fr_analise.value);
