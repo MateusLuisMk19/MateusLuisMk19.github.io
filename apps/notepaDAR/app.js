@@ -8,7 +8,7 @@ const usercode = document.getElementById("usercode"),
   cp_email = document.getElementById("btn-cp-email"),
   cp_transf = document.getElementById("btn-cp-transf"),
   clearBtn = document.getElementById("btn-clear"),
-  abbreviateBtn = document.getElementById("btn-clear"),
+  fitBtn = document.getElementById("btn-fit"),
   saveBtn = document.getElementById("btn-save"),
   fr_nserv = document.getElementById("nserv"),
   fr_name = document.getElementById("name"),
@@ -328,6 +328,17 @@ saveBtn.addEventListener('click', async () => {
 	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
 })
 
+fitBtn.addEventListener('click', () => {
+	// tratamento de dados
+	const fitText = abreviarTexto(fr_desc.value);
+
+	if(!fitText){
+		fitText = expandirTexto(fr_desc.value);
+	}
+	
+	fr_desc.value = fitText;
+})
+
 async function loadSaveList(uid){
 	const finalUid = uid ? "all" : "";
 	save_list.innerHTML = "";
@@ -366,7 +377,7 @@ function abreviarTexto(texto) {
     textoFinal = textoFinal.replace(regex, item.Abreviatura);
   });
 
-  return textoFinal;
+  return textoFinal == texto ? false : textoFinal;
 }
 
 /**
