@@ -330,13 +330,14 @@ saveBtn.addEventListener('click', async () => {
 
 fitBtn.addEventListener('click', () => {
 	// tratamento de dados
-	const fitText = abreviarTexto(fr_desc.value);
+	const fitDescText = abreviarTexto(fr_desc.value);
+	const fitAnaText = abreviarTexto(fr_analise.value);
 
-	if(!fitText){
-		fitText = expandirTexto(fr_desc.value);
-	}
+	if(!fitDescText) fitDescText = expandirTexto(fr_desc.value);
+	if(!fitAnaText) fitAnaText = expandirTexto(fr_analise.value);
 	
-	fr_desc.value = fitText;
+	fr_desc.value = fitDescText;
+	fr_analise.value = fitAnaText;
 })
 
 async function loadSaveList(uid){
