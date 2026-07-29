@@ -1,6 +1,240 @@
-<html>
-  <head>
-    <title>Stage Map</title>
-  </head>
-  <body>Olá</body>
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage Map — Organiza o teu palco, ouve a diferença</title>
+<meta name="description" content="Stage Map é um plugin VST3 que mapeia os instrumentos de uma sessão num palco visto de cima, com organização visual e processamento de áudio opcional por profundidade.">
+<link rel="icon" href="assets/stageMapHublogo.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="bg-canvas"></canvas>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <a href="#top" class="brand">
+      <img src="assets/stageMapHublogo.png" alt="Stage Map" class="brand-logo">
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav" id="mainNav">
+      <a href="#sobre">Sobre</a>
+      <a href="#funcionalidades">Funcionalidades</a>
+      <a href="#instalacao">Instalação</a>
+      <a href="#uso">Como usar</a>
+      <a href="#download" class="nav-cta">Download</a>
+    </nav>
+  </div>
+</header>
+
+<main id="top">
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Organiza o teu palco.<br>Ouve a diferença.</h1>
+      <p class="hero-sub">
+        Stage Map é um plugin VST3 que transforma a tua sessão numa vista de
+        palco de cima para baixo — arrasta cada instrumento para o sítio
+        certo, e opcionalmente deixa a posição controlar o volume, o filtro
+        e o reverb, tal como aconteceria num palco a sério.
+      </p>
+      <div class="hero-actions">
+        <a href="#download" class="btn btn-primary">Download</a>
+        <a href="https://github.com/MateusLuisMk19" target="_blank" rel="noopener" class="btn btn-ghost">Ver no GitHub</a>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="stage-demo" id="stageDemo"></div>
+    </div>
+  </section>
+
+  <section id="sobre" class="section">
+    <h2>O que é o Stage Map</h2>
+    <div class="two-col">
+      <div>
+        <p>
+          A maior parte dos plugins de mistura trabalha com números — dB,
+          Hz, ms. O Stage Map trabalha com uma ideia mais simples: onde é
+          que cada instrumento <em>está</em> no palco?
+        </p>
+        <p>
+          Arrasta um ponto para a esquerda ou direita e ele move-se entre
+          os altifalantes (L / MONO / R). Arrasta-o para a frente do palco
+          e — se ativares o Modo Ativo — ele fica mais alto, mais claro e
+          mais seco; arrasta-o para trás e ele fica mais discreto, mais
+          abafado e com mais reverb, como um instrumento realmente mais
+          longe do público.
+        </p>
+        <p>
+          A arquitetura tem duas partes: um plugin <strong>Hub</strong>
+          (insere-se uma vez, mostra o mapa completo do palco) e um plugin
+          <strong>Node</strong> por cada instrumento/faixa. Os dois
+          comunicam em tempo real dentro da mesma sessão da DAW.
+        </p>
+      </div>
+      <div class="logo-pair">
+        <img src="assets/stageMapNodelogo.png" alt="Stage Map Node">
+        <img src="assets/stageMapHublogo.png" alt="Stage Map Hub">
+      </div>
+    </div>
+  </section>
+
+  <section id="funcionalidades" class="section alt">
+    <h2>Funcionalidades</h2>
+    <div class="grid">
+
+      <div class="card">
+        <h3>Modo Visual / Ativo</h3>
+        <p>Organiza sem tocar no áudio (Visual), ou deixa a profundidade
+        controlar o volume de verdade (Ativo). Um interruptor no Hub
+        controla todos os instrumentos ao mesmo tempo.</p>
+      </div>
+
+      <div class="card">
+        <h3>Filtro por distância</h3>
+        <p>Um passa-baixo opcional, por instrumento, que abafa
+        naturalmente quem está mais atrás no palco — desligado por
+        defeito, liga-se com um clique.</p>
+      </div>
+
+      <div class="card">
+        <h3>Reverb + 5 salas</h3>
+        <p>Reverb opcional cuja intensidade acompanha a profundidade,
+        combinado com 5 presets de sala (Estúdio, Palco, Clube, Hall,
+        Íntimo) escolhidos no Hub.</p>
+      </div>
+
+      <div class="card">
+        <h3>Cores e ícones</h3>
+        <p>12 cores à escolha e um ícone automático para cada
+        instrumento (bateria, guitarra, voz, cordas, sopros e muito
+        mais) — de relance sabes o que é cada ponto.</p>
+      </div>
+
+      <div class="card">
+        <h3>Hub interativo</h3>
+        <p>O Hub não é só um mapa — arrasta um ponto diretamente nele e
+        o instrumento correspondente move-se de verdade, em tempo real.</p>
+      </div>
+
+      <div class="card">
+        <h3>Presets de organização</h3>
+        <p>5 layouts de palco prontos, mais um espaço para guardares o
+        teu próprio layout — aplica-os a partir do Node com um clique.</p>
+      </div>
+
+      <div class="card">
+        <h3>Desfazer / Refazer</h3>
+        <p>Cada movimento conta como um passo — no Node e no Hub. Se
+        arrastaste para o sítio errado, um clique resolve.</p>
+      </div>
+
+      <div class="card">
+        <h3>Automação total</h3>
+        <p>Posição, filtro e reverb são parâmetros normais da tua DAW —
+        automatiza-os, guarda-os com o projeto, usa-os como sempre.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="instalacao" class="section">
+    <h2>Instalação</h2>
+    <ol class="steps">
+      <li>
+        <h3>1. Descarrega</h3>
+        <p>Vai à secção <a href="#download">Download</a> e obtém o
+        pacote mais recente (ficheiros <code>.vst3</code> para
+        Windows).</p>
+      </li>
+      <li>
+        <h3>2. Copia para a pasta de VST3</h3>
+        <p>Copia <code>StageMapNode.vst3</code> e
+        <code>StageMapHub.vst3</code> para
+        <code>C:\Program Files\Common Files\VST3\</code>.</p>
+      </li>
+      <li>
+        <h3>3. Faz rescan na tua DAW</h3>
+        <p>Abre a tua DAW (FL Studio, Ableton, Reaper, etc.) e pede-lhe
+        para procurar novos plugins — normalmente em
+        Opções/Preferências → Gestão de Plugins.</p>
+      </li>
+      <li>
+        <h3>4. Confirma</h3>
+        <p>Procura por "StageMapHub" e "StageMapNode" na lista de
+        efeitos (não instrumentos) da tua DAW.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="uso" class="section alt">
+    <h2>Como usar</h2>
+    <ol class="steps">
+      <li>
+        <h3>1. Insere um Hub</h3>
+        <p>Insere <strong>StageMapHub</strong> numa faixa (ou no
+        master) — é a partir daqui que vês e controlas o palco todo.</p>
+      </li>
+      <li>
+        <h3>2. Insere um Node por instrumento</h3>
+        <p>Em cada faixa que queiras mapear, insere
+        <strong>StageMapNode</strong>. Escolhe o nome do instrumento
+        numa lista (ou escreve o teu), e uma cor.</p>
+      </li>
+      <li>
+        <h3>3. Organiza o palco</h3>
+        <p>Arrasta cada ponto (no Node ou diretamente no Hub) para a
+        posição que queres, ou usa "Organizar" no Node para aplicar um
+        preset a todo o palco de uma vez.</p>
+      </li>
+      <li>
+        <h3>4. Liga o Modo Ativo (opcional)</h3>
+        <p>No Hub, muda de "Visual" para "Ativo" para a posição
+        começar a afetar mesmo o volume — e, se quiseres, ativa o
+        filtro e o reverb em cada Node.</p>
+      </li>
+      <li>
+        <h3>5. Escolhe a sala (opcional)</h3>
+        <p>Também no Hub, escolhe entre os 5 presets de sala para dar
+        um caráter diferente ao reverb de todos os instrumentos.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section id="download" class="section download">
+    <h2>Download</h2>
+    <p>Versão para Windows (VST3). O código-fonte completo está
+    disponível no GitHub.</p>
+    <div class="hero-actions">
+      <a href="https://github.com/MateusLuisMk19/stageMap/releases" target="_blank" rel="noopener" class="btn btn-primary">
+        Última versão no GitHub
+      </a>
+      <a href="https://github.com/MateusLuisMk19/stageMap" target="_blank" rel="noopener" class="btn btn-ghost">
+        Ver código-fonte
+      </a>
+    </div>
+    <p class="fine-print">
+      Projeto em desenvolvimento ativo — se a página de releases ainda
+      não tiver um pacote publicado, isso significa que a próxima
+      versão está a caminho.
+    </p>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <img src="assets/stageMapHublogo.png" alt="Stage Map" class="footer-logo">
+    <p>Desenvolvido por <strong>Mateus Luís</strong> —
+      <a href="https://github.com/MateusLuisMk19" target="_blank" rel="noopener">github.com/MateusLuisMk19</a>
+    </p>
+    <p class="fine-print">Stage Map · Plugin VST3 para Windows</p>
+  </div>
+</footer>
+
+<script src="script.js"></script>
+</body>
 </html>
