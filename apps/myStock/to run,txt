@@ -1,0 +1,27 @@
+npm install firebase
+npm install -g firebase-tools
+
+É possível implantar agora ou depois. Para implantar agora, abra uma janela de terminal e navegue ou crie um diretório raiz a partir do seu app da Web.
+
+Faça login no Google
+firebase login
+Iniciar seu projeto
+Execute este comando do diretório raiz do seu app:
+
+firebase init
+Especifique seu site no firebase.json
+Adicione o ID do seu site para o arquivo de configuração firebase.json. Após a configuração, consulte as práticas recomendadas para uma implantação de vários sites.
+
+{
+  "hosting": {
+    "site": "mystoks",
+
+    "public": "public",
+    ...
+  }
+}
+
+Quando tudo estiver pronto, implante seu app da Web
+Inclua seus arquivos estáticos (por exemplo, HTML, CSS, JS) no diretório de implantação do app (o padrão é "público"). Em seguida, execute este comando no diretório raiz dele:
+
+firebase deploy --only hosting:mystoks
