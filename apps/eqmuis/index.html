@@ -76,7 +76,7 @@
       -webkit-appearance: none;
       margin-top: -5px;
       box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
-      transition: all 0.15s ease;
+      transition: transform 0.15s ease, background-color 0.15s ease;
     }
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.2);
@@ -85,11 +85,22 @@
     }
 
     /* Custom Vertical Sliders for EQ */
+    .eq-slider-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: 160px;
+      justify-content: space-between;
+    }
+
     .eq-slider {
-      writing-mode: bt-lr; /* IE/Edge */
-      -webkit-appearance: slider-vertical; /* WebKit */
-      width: 8px;
-      height: 130px;
+      -webkit-appearance: none;
+      appearance: none;
+      width: 120px;
+      height: 6px;
+      transform: rotate(-90deg);
+      margin: 55px 0;
+      background: transparent;
     }
 
     /* Vinyl / CD Spinning Animation */
@@ -102,12 +113,6 @@
     }
     .paused {
       animation-play-state: paused;
-    }
-
-    /* Drag over active overlay */
-    .drag-active {
-      border-color: #6366f1 !important;
-      background: rgba(99, 102, 241, 0.15) !important;
     }
   </style>
 </head>
@@ -243,30 +248,30 @@
 
         <!-- 5 Band Equalizer Sliders -->
         <div class="grid grid-cols-5 gap-2 text-center my-4 bg-slate-900/40 p-3 rounded-2xl border border-slate-800">
-          <div>
-            <span id="eqGain0" class="text-[10px] text-indigo-400 block mb-1 font-mono">0dB</span>
-            <input type="range" min="-12" max="12" value="0" step="1" class="eq-slider eq-band" data-index="0">
-            <span class="text-[10px] text-slate-400 mt-1 block">60Hz</span>
+          <div class="eq-slider-container">
+            <span id="eqGain0" class="text-[10px] text-indigo-400 font-mono">0dB</span>
+            <input type="range" min="-12" max="12" value="0" step="0.5" class="eq-slider eq-band" data-index="0">
+            <span class="text-[10px] text-slate-400 font-medium">60Hz</span>
           </div>
-          <div>
-            <span id="eqGain1" class="text-[10px] text-indigo-400 block mb-1 font-mono">0dB</span>
-            <input type="range" min="-12" max="12" value="0" step="1" class="eq-slider eq-band" data-index="1">
-            <span class="text-[10px] text-slate-400 mt-1 block">230Hz</span>
+          <div class="eq-slider-container">
+            <span id="eqGain1" class="text-[10px] text-indigo-400 font-mono">0dB</span>
+            <input type="range" min="-12" max="12" value="0" step="0.5" class="eq-slider eq-band" data-index="1">
+            <span class="text-[10px] text-slate-400 font-medium">230Hz</span>
           </div>
-          <div>
-            <span id="eqGain2" class="text-[10px] text-indigo-400 block mb-1 font-mono">0dB</span>
-            <input type="range" min="-12" max="12" value="0" step="1" class="eq-slider eq-band" data-index="2">
-            <span class="text-[10px] text-slate-400 mt-1 block">910Hz</span>
+          <div class="eq-slider-container">
+            <span id="eqGain2" class="text-[10px] text-indigo-400 font-mono">0dB</span>
+            <input type="range" min="-12" max="12" value="0" step="0.5" class="eq-slider eq-band" data-index="2">
+            <span class="text-[10px] text-slate-400 font-medium">910Hz</span>
           </div>
-          <div>
-            <span id="eqGain3" class="text-[10px] text-indigo-400 block mb-1 font-mono">0dB</span>
-            <input type="range" min="-12" max="12" value="0" step="1" class="eq-slider eq-band" data-index="3">
-            <span class="text-[10px] text-slate-400 mt-1 block">4kHz</span>
+          <div class="eq-slider-container">
+            <span id="eqGain3" class="text-[10px] text-indigo-400 font-mono">0dB</span>
+            <input type="range" min="-12" max="12" value="0" step="0.5" class="eq-slider eq-band" data-index="3">
+            <span class="text-[10px] text-slate-400 font-medium">4kHz</span>
           </div>
-          <div>
-            <span id="eqGain4" class="text-[10px] text-indigo-400 block mb-1 font-mono">0dB</span>
-            <input type="range" min="-12" max="12" value="0" step="1" class="eq-slider eq-band" data-index="4">
-            <span class="text-[10px] text-slate-400 mt-1 block">14kHz</span>
+          <div class="eq-slider-container">
+            <span id="eqGain4" class="text-[10px] text-indigo-400 font-mono">0dB</span>
+            <input type="range" min="-12" max="12" value="0" step="0.5" class="eq-slider eq-band" data-index="4">
+            <span class="text-[10px] text-slate-400 font-medium">14kHz</span>
           </div>
         </div>
 
@@ -396,16 +401,22 @@
     const visualizerCanvas = document.getElementById('visualizerCanvas');
     const canvasCtx = visualizerCanvas.getContext('2d');
 
+    /* Initialize Web Audio API DSP Signal Chain */
     function initWebAudio() {
-      if (state.audioContext) return;
+      if (state.audioContext) {
+        if (state.audioContext.state === 'suspended') {
+          state.audioContext.resume();
+        }
+        return;
+      }
 
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       state.audioContext = new AudioCtx();
 
-      // Create HTML Audio Source
+      // Create MediaElementSourceNode from Audio Tag
       state.sourceNode = state.audioContext.createMediaElementSource(audioElement);
 
-      // Create 5-Band Equalizer Filters
+      // Create 5-Band Equalizer Filters (BiquadFilterNodes)
       state.eqFilters = state.bands.map((freq, index) => {
         const filter = state.audioContext.createBiquadFilter();
         if (index === 0) {
@@ -417,28 +428,28 @@
           filter.Q.value = 1.0;
         }
         filter.frequency.value = freq;
-        filter.gain.value = 0;
+        // Apply existing slider values
+        const slider = document.querySelector(`.eq-band[data-index="${index}"]`);
+        filter.gain.value = slider ? parseFloat(slider.value) : 0;
         return filter;
       });
 
-      // Create Panner Node
+      // Create Stereo Panner Node
       if (state.audioContext.createStereoPanner) {
         state.pannerNode = state.audioContext.createStereoPanner();
+        state.pannerNode.pan.value = parseFloat(panSlider.value);
       } else {
-        // Fallback for older browsers
         state.pannerNode = state.audioContext.createPanner();
       }
 
-      // Create Reverb Nodes (Convolver + Dry/Wet Gain)
+      // Create Reverb Nodes
       state.convolverNode = state.audioContext.createConvolver();
       state.reverbGainNode = state.audioContext.createGain();
       state.dryGainNode = state.audioContext.createGain();
 
-      // Set initial dry/wet gain
-      state.dryGainNode.gain.value = 1.0;
-      state.reverbGainNode.gain.value = 0.0;
+      state.dryGainNode.gain.value = 1.0 - (state.reverbMix * 0.4);
+      state.reverbGainNode.gain.value = state.reverbMix;
 
-      // Build synthetic reverb impulse response
       updateReverbImpulse();
 
       // Create Analyser Node for Visualizer
@@ -446,29 +457,28 @@
       state.analyserNode.fftSize = 128;
 
       // Connect Signal Processing Chain:
-      // Source -> EQ0 -> EQ1 -> EQ2 -> EQ3 -> EQ4 -> Panner -> (Split Dry/Wet)
+      // Source -> EQ0 -> EQ1 -> EQ2 -> EQ3 -> EQ4 -> Panner -> (Dry + Wet Convolver) -> Analyser -> Destination
       let currentChain = state.sourceNode;
       state.eqFilters.forEach(filter => {
         currentChain.connect(filter);
         currentChain = filter;
       });
 
-      // Connect EQ output to Panner
       currentChain.connect(state.pannerNode);
 
-      // Connect Panner to Dry Path & Wet (Reverb) Path
+      // Parallel Dry and Wet Reverb Branches
       state.pannerNode.connect(state.dryGainNode);
       state.pannerNode.connect(state.convolverNode);
       state.convolverNode.connect(state.reverbGainNode);
 
-      // Merge Dry + Wet paths into Analyser
+      // Merge paths into Analyser
       state.dryGainNode.connect(state.analyserNode);
       state.reverbGainNode.connect(state.analyserNode);
 
-      // Connect Analyser to Destination (Speakers)
+      // Output to speakers
       state.analyserNode.connect(state.audioContext.destination);
 
-      // Start Visualizer Loop
+      // Render Visualizer
       renderVisualizer();
     }
 
@@ -542,7 +552,6 @@
 
       updatePlaylistUI();
 
-      // If no track is playing, play the first newly added track
       if (state.currentIndex === -1 && state.playlist.length > 0) {
         loadTrack(0);
       }
@@ -568,7 +577,7 @@
               updateTrackDisplay();
             }
           },
-          onError: function(error) {
+          onError: function() {
             console.log('Sem metadados ID3 para:', track.file.name);
           }
         });
@@ -665,9 +674,6 @@
       if (state.currentIndex === -1) return;
 
       initWebAudio();
-      if (state.audioContext && state.audioContext.state === 'suspended') {
-        state.audioContext.resume();
-      }
 
       audioElement.play().then(() => {
         state.isPlaying = true;
@@ -778,7 +784,7 @@
       handleFiles(files);
     });
 
-    // Playback Buttons
+    // Playback Controls
     btnPlay.addEventListener('click', togglePlay);
     btnNext.addEventListener('click', playNext);
     btnPrev.addEventListener('click', playPrev);
@@ -872,13 +878,15 @@
       updatePlaylistUI();
     });
 
-    // Equalizer Band Sliders
+    // Equalizer Band Sliders Fix
     document.querySelectorAll('.eq-band').forEach(slider => {
       slider.addEventListener('input', (e) => {
         initWebAudio();
         const bandIdx = parseInt(e.target.dataset.index);
         const val = parseFloat(e.target.value);
-        state.eqFilters[bandIdx].gain.value = val;
+        if (state.eqFilters[bandIdx]) {
+          state.eqFilters[bandIdx].gain.value = val;
+        }
         document.getElementById(`eqGain${bandIdx}`).textContent = (val > 0 ? '+' : '') + val + 'dB';
       });
     });
@@ -900,7 +908,9 @@
         const values = presets[presetName];
         if (values) {
           values.forEach((val, i) => {
-            state.eqFilters[i].gain.value = val;
+            if (state.eqFilters[i]) {
+              state.eqFilters[i].gain.value = val;
+            }
             const slider = document.querySelector(`.eq-band[data-index="${i}"]`);
             if (slider) slider.value = val;
             document.getElementById(`eqGain${i}`).textContent = (val > 0 ? '+' : '') + val + 'dB';
@@ -913,10 +923,12 @@
     panSlider.addEventListener('input', (e) => {
       initWebAudio();
       const val = parseFloat(e.target.value);
-      if (state.pannerNode.pan) {
-        state.pannerNode.pan.value = val;
-      } else {
-        state.pannerNode.setPosition(val, 0, 1 - Math.abs(val));
+      if (state.pannerNode) {
+        if (state.pannerNode.pan) {
+          state.pannerNode.pan.value = val;
+        } else {
+          state.pannerNode.setPosition(val, 0, 1 - Math.abs(val));
+        }
       }
 
       if (val === 0) panVal.textContent = "C";
@@ -929,8 +941,10 @@
       initWebAudio();
       const val = parseFloat(e.target.value);
       state.reverbMix = val;
-      state.reverbGainNode.gain.value = val;
-      state.dryGainNode.gain.value = 1.0 - (val * 0.4); // Maintain output level balance
+      if (state.reverbGainNode && state.dryGainNode) {
+        state.reverbGainNode.gain.value = val;
+        state.dryGainNode.gain.value = 1.0 - (val * 0.4);
+      }
       reverbMixVal.textContent = `${Math.round(val * 100)}%`;
     });
 
@@ -947,7 +961,9 @@
       initWebAudio();
       // Reset EQ
       presets.flat.forEach((val, i) => {
-        state.eqFilters[i].gain.value = val;
+        if (state.eqFilters[i]) {
+          state.eqFilters[i].gain.value = val;
+        }
         const slider = document.querySelector(`.eq-band[data-index="${i}"]`);
         if (slider) slider.value = val;
         document.getElementById(`eqGain${i}`).textContent = '0dB';
@@ -955,13 +971,17 @@
 
       // Reset Pan
       panSlider.value = 0;
-      if (state.pannerNode.pan) state.pannerNode.pan.value = 0;
+      if (state.pannerNode && state.pannerNode.pan) {
+        state.pannerNode.pan.value = 0;
+      }
       panVal.textContent = "C";
 
       // Reset Reverb
       reverbMixSlider.value = 0;
-      state.reverbGainNode.gain.value = 0;
-      state.dryGainNode.gain.value = 1.0;
+      if (state.reverbGainNode && state.dryGainNode) {
+        state.reverbGainNode.gain.value = 0;
+        state.dryGainNode.gain.value = 1.0;
+      }
       reverbMixVal.textContent = "0%";
 
       reverbDecaySlider.value = 2.0;
