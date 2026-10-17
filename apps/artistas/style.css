@@ -294,6 +294,27 @@ table.tracks td { padding: 8px; border-bottom: 1px solid var(--border); }
 table.tracks td.n { color: var(--muted); width: 30px; }
 table.tracks small { color: var(--muted); }
 
+/* ---------- Menu de dados ---------- */
+.menu { position: relative; }
+.menu-list {
+  position: absolute; right: 0; top: calc(100% + 6px); z-index: 20;
+  min-width: 240px; padding: 6px;
+  display: flex; flex-direction: column; gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+.menu-list > * {
+  display: flex; flex-direction: column; gap: 1px;
+  padding: 8px 10px; border: 0; border-radius: 6px;
+  background: transparent; color: var(--text);
+  font: inherit; font-size: 14px; font-weight: 600;
+  text-align: left; cursor: pointer;
+}
+.menu-list > *:hover, .menu-list > *:focus-visible { background: var(--surface-2); outline: none; }
+.menu-list small { font-size: 12px; font-weight: 400; color: var(--muted); }
+
 /* ---------- Login ---------- */
 [hidden] { display: none !important; }
 .auth { flex: 1; display: grid; place-items: center; padding: 24px 16px; }

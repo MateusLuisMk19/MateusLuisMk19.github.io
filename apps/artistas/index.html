@@ -15,7 +15,14 @@
     <input id="search" class="app-only" type="search" placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…" autocomplete="off" />
     <div class="actions app-only">
       <button id="btnSettings" class="btn ghost" type="button">Definições</button>
-      <button class="btn ghost" type="button" data-action="export-csv" title="Exportar catálogo para Excel">CSV</button>
+      <div class="menu" id="dataMenu">
+        <button class="btn ghost" type="button" data-action="toggle-menu" aria-haspopup="menu" aria-expanded="false">Dados ▾</button>
+        <div class="menu-list" role="menu" hidden>
+          <button type="button" role="menuitem" data-action="export-csv">Exportar CSV<small>catálogo para Excel / distribuidoras</small></button>
+          <button type="button" role="menuitem" data-action="export-json">Exportar JSON<small>backup completo com imagens</small></button>
+          <label role="menuitem">Importar JSON<small>junta aos dados atuais</small><input type="file" id="importFile" accept="application/json,.json" hidden /></label>
+        </div>
+      </div>
       <button id="btnNewArtist" class="btn primary" type="button">+ Artista</button>
       <button id="btnLogout" class="btn ghost" type="button" title="Terminar sessão">Sair</button>
     </div>
@@ -27,8 +34,7 @@
       <p class="hint">Os dados ficam guardados na nuvem e sincronizados entre aparelhos.</p>
       <label>Email<input name="email" type="email" required autocomplete="email" /></label>
       <label>Palavra-passe<input name="password" type="password" required minlength="6" autocomplete="current-password" /></label>
-      <button type="submit" class="btn primary" data-mode="login">Entrar</button>
-      <button type="submit" class="btn ghost" data-mode="signup">Criar conta</button>
+      <button type="submit" class="btn primary">Entrar</button>
       <p id="authMsg" class="hint"></p>
     </form>
   </section>

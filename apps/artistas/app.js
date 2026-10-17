@@ -47,6 +47,8 @@ const projectFromRow = (r) => {
   return p;
 };
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 async function uploadImage(blob) {
   const path = `${session.user.id}/${crypto.randomUUID()}.jpg`;
   const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
@@ -64,7 +66,6 @@ function errMsg(err) {
   const map = {
     "Invalid login credentials": "Email ou palavra-passe incorretos.",
     "Email not confirmed": "Confirma primeiro o email que te enviámos.",
-    "User already registered": "Já existe uma conta com este email.",
   };
   return map[err?.message] || err?.message || "Ocorreu um erro.";
 }
@@ -785,8 +786,161 @@ async function saveSettings(e) {
 }
 
 /* =========================================================
-   Exportação CSV (para distribuidoras / Excel)
+   Exportação / importação
    ========================================================= */
+const blobToDataUrl = (blob) =>
+  new Promise((resolve, reject) => {
+    const r = new FileReader();
+    r.onload = () => resolve(r.result);
+    r.onerror = () => reject(r.error);
+    r.readAsDataURL(blob);
+  });
+
+async function imageAsDataUrl(url) {
+  if (!url) return null;
+  try {
+    const res = await fetch(url);
+    return res.ok ? await blobToDataUrl(await res.blob()) : null;
+  } catch {
+    return null;
+  }
+}
+
+function toggleMenu(open) {
+  const btn = $("#dataMenu [data-action=toggle-menu]");
+  const list = $("#dataMenu .menu-list");
+  const show = open ?? list.hidden;
+  list.hidden = !show;
+  btn.setAttribute("aria-expanded", String(show));
+}
+
+// Backup autónomo: inclui as imagens embebidas para não depender do Storage
+async function exportJson() {
+  toast("A preparar o backup…");
+  const pick = (obj, fields, skip) => Object.fromEntries(Object.keys(fields).filter((k) => k !== skip).map((k) => [k, obj[k]]));
+  const artists = await Promise.all(
+    state.artists.map(async (a) => ({ id: a.id, ...pick(a, ARTIST_FIELDS, "photoPath"), photoData: await imageAsDataUrl(a.photo) }))
+  );
+  const projects = await Promise.all(
+    state.projects.map(async (p) => ({ id: p.id, ...pick(p, PROJECT_FIELDS, "coverPath"), coverData: await imageAsDataUrl(p.cover) }))
+  );
+  const data = { app: "catalogo-artistas", version: 2, exportedAt: new Date().toISOString(), settings: state.settings, artists, projects };
+  download(`catalogo-artistas-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(data), "application/json");
+  toast("Backup exportado.", "ok");
+}
+
+// Converte a imagem do backup (v2: *Data; v1 local: photo/cover em data URL) num JPEG pronto a enviar
+async function importedImage(data) {
+  if (typeof data !== "string" || !data.startsWith("data:image/")) return null;
+  try {
+    return await readImage(await (await fetch(data)).blob(), 1000);
+  } catch {
+    return null;
+  }
+}
+
+const str = (v) => (v == null ? "" : String(v).trim());
+
+async function importJson(file) {
+  let data;
+  try {
+    data = JSON.parse(await file.text());
+  } catch {
+    return toast("Ficheiro inválido.", "error");
+  }
+  if (data?.app !== "catalogo-artistas" || !Array.isArray(data.artists) || !Array.isArray(data.projects)) {
+    return toast("Este ficheiro não é um backup do catálogo.", "error");
+  }
+  const ok = confirm(
+    `Importar ${data.artists.length} artistas e ${data.projects.length} projetos?\n` +
+      "Os registos com o mesmo ID são atualizados; os restantes dados mantêm-se."
+  );
+  if (!ok) return;
+
+  const menuBtn = $("#dataMenu [data-action=toggle-menu]");
+  menuBtn.disabled = true;
+  const idMap = new Map(); // IDs antigos (não-UUID) passam a UUID
+  const mapId = (id) => {
+    if (!idMap.has(id)) idMap.set(id, UUID_RE.test(str(id)) ? str(id) : crypto.randomUUID());
+    return idMap.get(id);
+  };
+  let done = 0;
+  let failed = 0;
+  const total = data.artists.length + data.projects.length;
+  const progress = () => toast(`A importar… ${done + failed}/${total}`);
+
+  try {
+    // Definições: só substitui os campos que vêm preenchidos
+    if (data.settings) {
+      const s = { ...state.settings };
+      for (const k of Object.keys(SETTINGS_FIELDS)) if (data.settings[k] !== undefined && data.settings[k] !== "") s[k] = data.settings[k];
+      const { error } = await sb.from("settings").upsert({ user_id: session.user.id, ...toRow(s, SETTINGS_FIELDS) });
+      if (!error) state.settings = s;
+    }
+
+    for (const src of data.artists) {
+      let newPath = null;
+      try {
+        const a = { id: mapId(src.id) };
+        for (const k of Object.keys(ARTIST_FIELDS)) a[k] = str(src[k]);
+        if (!a.name) throw new Error("sem nome");
+        const existing = artistById(a.id);
+        a.photoPath = existing?.photoPath || "";
+        const blob = await importedImage(src.photoData || src.photo);
+        if (blob) newPath = a.photoPath = await uploadImage(blob);
+        const { error } = await sb.from("artists").upsert({ id: a.id, ...toRow(a, ARTIST_FIELDS) });
+        if (error) throw error;
+        if (newPath && existing?.photoPath) removeImages([existing.photoPath]);
+        done++;
+      } catch (err) {
+        if (newPath) removeImages([newPath]);
+        console.warn("Artista não importado:", src?.name, err);
+        failed++;
+      }
+      progress();
+    }
+
+    for (const src of data.projects) {
+      let newPath = null;
+      try {
+        const p = { id: mapId(src.id), artistId: idMap.get(src.artistId) || str(src.artistId) };
+        p.title = str(src.title);
+        p.type = TYPES.includes(src.type) ? src.type : "Single";
+        p.status = STATUSES.includes(src.status) ? src.status : "Rascunho";
+        p.releaseDate = /^\d{4}-\d{2}-\d{2}$/.test(src.releaseDate) ? src.releaseDate : "";
+        p.label = str(src.label);
+        p.genre = str(src.genre);
+        p.upc = isValidUpc(str(src.upc)) ? str(src.upc) : "";
+        p.tracks = (Array.isArray(src.tracks) ? src.tracks : []).map((t) => ({
+          title: str(t.title), feat: str(t.feat), duration: str(t.duration), isrc: normIsrc(t.isrc),
+        }));
+        if (!p.title) throw new Error("sem título");
+        const existing = state.projects.find((x) => x.id === p.id);
+        p.coverPath = existing?.coverPath || "";
+        const blob = await importedImage(src.coverData || src.cover);
+        if (blob) newPath = p.coverPath = await uploadImage(blob);
+        const { error } = await sb.from("projects").upsert({ id: p.id, ...toRow(p, PROJECT_FIELDS) });
+        if (error) throw error;
+        if (newPath && existing?.coverPath) removeImages([existing.coverPath]);
+        done++;
+      } catch (err) {
+        if (newPath) removeImages([newPath]);
+        console.warn("Projeto não importado:", src?.title, err);
+        failed++;
+      }
+      progress();
+    }
+
+    await loadAll();
+    render();
+    toast(failed ? `Importados ${done}; ${failed} com erro (ver consola).` : `Importação concluída: ${done} registos.`, failed ? "error" : "ok");
+  } catch (err) {
+    toast(errMsg(err), "error");
+  } finally {
+    menuBtn.disabled = false;
+  }
+}
+
 function exportCsv() {
   const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
   const rows = [["Artista", "Projeto", "Tipo", "Estado", "Data", "Editora", "Género", "UPC", "Nº", "Faixa", "Participações", "Duração", "ISRC"]];
@@ -806,7 +960,6 @@ function exportCsv() {
 async function handleAuth(e) {
   e.preventDefault();
   const form = e.target;
-  const mode = e.submitter?.dataset.mode || "login";
   const email = form.elements.email.value.trim();
   const password = form.elements.password.value;
   const msg = $("#authMsg");
@@ -814,18 +967,10 @@ async function handleAuth(e) {
   msg.textContent = "";
 
   await busy(form, async () => {
+    // Registos novos estão desativados no Supabase; as contas são criadas no painel
     try {
-      if (mode === "signup") {
-        const { data, error } = await sb.auth.signUp({ email, password, options: { emailRedirectTo: location.origin + location.pathname } });
-        if (error) throw error;
-        if (!data.session) {
-          msg.className = "hint ok";
-          msg.textContent = "Conta criada. Confirma o email que te enviámos e depois entra.";
-        }
-      } else {
-        const { error } = await sb.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-      }
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
     } catch (err) {
       msg.className = "hint bad";
       msg.textContent = errMsg(err);
@@ -916,6 +1061,14 @@ function bindEvents() {
   $("#settingsForm").addEventListener("submit", saveSettings);
   $("#settingsForm").addEventListener("input", updateSettingsPreview);
   $("#projectForm").elements.upc.addEventListener("input", updateUpcStatus);
+  $("#importFile").addEventListener("change", (e) => {
+    toggleMenu(false);
+    if (e.target.files[0]) importJson(e.target.files[0]);
+    e.target.value = "";
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") toggleMenu(false);
+  });
 
   bindImageInput($("#artistDialog .photo-drop"), 500, (blob) => {
     artistDraft.photoBlob = blob;
@@ -939,6 +1092,9 @@ function bindEvents() {
 
   document.addEventListener("click", (e) => {
     const t = e.target;
+
+    // Fecha o menu de dados ao clicar fora dele ou numa das opções
+    if (!t.closest("[data-action=toggle-menu]") && !t.closest("#dataMenu label")) toggleMenu(false);
 
     if (t.closest("[data-close]")) return t.closest("dialog").close();
 
@@ -1022,8 +1178,12 @@ function bindEvents() {
         return download(`UPC-${p.upc}.svg`, upcBarcodeSvg(p.upc), "image/svg+xml");
       case "download-cover":
         return downloadCover(p);
+      case "toggle-menu":
+        return toggleMenu();
       case "export-csv":
         return exportCsv();
+      case "export-json":
+        return exportJson();
     }
   });
 
