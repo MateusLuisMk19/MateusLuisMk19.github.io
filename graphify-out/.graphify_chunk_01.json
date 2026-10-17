@@ -1,0 +1,1145 @@
+{
+ "nodes": [
+  {
+   "id": "jjb_jb_backup",
+   "label": "JB backup.txt (empty)",
+   "file_type": "document",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\backup.txt",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_jb_index",
+   "label": "JB Virtual Daily Register Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_jj_index",
+   "label": "JJ DigiPay Daily Register Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JJ\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_auth_cadastro",
+   "label": "JJB Collaborator Signup Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_auth_login",
+   "label": "JJB Virtual Login Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\login.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_clients",
+   "label": "JJB Clients Management Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_colaboradores",
+   "label": "JJB Collaborators Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_config",
+   "label": "JJB Config Page (Cards & Banks)",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_contas",
+   "label": "JJB Accounts Page (Chart.js)",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_history",
+   "label": "JJB Operations History Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_pages_home",
+   "label": "JJB onFire Home (Operations Entry)",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_index",
+   "label": "JJB Launcher Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "readme",
+   "label": "MateusLuisMk19.github.io README",
+   "file_type": "document",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\README.md",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "auth_login",
+   "label": "Site Login Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\login.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "auth_register",
+   "label": "Site Register Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "index",
+   "label": "Mateus Luis Portfolio Page",
+   "file_type": "code",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "index_wallpapers_project",
+   "label": "Wallpapers Project",
+   "file_type": "concept",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "index_greaclos_project",
+   "label": "Greaclos Project",
+   "file_type": "concept",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "index_player_lists_yb_project",
+   "label": "Player Lists YB Project",
+   "file_type": "concept",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_jjb_virtual_system",
+   "label": "JJB Virtual (currency card exchange business system)",
+   "file_type": "concept",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_firebase_compat_backend",
+   "label": "Firebase 9.13 compat (Auth/Firestore/Storage)",
+   "file_type": "concept",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  },
+  {
+   "id": "jjb_daily_register_pattern",
+   "label": "Daily operation register with cambio (exchange rate) and Terminar Dia",
+   "file_type": "rationale",
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\index.html",
+   "source_location": null,
+   "source_url": null,
+   "captured_at": null,
+   "author": null,
+   "contributor": null
+  }
+ ],
+ "edges": [
+  {
+   "source": "jjb_index",
+   "target": "jjb_jb_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_index",
+   "target": "jjb_jj_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_index",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "index",
+   "target": "index_wallpapers_project",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "index",
+   "target": "index_greaclos_project",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "index",
+   "target": "index_player_lists_yb_project",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "readme",
+   "target": "index",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.65,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\README.md",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jb_index",
+   "target": "jjb_jb_br",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jj_index",
+   "target": "jjb_jj_br",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JJ\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jb_index",
+   "target": "jjb_jj_index",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.95,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JJ\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jb_br",
+   "target": "jjb_jj_br",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JJ\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jb_index",
+   "target": "jjb_daily_register_pattern",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jj_index",
+   "target": "jjb_daily_register_pattern",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JJ\\index.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_daily_register_pattern",
+   "relation": "implements",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_jb_index",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_jb_backup",
+   "target": "jjb_jb_index",
+   "relation": "conceptually_related_to",
+   "confidence": "AMBIGUOUS",
+   "confidence_score": 0.2,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\JB\\backup.txt",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_login",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_login",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_login",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_login",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_js_functions",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_js_index",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_firebase_compat_backend",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_jjb_virtual_system",
+   "relation": "conceptually_related_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_pages_colaboradores",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_pages_history",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_pages_contas",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_auth_cadastro",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\auth\\cadastro.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_colaboradores",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\colaboradores.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_pages_home",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_home",
+   "target": "jjb_pages_clients",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_clients",
+   "target": "jjb_pages_home",
+   "relation": "shares_data_with",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\clients.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_history",
+   "target": "jjb_pages_home",
+   "relation": "shares_data_with",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\history.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_contas",
+   "target": "jjb_pages_history",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\contas.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "jjb_pages_config",
+   "target": "jjb_pages_home",
+   "relation": "shares_data_with",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\config.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_login",
+   "target": "auth_auth_data",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_login",
+   "target": "jjb_js_auth",
+   "relation": "references",
+   "confidence": "AMBIGUOUS",
+   "confidence_score": 0.3,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_register",
+   "target": "auth_auth_data",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_register",
+   "target": "jjb_js_auth",
+   "relation": "references",
+   "confidence": "AMBIGUOUS",
+   "confidence_score": 0.3,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_register",
+   "target": "auth_auth",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_login",
+   "target": "auth_register",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_register",
+   "target": "auth_login",
+   "relation": "references",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_login",
+   "target": "jjb_pages_auth_login",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\login.html",
+   "source_location": null,
+   "weight": 1.0
+  },
+  {
+   "source": "auth_register",
+   "target": "jjb_pages_auth_cadastro",
+   "relation": "semantically_similar_to",
+   "confidence": "INFERRED",
+   "confidence_score": 0.75,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\auth\\register.html",
+   "source_location": null,
+   "weight": 1.0
+  }
+ ],
+ "hyperedges": [
+  {
+   "id": "jjb_pages_spa_navigation",
+   "label": "JJB Pages sharing navbar, functions.js/index.js and Firebase",
+   "nodes": [
+    "jjb_pages_auth_cadastro",
+    "jjb_pages_auth_login",
+    "jjb_pages_clients",
+    "jjb_pages_colaboradores",
+    "jjb_pages_config",
+    "jjb_pages_contas",
+    "jjb_pages_history",
+    "jjb_pages_home"
+   ],
+   "relation": "participate_in",
+   "confidence": "EXTRACTED",
+   "confidence_score": 1.0,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html"
+  },
+  {
+   "id": "jjb_operations_flow",
+   "label": "JJB operations flow: register, clients, history, accounts",
+   "nodes": [
+    "jjb_pages_home",
+    "jjb_pages_clients",
+    "jjb_pages_history",
+    "jjb_pages_contas",
+    "jjb_pages_config"
+   ],
+   "relation": "form",
+   "confidence": "INFERRED",
+   "confidence_score": 0.85,
+   "source_file": "C:\\Users\\mateu\\OneDrive\\Documentos\\GitHub\\MateusLuisMk19.github.io\\JJB\\Pages\\home.html"
+  }
+ ],
+ "input_tokens": 0,
+ "output_tokens": 0
+}

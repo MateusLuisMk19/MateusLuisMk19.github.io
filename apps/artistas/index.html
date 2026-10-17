@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Catálogo de Artistas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <a href="../../index.html" class="back" title="Voltar aos projetos">&larr;</a>
+      <h1>CATÁLOGO<span>ARTISTAS</span></h1>
+    </div>
+    <input id="search" type="search" placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…" autocomplete="off" />
+    <div class="actions">
+      <button id="btnSettings" class="btn ghost" type="button">Definições</button>
+      <button id="btnBackup" class="btn ghost" type="button">Backup</button>
+      <button id="btnNewArtist" class="btn primary" type="button">+ Artista</button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside id="artistList" class="sidebar" aria-label="Artistas"></aside>
+    <main id="main"></main>
+  </div>
+
+  <footer class="foot">
+    Os dados ficam guardados neste navegador — faz backup regularmente.
+    <span>by <a target="_blank" href="https://github.com/MateusLuisMk19">Mateus Luis</a></span>
+  </footer>
+
+  <!-- Artista -->
+  <dialog id="artistDialog">
+    <form id="artistForm" method="dialog">
+      <h2 id="artistFormTitle">Novo artista</h2>
+      <div class="form-top">
+        <label class="photo-drop round" title="Escolher foto">
+          <input type="file" accept="image/*" name="photoFile" hidden />
+          <span class="photo-preview" id="artistPhotoPreview">Foto</span>
+        </label>
+        <div class="grid2 grow">
+          <label class="span2">Nome artístico *<input name="name" required maxlength="120" /></label>
+          <label>Nome real<input name="realName" maxlength="120" /></label>
+          <label>Género<input name="genre" maxlength="60" /></label>
+          <label>País<input name="country" maxlength="60" /></label>
+          <label>Email / contacto<input name="contact" maxlength="120" /></label>
+        </div>
+      </div>
+      <label>Biografia<textarea name="bio" rows="3"></textarea></label>
+      <div class="grid2">
+        <label>Spotify<input name="spotify" type="url" placeholder="https://" /></label>
+        <label>Instagram<input name="instagram" type="url" placeholder="https://" /></label>
+        <label>YouTube<input name="youtube" type="url" placeholder="https://" /></label>
+        <label>Website<input name="website" type="url" placeholder="https://" /></label>
+      </div>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Projeto (edição) -->
+  <dialog id="projectDialog" class="wide">
+    <form id="projectForm" method="dialog">
+      <h2 id="projectFormTitle">Novo projeto</h2>
+      <div class="form-top">
+        <label class="photo-drop cover" title="Escolher capa (ou arrastar imagem)">
+          <input type="file" accept="image/*" name="coverFile" hidden />
+          <span class="photo-preview" id="coverPreview">Capa<br /><small>clicar ou arrastar</small></span>
+        </label>
+        <div class="grid2 grow">
+          <label class="span2">Título *<input name="title" required maxlength="160" /></label>
+          <label>Artista *<select name="artistId" required></select></label>
+          <label>Tipo<select name="type"></select></label>
+          <label>Data de lançamento<input name="releaseDate" type="date" /></label>
+          <label>Estado<select name="status"></select></label>
+          <label>Editora<input name="label" maxlength="120" /></label>
+          <label>Género<input name="genre" maxlength="60" /></label>
+          <label class="span2">UPC
+            <div class="code-input">
+              <input name="upc" class="mono" inputmode="numeric" maxlength="12" placeholder="12 dígitos" />
+              <button type="button" class="btn small" data-action="gen-upc">Gerar</button>
+            </div>
+            <small id="upcStatus" class="hint"></small>
+          </label>
+        </div>
+      </div>
+      <div id="upcBarcode" class="barcode-box"></div>
+
+      <div class="tracks-head">
+        <h3>Faixas</h3>
+        <div>
+          <button type="button" class="btn small ghost" data-action="gen-isrc-all">Gerar ISRC em falta</button>
+          <button type="button" class="btn small" data-action="add-track">+ Faixa</button>
+        </div>
+      </div>
+      <div id="trackList" class="track-list"></div>
+
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar projeto</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Projeto (detalhe) -->
+  <dialog id="viewDialog" class="wide">
+    <div id="viewBody"></div>
+  </dialog>
+
+  <!-- Definições -->
+  <dialog id="settingsDialog">
+    <form id="settingsForm" method="dialog">
+      <h2>Definições de códigos</h2>
+      <fieldset>
+        <legend>UPC (código de barras do lançamento)</legend>
+        <p class="hint">Usa o prefixo de empresa atribuído pela GS1 (6 a 10 dígitos). O gerador acrescenta a referência sequencial e o dígito de controlo.</p>
+        <div class="grid2">
+          <label>Prefixo GS1<input name="upcPrefix" class="mono" inputmode="numeric" maxlength="10" placeholder="ex.: 0123456" /></label>
+          <label>Referência inicial<input name="upcStart" type="number" min="1" /></label>
+        </div>
+        <p class="hint">Próximo: <code id="upcNextPreview">—</code></p>
+      </fieldset>
+      <fieldset>
+        <legend>ISRC (código de cada gravação)</legend>
+        <p class="hint">Formato <code>PT-XXX-AA-NNNNN</code>: país, código de registante (atribuído pela agência nacional — em Portugal a AUDIOGEST), ano e número de designação.</p>
+        <div class="grid2">
+          <label>País<input name="isrcCountry" class="mono" maxlength="2" placeholder="PT" /></label>
+          <label>Registante<input name="isrcRegistrant" class="mono" maxlength="3" placeholder="ABC" /></label>
+          <label>Designação inicial<input name="isrcStart" type="number" min="1" max="99999" /></label>
+        </div>
+        <p class="hint">Próximo: <code id="isrcNextPreview">—</code></p>
+      </fieldset>
+      <div class="dialog-actions">
+        <button type="button" class="btn ghost" data-close>Cancelar</button>
+        <button type="submit" class="btn primary">Guardar</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Backup -->
+  <dialog id="backupDialog">
+    <h2>Backup e exportação</h2>
+    <div class="backup-list">
+      <button class="btn" type="button" data-action="export-json">Exportar backup (.json)</button>
+      <label class="btn">Importar backup (.json)<input type="file" accept="application/json,.json" id="importFile" hidden /></label>
+      <button class="btn" type="button" data-action="export-csv">Exportar catálogo (.csv)</button>
+    </div>
+    <p class="hint">O backup inclui artistas, projetos, capas e definições. Importar substitui todos os dados atuais.</p>
+    <div class="dialog-actions">
+      <button type="button" class="btn ghost" data-close>Fechar</button>
+    </div>
+  </dialog>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
