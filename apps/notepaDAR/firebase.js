@@ -39,6 +39,43 @@ async function saveNoteFromUI(color, type, subtype, dar, noteId) {
   } catch (e) { alert("Erro ao guardar."); }
 }
 
+// BUSCAR    
+async function fetchSaveList(uid) {
+  // 1. Lógica de prioridade do UID
+  const userIdInput = document.getElementById("usercode")?.value.trim();
+  const finalUID = uid || userIdInput;
+
+  if (!finalUID) {
+    console.warn("Nenhum UID fornecido.");
+    return null;
+  }
+
+  try {
+    // 2. Referência à coleção e criação da Query
+    const notesRef = collection(db, "notes");
+    const q = query(notesRef, where("uid", "==", finalUID));
+
+    // 3. Execução da consulta
+    const querySnapshot = await getDocs(q);
+
+    if (!querySnapshot.empty) {
+      // Mapeia os documentos encontrados para um array
+      const notes = querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      
+      console.log("Notas encontradas:", notes);
+      return notes; // Retorna a lista de notas
+    } else {
+      console.log("Nenhuma nota encontrada para este UID.");
+      return []; // Retorna array vazio se não houver resultados
+    }
+  } catch (e) {
+    console.error("Erro ao buscar notas:", e);
+    return null;
+  }
+}
 
 async function checkUserExists(userId) {
   try {
@@ -70,4 +107,4 @@ async function checkNoteExists(noteId) {
 
 
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists };
+window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists, fetchSaveList };
