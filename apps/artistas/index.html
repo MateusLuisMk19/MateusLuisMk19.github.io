@@ -12,21 +12,34 @@
       <a href="../../index.html" class="back" title="Voltar aos projetos">&larr;</a>
       <h1>CATÁLOGO<span>ARTISTAS</span></h1>
     </div>
-    <input id="search" type="search" placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…" autocomplete="off" />
-    <div class="actions">
+    <input id="search" class="app-only" type="search" placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…" autocomplete="off" />
+    <div class="actions app-only">
       <button id="btnSettings" class="btn ghost" type="button">Definições</button>
-      <button id="btnBackup" class="btn ghost" type="button">Backup</button>
+      <button class="btn ghost" type="button" data-action="export-csv" title="Exportar catálogo para Excel">CSV</button>
       <button id="btnNewArtist" class="btn primary" type="button">+ Artista</button>
+      <button id="btnLogout" class="btn ghost" type="button" title="Terminar sessão">Sair</button>
     </div>
   </header>
 
-  <div class="layout">
+  <section id="authScreen" class="auth" hidden>
+    <form id="authForm" class="auth-card">
+      <h2>Entrar no catálogo</h2>
+      <p class="hint">Os dados ficam guardados na nuvem e sincronizados entre aparelhos.</p>
+      <label>Email<input name="email" type="email" required autocomplete="email" /></label>
+      <label>Palavra-passe<input name="password" type="password" required minlength="6" autocomplete="current-password" /></label>
+      <button type="submit" class="btn primary" data-mode="login">Entrar</button>
+      <button type="submit" class="btn ghost" data-mode="signup">Criar conta</button>
+      <p id="authMsg" class="hint"></p>
+    </form>
+  </section>
+
+  <div id="appShell" class="layout" hidden>
     <aside id="artistList" class="sidebar" aria-label="Artistas"></aside>
     <main id="main"></main>
   </div>
 
   <footer class="foot">
-    Os dados ficam guardados neste navegador — faz backup regularmente.
+    <span id="userInfo">Dados sincronizados com o Supabase.</span>
     <span>by <a target="_blank" href="https://github.com/MateusLuisMk19">Mateus Luis</a></span>
   </footer>
 
@@ -140,22 +153,9 @@
     </form>
   </dialog>
 
-  <!-- Backup -->
-  <dialog id="backupDialog">
-    <h2>Backup e exportação</h2>
-    <div class="backup-list">
-      <button class="btn" type="button" data-action="export-json">Exportar backup (.json)</button>
-      <label class="btn">Importar backup (.json)<input type="file" accept="application/json,.json" id="importFile" hidden /></label>
-      <button class="btn" type="button" data-action="export-csv">Exportar catálogo (.csv)</button>
-    </div>
-    <p class="hint">O backup inclui artistas, projetos, capas e definições. Importar substitui todos os dados atuais.</p>
-    <div class="dialog-actions">
-      <button type="button" class="btn ghost" data-close>Fechar</button>
-    </div>
-  </dialog>
-
   <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
