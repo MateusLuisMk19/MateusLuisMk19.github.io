@@ -384,3 +384,5 @@ table.tracks small { color: var(--muted); }
   .span2 { grid-column: auto; }
   .project-grid { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
 }
+
+.photo-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }

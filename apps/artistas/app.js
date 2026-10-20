@@ -26,9 +26,39 @@ const SETTINGS_FIELDS = {
 const imageUrl = (path) => (path ? sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl : "");
 
 function fromRow(row, fields) {
-  const obj = { id: row.id };
+  const obj = { id: row.id, updatedAt: row.updated_at || null };
   for (const [k, col] of Object.entries(fields)) obj[k] = row[col] ?? "";
   return obj;
+}
+
+// As colunas de settings são NOT NULL: campos vazios vão como "" (e não null)
+function settingsRow(s) {
+  const row = { user_id: session.user.id };
+  for (const [k, col] of Object.entries(SETTINGS_FIELDS)) row[col] = s[k] ?? DEFAULT_SETTINGS[k];
+  return row;
+}
+
+// Insere (novo) ou atualiza só se ninguém alterou o registo entretanto (updated_at)
+async function saveRow(table, obj, fields, isNew) {
+  const row = { id: obj.id, ...toRow(obj, fields) };
+  if (isNew) return sb.from(table).insert(row).select().single();
+  let q = sb.from(table).update(row).eq("id", obj.id);
+  if (obj.updatedAt) q = q.eq("updated_at", obj.updatedAt);
+  const res = await q.select().maybeSingle();
+  if (!res.error && !res.data) return { data: null, error: { code: "STALE", message: "Este registo foi alterado noutro aparelho. Os dados foram recarregados — repete a edição." } };
+  return res;
+}
+
+// Lê todas as linhas (o Supabase devolve no máximo 1000 por pedido)
+async function fetchAll(table) {
+  const size = 1000;
+  const rows = [];
+  for (let from = 0; ; from += size) {
+    const { data, error } = await sb.from(table).select("*").order("id").range(from, from + size - 1);
+    if (error) throw error;
+    rows.push(...data);
+    if (data.length < size) return rows;
+  }
 }
 function toRow(obj, fields) {
   const row = {};
@@ -63,6 +93,8 @@ async function removeImages(paths) {
 
 function errMsg(err) {
   if (err?.code === "23505") return "Este UPC já está atribuído a outro projeto.";
+  if (/isrc_conflict/.test(err?.message || "")) return "Um dos ISRC já pertence a outra gravação (outro título). Gera um novo ISRC.";
+  if (/isrc_duplicate_in_project/.test(err?.message || "")) return "Há ISRC repetidos neste projeto.";
   const map = {
     "Invalid login credentials": "Email ou palavra-passe incorretos.",
     "Email not confirmed": "Confirma primeiro o email que te enviámos.",
@@ -97,6 +129,9 @@ const projectsOf = (artistId) => state.projects.filter((p) => p.artistId === art
 const sortProjects = (list) =>
   [...list].sort((a, b) => (b.releaseDate || "").localeCompare(a.releaseDate || "") || a.title.localeCompare(b.title));
 const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "");
+const todayIso = () => new Date().toLocaleDateString("sv-SE");
+// "Agendado" passa a "Lançado" quando a data de lançamento chega
+const statusOf = (p) => (p.status === "Agendado" && p.releaseDate && p.releaseDate <= todayIso() ? "Lançado" : p.status);
 
 let toastTimer;
 function toast(msg, kind = "") {
@@ -233,9 +268,12 @@ function nextIsrc(exclude = []) {
     throw new Error("Define o país e o código de registante ISRC nas Definições.");
   }
   const stem = isrcCountry + isrcRegistrant + String(new Date().getFullYear()).slice(-2);
-  let max = (Number(state.settings.isrcStart) || 1) - 1;
-  for (const code of [...allIsrcs(), ...exclude]) {
-    if (code && code.startsWith(stem)) max = Math.max(max, Number(code.slice(7)));
+  const codes = [...allIsrcs(), ...exclude].filter(Boolean);
+  // A designação inicial só vale para o primeiro ano; em anos novos a sequência recomeça em 1
+  const usedBefore = codes.some((c) => c.startsWith(isrcCountry + isrcRegistrant) && !c.startsWith(stem));
+  let max = usedBefore ? 0 : (Number(state.settings.isrcStart) || 1) - 1;
+  for (const code of codes) {
+    if (code.startsWith(stem)) max = Math.max(max, Number(code.slice(7)));
   }
   if (max + 1 > 99999) throw new Error("Atingiste o limite de 99999 ISRC para este ano.");
   return stem + String(max + 1).padStart(5, "0");
@@ -289,7 +327,7 @@ function projectCard(p, showArtist) {
       <div class="cover">
         ${p.cover ? `<img src="${esc(p.cover)}" alt="Capa de ${esc(p.title)}" loading="lazy">` : esc(initials(p.title))}
         <span class="badge">${esc(p.type)}</span>
-        <span class="badge status st-${esc(p.status)}">${esc(p.status)}</span>
+        <span class="badge status st-${esc(statusOf(p))}">${esc(statusOf(p))}</span>
       </div>
       <div class="meta">
         <h3 title="${esc(p.title)}">${esc(p.title)}</h3>
@@ -319,7 +357,8 @@ function matchesQuery(p, q) {
   const hay = [p.title, p.upc, p.label, artist?.name, ...p.tracks.flatMap((t) => [t.title, t.feat, t.isrc, fmtIsrc(t.isrc)])]
     .join(" ")
     .toLowerCase();
-  return hay.includes(q) || hay.includes(q.replace(/-/g, ""));
+  const compact = q.replace(/-/g, "");
+  return hay.includes(q) || (compact !== "" && hay.includes(compact));
 }
 
 function renderMain() {
@@ -356,7 +395,7 @@ function renderMain() {
             <div><strong>${state.artists.length}</strong><span>artistas</span></div>
             <div><strong>${state.projects.length}</strong><span>projetos</span></div>
             <div><strong>${tracks}</strong><span>faixas</span></div>
-            <div><strong>${state.projects.filter((p) => p.status === "Lançado").length}</strong><span>lançados</span></div>
+            <div><strong>${state.projects.filter((p) => statusOf(p) === "Lançado").length}</strong><span>lançados</span></div>
           </div>
         </div>
       </div>
@@ -430,7 +469,25 @@ function openArtistForm(artist) {
   }
   $("#artistFormTitle").textContent = artist ? "Editar artista" : "Novo artista";
   setPreview($("#artistPhotoPreview"), artistDraft.photo, "Foto");
+  $("#btnRemovePhoto").hidden = !artistDraft.photo;
+  $("#artistDialog").dataset.dirty = "";
   $("#artistDialog").showModal();
+}
+
+// Dialogs com alterações por guardar pedem confirmação antes de fechar
+function closeDialog(dlg, force = false) {
+  if (!force && dlg.dataset.dirty && !confirm("Descartar as alterações por guardar?")) return;
+  dlg.dataset.dirty = "";
+  dlg.close();
+}
+
+async function reloadData() {
+  try {
+    await loadAll();
+    render();
+  } catch (err) {
+    toast(errMsg(err), "error");
+  }
 }
 
 async function saveArtist(e) {
@@ -449,19 +506,21 @@ async function saveArtist(e) {
     let newPath = null;
     try {
       if (a.photoBlob) newPath = a.photoPath = await uploadImage(a.photoBlob);
-      const { data, error } = await sb.from("artists").upsert({ id: a.id, ...toRow(a, ARTIST_FIELDS) }).select().single();
+      else if (a.removePhoto) a.photoPath = "";
+      const { data, error } = await saveRow("artists", a, ARTIST_FIELDS, isNew);
       if (error) throw error;
-      if (newPath && oldPath) removeImages([oldPath]);
+      if (oldPath && a.photoPath !== oldPath) removeImages([oldPath]);
 
       const saved = artistFromRow(data);
       state.artists = isNew ? [...state.artists, saved] : state.artists.map((x) => (x.id === saved.id ? saved : x));
       state.selected = saved.id;
-      $("#artistDialog").close();
+      closeDialog($("#artistDialog"), true);
       render();
       toast(isNew ? "Artista criado." : "Artista atualizado.", "ok");
     } catch (err) {
       if (newPath) removeImages([newPath]);
       toast(errMsg(err), "error");
+      if (err.code === "STALE") reloadData();
     }
   });
 }
@@ -516,7 +575,18 @@ function openProjectForm(project, artistId) {
   setPreview($("#coverPreview"), draft.cover, "Capa<br><small>clicar ou arrastar</small>");
   updateUpcStatus();
   renderTracks();
+  $("#btnRemoveCover").hidden = !draft.cover;
+  $("#projectDialog").dataset.dirty = "";
   $("#projectDialog").showModal();
+}
+
+// Atualiza projetos antes de gerar códigos, para não repetir os gerados noutro aparelho
+async function refreshProjects() {
+  try {
+    state.projects = (await fetchAll("projects")).map(projectFromRow);
+  } catch {
+    /* sem rede: segue com os dados em memória; a base de dados valida na gravação */
+  }
 }
 
 function updateUpcStatus() {
@@ -577,12 +647,20 @@ function syncTracks() {
   });
 }
 
-function genIsrcFor(indexes) {
+async function genIsrcFor(indexes) {
   syncTracks();
+  await refreshProjects();
   try {
-    for (const i of indexes) {
-      const others = draft.tracks.filter((_, j) => j !== i).map((t) => t.isrc);
-      draft.tracks[i].isrc = nextIsrc(others);
+    // Exclui o próprio projeto: os ISRC dele vêm do rascunho
+    const saved = state.projects;
+    state.projects = saved.filter((p) => p.id !== draft.id);
+    try {
+      for (const i of indexes) {
+        const others = draft.tracks.filter((_, j) => j !== i).map((t) => t.isrc);
+        draft.tracks[i].isrc = nextIsrc(others);
+      }
+    } finally {
+      state.projects = saved;
     }
     renderTracks();
     if (indexes.length) toast(indexes.length === 1 ? `ISRC gerado: ${fmtIsrc(draft.tracks[indexes[0]].isrc)}` : `${indexes.length} ISRC gerados.`, "ok");
@@ -621,8 +699,7 @@ async function saveProject(e) {
       if (o.id === p.id) continue;
       const same = o.tracks.find((x) => x.isrc === t.isrc);
       if (same && same.title.toLowerCase() !== t.title.toLowerCase()) {
-        const ok = confirm(`O ISRC ${fmtIsrc(t.isrc)} já pertence a "${same.title}" em "${o.title}".\nUm ISRC identifica uma única gravação. Continuar mesmo assim?`);
-        if (!ok) return;
+        return toast(`O ISRC ${fmtIsrc(t.isrc)} já pertence a "${same.title}" em "${o.title}". Um ISRC identifica uma única gravação.`, "error");
       }
     }
   }
@@ -635,19 +712,21 @@ async function saveProject(e) {
     let newPath = null;
     try {
       if (p.coverBlob) newPath = p.coverPath = await uploadImage(p.coverBlob);
-      const { data, error } = await sb.from("projects").upsert({ id: p.id, ...toRow(p, PROJECT_FIELDS) }).select().single();
+      else if (p.removeCover) p.coverPath = "";
+      const { data, error } = await saveRow("projects", p, PROJECT_FIELDS, isNew);
       if (error) throw error;
-      if (newPath && oldPath) removeImages([oldPath]);
+      if (oldPath && p.coverPath !== oldPath) removeImages([oldPath]);
 
       const saved = projectFromRow(data);
       state.projects = isNew ? [...state.projects, saved] : state.projects.map((x) => (x.id === saved.id ? saved : x));
       state.selected = saved.artistId;
-      $("#projectDialog").close();
+      closeDialog($("#projectDialog"), true);
       render();
       toast(isNew ? "Projeto adicionado à biblioteca." : "Projeto atualizado.", "ok");
     } catch (err) {
       if (newPath) removeImages([newPath]);
       toast(errMsg(err), "error");
+      if (err.code === "STALE") reloadData();
     }
   });
 }
@@ -672,7 +751,7 @@ function openProjectView(id) {
         ${p.cover ? `<button class="btn small ghost" style="margin-top:8px" data-action="download-cover" data-id="${p.id}">Descarregar capa</button>` : ""}
       </div>
       <div>
-        <span class="badge status st-${esc(p.status)}">${esc(p.status)}</span>
+        <span class="badge status st-${esc(statusOf(p))}">${esc(statusOf(p))}</span>
         <h2 style="margin-top:8px">${esc(p.title)}</h2>
         <p class="sub">${esc(artist?.name || "—")} · ${esc(p.type)}</p>
         <dl class="facts">
@@ -777,7 +856,7 @@ async function saveSettings(e) {
   if (s.isrcCountry && s.isrcCountry.length !== 2) return toast("O país ISRC tem 2 letras (ex.: PT).", "error");
   if (s.isrcRegistrant && s.isrcRegistrant.length !== 3) return toast("O código de registante tem 3 caracteres.", "error");
   await busy(e.target, async () => {
-    const { error } = await sb.from("settings").upsert({ user_id: session.user.id, ...toRow(s, SETTINGS_FIELDS) });
+    const { error } = await sb.from("settings").upsert(settingsRow(s));
     if (error) return toast(errMsg(error), "error");
     state.settings = s;
     $("#settingsDialog").close();
@@ -818,12 +897,14 @@ function toggleMenu(open) {
 async function exportJson() {
   toast("A preparar o backup…");
   const pick = (obj, fields, skip) => Object.fromEntries(Object.keys(fields).filter((k) => k !== skip).map((k) => [k, obj[k]]));
-  const artists = await Promise.all(
-    state.artists.map(async (a) => ({ id: a.id, ...pick(a, ARTIST_FIELDS, "photoPath"), photoData: await imageAsDataUrl(a.photo) }))
-  );
-  const projects = await Promise.all(
-    state.projects.map(async (p) => ({ id: p.id, ...pick(p, PROJECT_FIELDS, "coverPath"), coverData: await imageAsDataUrl(p.cover) }))
-  );
+  // Descarrega as imagens em lotes pequenos para não saturar a rede
+  const mapLimit = async (list, fn, size = 5) => {
+    const out = [];
+    for (let i = 0; i < list.length; i += size) out.push(...(await Promise.all(list.slice(i, i + size).map(fn))));
+    return out;
+  };
+  const artists = await mapLimit(state.artists, async (a) => ({ id: a.id, ...pick(a, ARTIST_FIELDS, "photoPath"), photoData: await imageAsDataUrl(a.photo) }));
+  const projects = await mapLimit(state.projects, async (p) => ({ id: p.id, ...pick(p, PROJECT_FIELDS, "coverPath"), coverData: await imageAsDataUrl(p.cover) }));
   const data = { app: "catalogo-artistas", version: 2, exportedAt: new Date().toISOString(), settings: state.settings, artists, projects };
   download(`catalogo-artistas-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(data), "application/json");
   toast("Backup exportado.", "ok");
@@ -853,7 +934,8 @@ async function importJson(file) {
   }
   const ok = confirm(
     `Importar ${data.artists.length} artistas e ${data.projects.length} projetos?\n` +
-      "Os registos com o mesmo ID são atualizados; os restantes dados mantêm-se."
+      "Os registos com o mesmo ID são atualizados; os restantes dados mantêm-se.\n" +
+      "Fotos e capas já existentes não são substituídas."
   );
   if (!ok) return;
 
@@ -866,6 +948,8 @@ async function importJson(file) {
   };
   let done = 0;
   let failed = 0;
+  const problems = []; // tudo o que foi descartado ou falhou, para mostrar no fim
+  const knownArtists = new Set(state.artists.map((a) => a.id));
   const total = data.artists.length + data.projects.length;
   const progress = () => toast(`A importar… ${done + failed}/${total}`);
 
@@ -874,7 +958,7 @@ async function importJson(file) {
     if (data.settings) {
       const s = { ...state.settings };
       for (const k of Object.keys(SETTINGS_FIELDS)) if (data.settings[k] !== undefined && data.settings[k] !== "") s[k] = data.settings[k];
-      const { error } = await sb.from("settings").upsert({ user_id: session.user.id, ...toRow(s, SETTINGS_FIELDS) });
+      const { error } = await sb.from("settings").upsert(settingsRow(s));
       if (!error) state.settings = s;
     }
 
@@ -886,15 +970,17 @@ async function importJson(file) {
         if (!a.name) throw new Error("sem nome");
         const existing = artistById(a.id);
         a.photoPath = existing?.photoPath || "";
-        const blob = await importedImage(src.photoData || src.photo);
+        // Só envia a imagem se o registo ainda não tem uma (evita duplicar ficheiros em cada importação)
+        const blob = a.photoPath ? null : await importedImage(src.photoData || src.photo);
         if (blob) newPath = a.photoPath = await uploadImage(blob);
         const { error } = await sb.from("artists").upsert({ id: a.id, ...toRow(a, ARTIST_FIELDS) });
         if (error) throw error;
-        if (newPath && existing?.photoPath) removeImages([existing.photoPath]);
+        knownArtists.add(a.id);
         done++;
       } catch (err) {
         if (newPath) removeImages([newPath]);
         console.warn("Artista não importado:", src?.name, err);
+        problems.push(`Artista "${str(src?.name) || "?"}" não importado: ${errMsg(err)}`);
         failed++;
       }
       progress();
@@ -910,22 +996,24 @@ async function importJson(file) {
         p.releaseDate = /^\d{4}-\d{2}-\d{2}$/.test(src.releaseDate) ? src.releaseDate : "";
         p.label = str(src.label);
         p.genre = str(src.genre);
+        if (!knownArtists.has(p.artistId)) throw new Error("o artista do projeto não existe");
         p.upc = isValidUpc(str(src.upc)) ? str(src.upc) : "";
+        if (str(src.upc) && !p.upc) problems.push(`Projeto "${str(src.title)}": UPC inválido (${str(src.upc)}) foi ignorado.`);
         p.tracks = (Array.isArray(src.tracks) ? src.tracks : []).map((t) => ({
           title: str(t.title), feat: str(t.feat), duration: str(t.duration), isrc: normIsrc(t.isrc),
         }));
         if (!p.title) throw new Error("sem título");
         const existing = state.projects.find((x) => x.id === p.id);
         p.coverPath = existing?.coverPath || "";
-        const blob = await importedImage(src.coverData || src.cover);
+        const blob = p.coverPath ? null : await importedImage(src.coverData || src.cover);
         if (blob) newPath = p.coverPath = await uploadImage(blob);
         const { error } = await sb.from("projects").upsert({ id: p.id, ...toRow(p, PROJECT_FIELDS) });
         if (error) throw error;
-        if (newPath && existing?.coverPath) removeImages([existing.coverPath]);
         done++;
       } catch (err) {
         if (newPath) removeImages([newPath]);
         console.warn("Projeto não importado:", src?.title, err);
+        problems.push(`Projeto "${str(src?.title) || "?"}" não importado: ${errMsg(err)}`);
         failed++;
       }
       progress();
@@ -933,7 +1021,12 @@ async function importJson(file) {
 
     await loadAll();
     render();
-    toast(failed ? `Importados ${done}; ${failed} com erro (ver consola).` : `Importação concluída: ${done} registos.`, failed ? "error" : "ok");
+    toast(failed ? `Importados ${done}; ${failed} com erro.` : `Importação concluída: ${done} registos.`, failed ? "error" : "ok");
+    if (problems.length) {
+      const shown = problems.slice(0, 10).join("\n");
+      alert(`Importação com avisos (${problems.length}):\n\n${shown}${problems.length > 10 ? `\n… e mais ${problems.length - 10} (ver consola)` : ""}`);
+      console.warn("Avisos da importação:", problems);
+    }
   } catch (err) {
     toast(errMsg(err), "error");
   } finally {
@@ -942,11 +1035,16 @@ async function importJson(file) {
 }
 
 function exportCsv() {
-  const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  // Prefixa com ' as células de texto que o Excel interpretaria como fórmula
+  const cell = (v) => {
+    let s = String(v ?? "");
+    if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
+    return `"${s.replace(/"/g, '""')}"`;
+  };
   const rows = [["Artista", "Projeto", "Tipo", "Estado", "Data", "Editora", "Género", "UPC", "Nº", "Faixa", "Participações", "Duração", "ISRC"]];
   for (const p of sortProjects(state.projects)) {
     const artist = artistById(p.artistId)?.name || "";
-    const base = [artist, p.title, p.type, p.status, p.releaseDate, p.label, p.genre, p.upc];
+    const base = [artist, p.title, p.type, statusOf(p), p.releaseDate, p.label, p.genre, p.upc];
     if (!p.tracks.length) rows.push([...base, "", "", "", "", ""]);
     p.tracks.forEach((t, i) => rows.push([...base, i + 1, t.title, t.feat, t.duration, fmtIsrc(t.isrc)]));
   }
@@ -987,13 +1085,13 @@ function showApp(loggedIn) {
 
 async function loadAll() {
   const [artists, projects, settings] = await Promise.all([
-    sb.from("artists").select("*"),
-    sb.from("projects").select("*"),
+    fetchAll("artists"),
+    fetchAll("projects"),
     sb.from("settings").select("*").maybeSingle(),
   ]);
-  for (const res of [artists, projects, settings]) if (res.error) throw res.error;
-  state.artists = artists.data.map(artistFromRow);
-  state.projects = projects.data.map(projectFromRow);
+  if (settings.error) throw settings.error;
+  state.artists = artists.map(artistFromRow);
+  state.projects = projects.map(projectFromRow);
   state.settings = settings.data ? fromRow(settings.data, SETTINGS_FIELDS) : { ...DEFAULT_SETTINGS };
 }
 
@@ -1072,14 +1170,34 @@ function bindEvents() {
 
   bindImageInput($("#artistDialog .photo-drop"), 500, (blob) => {
     artistDraft.photoBlob = blob;
+    artistDraft.removePhoto = false;
     artistDraft.photo = URL.createObjectURL(blob);
     setPreview($("#artistPhotoPreview"), artistDraft.photo, "Foto");
+    $("#btnRemovePhoto").hidden = false;
+    $("#artistDialog").dataset.dirty = "1";
   });
   bindImageInput($("#projectDialog .photo-drop"), 1000, (blob) => {
     draft.coverBlob = blob;
+    draft.removeCover = false;
     draft.cover = URL.createObjectURL(blob);
     setPreview($("#coverPreview"), draft.cover, "");
+    $("#btnRemoveCover").hidden = false;
+    $("#projectDialog").dataset.dirty = "1";
   });
+
+  // Marca os formulários como alterados e protege o fecho acidental
+  for (const id of ["artistDialog", "projectDialog"]) {
+    const dlg = $(`#${id}`);
+    dlg.addEventListener("input", () => (dlg.dataset.dirty = "1"));
+    dlg.addEventListener("click", (e) => {
+      if (e.target.closest("[data-action]")) dlg.dataset.dirty = "1";
+    });
+    dlg.addEventListener("cancel", (e) => {
+      if (!dlg.dataset.dirty) return;
+      e.preventDefault();
+      closeDialog(dlg);
+    });
+  }
 
   // Abrir cartões com o teclado
   document.addEventListener("keydown", (e) => {
@@ -1096,7 +1214,7 @@ function bindEvents() {
     // Fecha o menu de dados ao clicar fora dele ou numa das opções
     if (!t.closest("[data-action=toggle-menu]") && !t.closest("#dataMenu label")) toggleMenu(false);
 
-    if (t.closest("[data-close]")) return t.closest("dialog").close();
+    if (t.closest("[data-close]")) return closeDialog(t.closest("dialog"));
 
     const sel = t.closest("[data-select]");
     if (sel) {
@@ -1143,15 +1261,28 @@ function bindEvents() {
       case "delete-project":
         return deleteProject(btn.dataset.id);
       case "gen-upc":
-        try {
-          const code = nextUpc();
-          $("#projectForm").elements.upc.value = code;
-          updateUpcStatus();
-          toast(`UPC gerado: ${code}`, "ok");
-        } catch (err) {
-          toast(err.message, "error");
-        }
-        return;
+        return refreshProjects().then(() => {
+          try {
+            const code = nextUpc();
+            $("#projectForm").elements.upc.value = code;
+            updateUpcStatus();
+            toast(`UPC gerado: ${code}`, "ok");
+          } catch (err) {
+            toast(err.message, "error");
+          }
+        });
+      case "remove-photo":
+        artistDraft.photoBlob = null;
+        artistDraft.photo = "";
+        artistDraft.removePhoto = true;
+        $("#btnRemovePhoto").hidden = true;
+        return setPreview($("#artistPhotoPreview"), "", "Foto");
+      case "remove-cover":
+        draft.coverBlob = null;
+        draft.cover = "";
+        draft.removeCover = true;
+        $("#btnRemoveCover").hidden = true;
+        return setPreview($("#coverPreview"), "", "Capa<br><small>clicar ou arrastar</small>");
       case "gen-isrc":
         return genIsrcFor([i]);
       case "gen-isrc-all":
@@ -1193,7 +1324,7 @@ function bindEvents() {
       if (e.target !== dlg) return;
       const r = dlg.getBoundingClientRect();
       const outside = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
-      if (outside) dlg.close();
+      if (outside) closeDialog(dlg);
     })
   );
 }

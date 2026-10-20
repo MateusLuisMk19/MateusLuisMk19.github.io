@@ -54,10 +54,13 @@
     <form id="artistForm" method="dialog">
       <h2 id="artistFormTitle">Novo artista</h2>
       <div class="form-top">
-        <label class="photo-drop round" title="Escolher foto">
+        <div class="photo-col">
+          <label class="photo-drop round" title="Escolher foto">
           <input type="file" accept="image/*" name="photoFile" hidden />
           <span class="photo-preview" id="artistPhotoPreview">Foto</span>
         </label>
+          <button type="button" class="btn small ghost" id="btnRemovePhoto" data-action="remove-photo" hidden>Remover foto</button>
+        </div>
         <div class="grid2 grow">
           <label class="span2">Nome artístico *<input name="name" required maxlength="120" /></label>
           <label>Nome real<input name="realName" maxlength="120" /></label>
@@ -85,10 +88,13 @@
     <form id="projectForm" method="dialog">
       <h2 id="projectFormTitle">Novo projeto</h2>
       <div class="form-top">
-        <label class="photo-drop cover" title="Escolher capa (ou arrastar imagem)">
+        <div class="photo-col">
+          <label class="photo-drop cover" title="Escolher capa (ou arrastar imagem)">
           <input type="file" accept="image/*" name="coverFile" hidden />
           <span class="photo-preview" id="coverPreview">Capa<br /><small>clicar ou arrastar</small></span>
         </label>
+          <button type="button" class="btn small ghost" id="btnRemoveCover" data-action="remove-cover" hidden>Remover capa</button>
+        </div>
         <div class="grid2 grow">
           <label class="span2">Título *<input name="title" required maxlength="160" /></label>
           <label>Artista *<select name="artistId" required></select></label>
