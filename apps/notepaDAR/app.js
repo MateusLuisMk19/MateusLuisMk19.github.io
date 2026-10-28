@@ -358,6 +358,7 @@ async function loadSaveList(uid){
 	
 	notas.forEach((nota) =>{
 		let card = document.createElement("div");
+		card.setAttribute("onClick", alert("fui clicado"));
 		card.classList.add("bridge-item");
 		card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
 		card.setAttribute("data-status", "no-signal");
