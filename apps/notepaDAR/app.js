@@ -337,11 +337,15 @@ saveBtn.addEventListener('click', async () => {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "llama-3.1-8b-instant", // Modelo gratuito, extremamente rápido e eficiente
+                model: "openai/gpt-oss-120b", // Modelo gratuito, extremamente rápido e eficiente
                 messages: [
                     {
                         role: "system",
-                        content: "És um assistente técnico de telecomunicações. Analisa a descrição da avaria e devolve estritamente um objeto JSON com três chaves: 'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.) e 'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.) ."
+                        content: `És um resumidor de textos para assistente técnico de telecomunicações. 
+							Analisa a descrição e analise da avaria e devolve estritamente um objeto JSON com três chaves: 
+							'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.), 
+							'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.) e 
+							'color' em Exadecimal (#dd8833).`
                     },
                     {
                         role: "user",
@@ -354,6 +358,8 @@ saveBtn.addEventListener('click', async () => {
         });
 
         const data = await response.json();
+		console.log("data",data);
+		console.log("resp",response);
         
         if (data.choices && data.choices[0]) {
             const aiResult = JSON.parse(data.choices[0].message.content);
@@ -376,7 +382,7 @@ saveBtn.addEventListener('click', async () => {
     };
     
     if (window.firebaseTMA) {
-        window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
+        window.firebaseTMA.saveNoteFromUI("#dd8833", type, subtype, dar, noteId);
     }
 
 	loadSaveList(true);
