@@ -304,3 +304,82 @@ textarea {
   color: white;
 }
 
+/* Contentor fixo no canto superior direito */
+.toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-width: 350px;
+  width: 100%;
+}
+
+/* Estrutura base do Toast */
+.toast {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 16px;
+  border-radius: 8px;
+  color: #fff;
+  font-family: system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  
+  /* Animações de entrada e saída */
+  animation: slideIn 0.3s ease forwards;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.toast.hide {
+  animation: slideOut 0.3s ease forwards;
+}
+
+/* Tipos de Alerta */
+.toast.success { background-color: #2e7d32; } /* Verde */
+.toast.error   { background-color: #d32f2f; } /* Vermelho */
+.toast.warning { background-color: #ed6c02; } /* Laranja */
+.toast.info    { background-color: #0288d1; } /* Azul */
+
+/* Botão de Fechar */
+.toast-close {
+  background: none;
+  border: none;
+  color: inherit;
+  font-size: 18px;
+  margin-left: 12px;
+  cursor: pointer;
+  opacity: 0.7;
+  line-height: 1;
+}
+
+.toast-close:hover {
+  opacity: 1;
+}
+
+/* Animações (Keyframes) */
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOut {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
