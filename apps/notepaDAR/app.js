@@ -325,19 +325,24 @@ saveBtn.addEventListener('click', async () => {
     // Valores padrão caso a IA falhe
     let type = "Outros";
     let subtype = "Sem sinal";
+    let aiColor = "#dd8833"; // Cor padrão caso falhe
 
-    // IA resuming (Groq API)
+    // IA resuming (Groq API via CORS Proxy para GitHub Pages)
     try {
-        const GROQ_API_KEY = "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"; // Substitui pela tua chave de API do Groq
+        const GROQ_API_KEY = "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"; 
+        
+        // URL da API do Groq codificada para passar pelo proxy CORS
+        const targetUrl = "https://api.groq.com/openai/v1/chat/completions";
+        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
 
-        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        const response = await fetch(proxyUrl, {
             method: "POST",
             headers: {
                 "Authorization": `Bearer ${GROQ_API_KEY}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify({
-                model: "openai/gpt-oss-120b", // Modelo gratuito, extremamente rápido e eficiente
+                model: "llama-3.1-8b-instant", // Usando um modelo suportado e rápido da Groq
                 messages: [
                     {
                         role: "system",
@@ -353,23 +358,23 @@ saveBtn.addEventListener('click', async () => {
                     }
                 ],
                 response_format: { type: "json_object" },
-                temperature: 0.1 // Temperatura baixa para respostas mais consistentes e diretas
+                temperature: 0.1 
             })
         });
 
         const data = await response.json();
-		console.log("data",data);
-		console.log("resp",response);
+        console.log("data", data);
         
         if (data.choices && data.choices[0]) {
             const aiResult = JSON.parse(data.choices[0].message.content);
             type = aiResult.type || type;
             subtype = aiResult.subtype || subtype;
+            if (aiResult.color) aiColor = aiResult.color;
         }
 
     } catch (error) {
         console.error("Erro ao processar resumo com IA:", error);
-        // Fallback básico caso a API falhe (ex: sem internet)
+        // Fallback básico caso a API falhe
         type = "Análise Manual";
         subtype = "Verificar descrição";
     }
@@ -382,10 +387,10 @@ saveBtn.addEventListener('click', async () => {
     };
     
     if (window.firebaseTMA) {
-        window.firebaseTMA.saveNoteFromUI("#dd8833", type, subtype, dar, noteId);
+        window.firebaseTMA.saveNoteFromUI(aiColor, type, subtype, dar, noteId);
     }
 
-	loadSaveList(true);
+    loadSaveList(true);
 });
 
 fitBtn.addEventListener('click', () => {
