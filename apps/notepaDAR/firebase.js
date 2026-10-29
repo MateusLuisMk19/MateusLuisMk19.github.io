@@ -1,6 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-app.js";
 import {
-  getFirestore, doc, setDoc, collection, getDocs, query, orderBy, limit, where, getDoc,
+  getFirestore, doc, setDoc, collection, getDocs, query, orderBy, limit, where, getDoc, deleteDoc,
 } from "https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -105,6 +105,18 @@ async function checkNoteExists(noteId) {
   }
 }
 
+// --- ELIMINAR NOTA ---
+async function deleteNote(noteId) {
+ try {
+ await deleteDoc(doc(db, "notes", noteId));
+ console.log("Nota eliminada com sucesso:", noteId);
+ return true;
+ } catch (e) {
+ console.error("Erro ao eliminar nota:", e);
+ alert("Erro ao eliminar a nota.");
+ return false;
+ }
+}
 
 // --- EXPOR PARA O WINDOW ---
-window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists, fetchSaveList };
+window.firebaseTMA = { saveNoteFromUI, checkUserExists, checkNoteExists, fetchSaveList, deleteNote };
