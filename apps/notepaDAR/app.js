@@ -509,6 +509,48 @@ function enableRightClickPaste(target) {
     });
 }
 
+/**
+ * Adiciona um evento de duplo clique para copiar texto para a área de transferência.
+ * @param {HTMLElement|string} target - Elemento HTML ou seletor CSS.
+ * @param {string|Function} [textToCopy] - Texto fixo a copiar, uma função que retorna o texto, ou vazio para copiar o conteúdo do elemento.
+ */
+function enableDoubleClickCopy(target, textToCopy) {
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+
+    if (!element) {
+        console.error("Elemento não encontrado.");
+        return;
+    }
+
+    element.addEventListener("dblclick", async () => {
+        try {
+            let content = "";
+
+            // Determina o que deve ser copiado
+            if (typeof textToCopy === 'function') {
+                content = textToCopy(element);
+            } else if (typeof textToCopy === 'string') {
+                content = textToCopy;
+            } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                content = element.value;
+            } else {
+                content = element.innerText || element.textContent;
+            }
+
+            // Copia para a área de transferência
+            await navigator.clipboard.writeText(content);
+            console.log("Copiado com sucesso:", content);
+            
+            // Opcional: Feedback visual temporário (ex: mudar a cor ou dar um alerta subtil)
+            element.style.outline = "2px solid #4CAF50";
+            setTimeout(() => element.style.outline = "none", 400);
+
+        } catch (err) {
+            console.error("Falha ao copiar para a área de transferência: ", err);
+        }
+    });
+}
+
 clearBtn.addEventListener('click', () => {
 	// tratamento de dados
 	fr_nserv.value = "";
@@ -524,5 +566,19 @@ clearBtn.addEventListener('click', () => {
 document.addEventListener('DOMContentLoaded', async (event) => {
 	localStorage.removeItem("usercode");
 	enableRightClickPaste(fr_desc);
+	enableRightClickPaste(fr_nserv);
+	enableRightClickPaste(fr_name);
+	enableRightClickPaste(fr_tel);
+	enableRightClickPaste(fr_nif);
+	enableRightClickPaste(fr_analise);
+	enableRightClickPaste(fr_Resol);
+
+	enableDoubleClickCopy(fr_desc);
+	enableDoubleClickCopy(fr_nserv);
+	enableDoubleClickCopy(fr_name);
+	enableDoubleClickCopy(fr_tel);
+	enableDoubleClickCopy(fr_nif);
+	enableDoubleClickCopy(fr_analise);
+	enableDoubleClickCopy(fr_Resol);
 	await loadSaveList(true);
 });
