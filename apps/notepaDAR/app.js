@@ -201,7 +201,7 @@ front.addEventListener('click', async () => {
     const exists = await window.firebaseTMA.checkUserExists(uid);
 
     if (exists) {
-        alert(`Logado como ${uid}`);
+        showToast(`Logado como ${uid}`);
         confirmarLogin();
     } else {
         const novoRegisto = confirm(`O user "${uid}" não foi encontrado na base de dados.\nDeseja criar um novo registo com este nome?`);
@@ -268,10 +268,10 @@ cp_btn.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.", "error");
     });
 })
 
@@ -287,10 +287,10 @@ cp_transf.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.","error");
     });
 })
 
@@ -308,10 +308,10 @@ cp_email.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.","error");
     });
 })
 
@@ -415,6 +415,100 @@ function expandirTexto(texto) {
   return textoFinal;
 }
 
+/**
+ * Exibe um alerta dinâmico (Toast).
+ * 
+ * @param {string} message - Mensagem a ser exibida.
+ * @param {string} type - Tipo de alerta: 'success', 'error', 'warning', 'info' (Padrão: 'info').
+ * @param {number} duration - Tempo em milissegundos antes de desaparecer (Padrão: 4000ms / 4s).
+ */
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  // Cria o elemento do toast
+  const toast = document.createElement('div');
+  toast.classList.add('toast', type);
+
+  // Conteúdo HTML do alerta com botão de fechar (×)
+  toast.innerHTML = `
+    <span class="toast-message">${message}</span>
+    <button class="toast-close" aria-label="Fechar">&times;</button>
+  `;
+
+  // Função interna para fechar com animação
+  const removeToast = () => {
+    if (toast.classList.contains('hide')) return; // Evita correr duas vezes
+    toast.classList.add('hide');
+    
+    // Espera a animação de saída (300ms) terminar antes de remover do DOM
+    toast.addEventListener('animationend', () => {
+      toast.remove();
+    });
+  };
+
+  // Fecha ao clicar no botão 'x'
+  toast.querySelector('.toast-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    removeToast();
+  });
+
+  // Temporizador para fechar automaticamente
+  const autoCloseTimeout = setTimeout(removeToast, duration);
+
+  // Opcional: Pausa o temporizador quando o rato está por cima (hover)
+  toast.addEventListener('mouseenter', () => clearTimeout(autoCloseTimeout));
+  toast.addEventListener('mouseleave', () => {
+    setTimeout(removeToast, duration);
+  });
+
+  // Adiciona o toast ao contentor
+  container.appendChild(toast);
+}
+
+/**
+ * Adiciona o evento de clique com o botão direito (contextmenu) num elemento.
+ * @param {HTMLElement|string} target - Elemento HTML ou seletor CSS (ex: '#meuInput' ou document.querySelector('#meuInput'))
+ */
+function enableRightClickPaste(target) {
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+
+    if (!element) {
+        console.error("Elemento não encontrado.");
+        return;
+    }
+
+    element.addEventListener("contextmenu", async (event) => {
+        // Previne o menu de contexto padrão do navegador (menu que aparece com botão direito)
+        event.preventDefault();
+
+        try {
+            // Lê o texto que está na área de transferência
+            const text = await navigator.clipboard.readText();
+
+            // Se o elemento for um campo de texto (input ou textarea)
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                // Insere o texto no local onde o cursor estiver posicionado
+                const start = element.selectionStart;
+                const end = element.selectionEnd;
+                const currentValue = element.value;
+
+                element.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+
+                // Re-posiciona o cursor após o texto colado
+                element.selectionStart = element.selectionEnd = start + text.length;
+            } else {
+                // Se for outro tipo de elemento (como uma div editável ou texto normal)
+                element.textContent += text;
+            }
+
+            console.log("Conteúdo colado com sucesso!");
+        } catch (err) {
+            console.error("Falha ao ler a área de transferência: ", err);
+        }
+    });
+}
+
 clearBtn.addEventListener('click', () => {
 	// tratamento de dados
 	fr_nserv.value = "";
@@ -429,5 +523,6 @@ clearBtn.addEventListener('click', () => {
 
 document.addEventListener('DOMContentLoaded', async (event) => {
 	localStorage.removeItem("usercode");
+	enableRightClickPaste(fr_desc);
 	await loadSaveList(true);
 });
