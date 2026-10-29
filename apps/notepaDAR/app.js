@@ -341,11 +341,11 @@ saveBtn.addEventListener('click', async () => {
                 messages: [
                     {
                         role: "system",
-                        content: "És um assistente técnico de telecomunicações. Analisa a descrição da avaria e devolve estritamente um objeto JSON com duas chaves: 'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.) e 'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.)."
+                        content: "És um assistente técnico de telecomunicações. Analisa a descrição da avaria e devolve estritamente um objeto JSON com três chaves: 'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.) e 'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.) ."
                     },
                     {
                         role: "user",
-                        content: fr_desc.value
+                        content: `descrição: ${fr_desc.value}, analise: ${fr_analise.value}`
                     }
                 ],
                 response_format: { type: "json_object" },
