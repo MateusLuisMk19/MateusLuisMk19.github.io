@@ -361,7 +361,7 @@ async function loadSaveList(uid){
 		card.classList.add("bridge-item");
 		card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
 		card.setAttribute("data-status", "no-signal");
-		card.setAttribute("onclick", console.log("clicado no card", nota));
+		card.setAttribute("onclick", `${console.log("clicado no card", nota.id)}`);
 		card.innerHTML = `<span class="bridge-title">${nota.type}</span>
 		    		<span class="bridge-desc">${nota.subtype}</span>`;
 
