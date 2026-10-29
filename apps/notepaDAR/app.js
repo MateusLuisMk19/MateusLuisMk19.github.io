@@ -316,25 +316,69 @@ cp_email.addEventListener('click', () => {
 })
 
 saveBtn.addEventListener('click', async () => {
-	// tratamento de dados
-	if(!fr_desc || !fr_analise || !fr_Resol){
-		console.log("sem dados");
-		return
-	}
+    // tratamento de dados
+    if(!fr_desc || !fr_analise || !fr_Resol){
+        console.log("sem dados");
+        return;
+    }
 
-	const noteId = await generateUniqueId();
-	const dar = {
-		d: fr_desc.value,
-		a: fr_analise.value,
-		r: fr_Resol.value,
-	};
+    // Valores padrão caso a IA falhe
+    let type = "Outros";
+    let subtype = "Sem sinal";
 
-	// IA resuming
-	let type = "Sem tv"; //fr_desc resume
-	let subtype = "Sem sinal"; //fr_desc resume cause
-	
-	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
-})
+    // IA resuming (Groq API)
+    try {
+        const GROQ_API_KEY = "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"; // Substitui pela tua chave de API do Groq
+
+        const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${GROQ_API_KEY}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant", // Modelo gratuito, extremamente rápido e eficiente
+                messages: [
+                    {
+                        role: "system",
+                        content: "És um assistente técnico de telecomunicações. Analisa a descrição da avaria e devolve estritamente um objeto JSON com duas chaves: 'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.) e 'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.)."
+                    },
+                    {
+                        role: "user",
+                        content: fr_desc.value
+                    }
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.1 // Temperatura baixa para respostas mais consistentes e diretas
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.choices && data.choices[0]) {
+            const aiResult = JSON.parse(data.choices[0].message.content);
+            type = aiResult.type || type;
+            subtype = aiResult.subtype || subtype;
+        }
+
+    } catch (error) {
+        console.error("Erro ao processar resumo com IA:", error);
+        // Fallback básico caso a API falhe (ex: sem internet)
+        type = "Análise Manual";
+        subtype = "Verificar descrição";
+    }
+
+    const noteId = await generateUniqueId();
+    const dar = {
+        d: fr_desc.value,
+        a: fr_analise.value,
+        r: fr_Resol.value,
+    };
+    
+    if (window.firebaseTMA) {
+        window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
+    }
+});
 
 fitBtn.addEventListener('click', () => {
 	// tratamento de dados
