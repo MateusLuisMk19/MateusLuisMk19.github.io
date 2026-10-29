@@ -414,21 +414,36 @@ async function loadSaveList(uid){
 
     console.log("data:", notas);
     
+    if (!notas) return;
+
     notas.forEach((nota) => {
         let card = document.createElement("div");
         card.classList.add("bridge-item");
         
-        // Se precisares de guardar os dados no elemento, podes usar dataset
         card.dataset.id = nota.id;
         card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
         card.setAttribute("data-status", "no-signal");
         
         card.innerHTML = `
+            <button class="delete-btn" title="Eliminar nota">&times;</button>
             <span class="bridge-title">${nota.type}</span>
             <span class="bridge-desc">${nota.subtype}</span>
         `;
 
-        // Adicionar o evento de clique corretamente com listener
+        // Evento para o botão de eliminar (com stopPropagation para não disparar o clique do card)
+        const deleteBtn = card.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", async (e) => {
+            e.stopPropagation(); // Evita que clique no card ao tentar apagar
+            
+            if (confirm("Tens a certeza que pretendes eliminar esta nota?")) {
+                const sucesso = await window.firebaseTMA.deleteNote(nota.id);
+                if (sucesso) {
+                    card.remove(); // Remove o elemento diretamente do DOM
+                }
+            }
+        });
+
+        // Adicionar o evento de clique principal do card
         card.addEventListener("click", () => {
             console.log("clicado no card", nota);
             // Podes colocar aqui a lógica que tinhas planeada para o clique
