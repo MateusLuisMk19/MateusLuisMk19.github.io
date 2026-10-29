@@ -379,7 +379,7 @@ saveBtn.addEventListener('click', async () => {
         window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
     }
 
-	await loadSaveList(true);
+	loadSaveList(true);
 });
 
 fitBtn.addEventListener('click', () => {
@@ -597,7 +597,7 @@ function enableDoubleClickCopy(target, textToCopy) {
     });
 }
 
-clearBtn.addEventListener('click', () => {
+clearBtn.addEventListener('click', async () => {
 	// tratamento de dados
 	fr_nserv.value = "";
 	fr_name.value = "";
