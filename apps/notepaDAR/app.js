@@ -378,6 +378,8 @@ saveBtn.addEventListener('click', async () => {
     if (window.firebaseTMA) {
         window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
     }
+
+	await loadSaveList(true);
 });
 
 fitBtn.addEventListener('click', () => {
@@ -416,7 +418,7 @@ async function loadSaveList(uid){
 
         // Adicionar o evento de clique corretamente com listener
         card.addEventListener("click", () => {
-            console.log("clicado no card", nota.id);
+            console.log("clicado no card", nota);
             // Podes colocar aqui a lógica que tinhas planeada para o clique
         });
 
@@ -604,6 +606,7 @@ clearBtn.addEventListener('click', () => {
 	fr_nif.value = "";
 	fr_analise.value = "";
 	fr_Resol.value = "";
+	await loadSaveList(true);
 })
 
 
