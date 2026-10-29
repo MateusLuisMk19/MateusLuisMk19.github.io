@@ -383,3 +383,25 @@ textarea {
     opacity: 0;
   }
 }
+
+.bridge-item {
+    position: relative; /* Necessário para posicionar o botão absolutamente em relação ao card */
+}
+
+.delete-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+    padding: 0 5px;
+    line-height: 1;
+}
+
+.delete-btn:hover {
+    color: #ff4d4d; /* Fica vermelho ao passar o rato */
+}
