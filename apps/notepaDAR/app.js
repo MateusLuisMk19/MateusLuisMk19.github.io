@@ -349,25 +349,35 @@ fitBtn.addEventListener('click', () => {
 })
 
 async function loadSaveList(uid){
-	const finalUid = uid ? "all" : "";
-	save_list.innerHTML = "";
+    const finalUid = uid ? "all" : "";
+    save_list.innerHTML = "";
 
-	const notas = await window.firebaseTMA.fetchSaveList(finalUid);
+    const notas = await window.firebaseTMA.fetchSaveList(finalUid);
 
-	console.log("data:", notas)
-	
-	notas.forEach((nota) =>{
-		let card = document.createElement("div");
-		card.classList.add("bridge-item");
-		card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
-		card.setAttribute("data-status", "no-signal");
-		card.setAttribute("onclick", `${console.log("clicado no card", nota.id)}`);
-		card.innerHTML = `<span class="bridge-title">${nota.type}</span>
-		    		<span class="bridge-desc">${nota.subtype}</span>`;
+    console.log("data:", notas);
+    
+    notas.forEach((nota) => {
+        let card = document.createElement("div");
+        card.classList.add("bridge-item");
+        
+        // Se precisares de guardar os dados no elemento, podes usar dataset
+        card.dataset.id = nota.id;
+        card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
+        card.setAttribute("data-status", "no-signal");
+        
+        card.innerHTML = `
+            <span class="bridge-title">${nota.type}</span>
+            <span class="bridge-desc">${nota.subtype}</span>
+        `;
 
-		
-		save_list.append(card)
-	});
+        // Adicionar o evento de clique corretamente com listener
+        card.addEventListener("click", () => {
+            console.log("clicado no card", nota.id);
+            // Podes colocar aqui a lógica que tinhas planeada para o clique
+        });
+
+        save_list.append(card);
+    });
 }
 
 /**
