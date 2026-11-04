@@ -217,7 +217,7 @@ textarea {
 
 /* === RESPONSIVIDADE === */
 @media (max-width: 480px) {
-  .gridd { grid-template-columns: 1fr; }
+   /*.gridd { grid-template-columns: 1fr; }*/
   .grid { grid-template-columns: 1fr 1fr; }
 }
 
