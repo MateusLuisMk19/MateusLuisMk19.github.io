@@ -47,17 +47,29 @@
 				<span>A</span>	
 				<textarea id="analise" placeholder="Analise"></textarea>
 			 </div>
-			
-			 <div class="row" style="margin: 8px 0">
-				<span>R</span>	
-				<input id="resol" type="text" placeholder="Resolução" list="opcoes-resolucao" />
-    
-    <datalist id="opcoes-resolucao">
-        <option value="FOT">
-        <option value="BOT">
-        <option value="Estafeta">
-        <option value="FF">
-    </datalist>
+
+				 <div class="row" style="margin: 8px 0">
+					<span>R</span>	
+					<input id="resol" type="text" placeholder="Resolução" list="opcoes-resolucao" />
+	    
+				    <datalist id="opcoes-resolucao">
+				        <option value="FOT">
+				        <option value="BOT">
+				        <option value="Estafeta">
+				        <option value="FF">
+				        <option value="Insistencia">
+				        <option value="Transf">
+				    </datalist>
+				 </div>
+
+			<div class="gridd" style="margin: 8px 0">
+				<div class="" style="margin: 8px 0">
+					<input id="equip" type="text" placeholder="Equipamento">
+			 	 </div>
+				<div class="row" style="margin: 8px 0">
+					<span>Instalar</span>	
+					<input id="install" type="checkbox" placeholder="install">						    
+				 </div>
 			 </div>
 		</div>
 		      
@@ -96,7 +108,7 @@
 		  </button>
 		
 		  <!-- Salvar Tipo -->
-		  <button id="btn-save" class="btn btn-save" title="Salvar Tipo">
+		  <button id="btn-save" disabled class="btn btn-save" title="Salvar Tipo">
 		    <svg viewBox="0 0 24 24" aria-hidden="true">
 		      <path d="M5 4h14v16H5z"></path>
 		      <path d="M7 4v6h10V4"></path>
@@ -117,22 +129,10 @@
 			<div class="grid dense" id="save-list">
 				<div class="bridge-item" data-status="no-signal">
 		    		<span class="bridge-title">Sem TV</span>
-		    		<span class="bridge-desc">Sem sinal</span>
+		    		<span class="bridge-desc">Luis</span>
 		  		</div>
-		
-				<div class="bridge-item" data-status="no-services">
-					<span class="bridge-title">Sem serviços</span>
-				</div>
-		
-				<div class="bridge-item" data-status="no-services">
-					<span class="bridge-title">Sem serviços</span>
-				</div>
 				
-				<div class="bridge-item" data-status="loss-signal">
-					<span class="bridge-title">Loss of Signal</span>
-				</div>
-				
-				<div class="bridge-item" data-status="connected-no-internet">
+				<div class="bridge-item" data-status="connected-no-internet" onclick="alert("UI")">
 					<span class="bridge-title">Ligado</span>
 					<span class="bridge-desc">Sem internet</span>
 				</div>
@@ -165,6 +165,17 @@
      </div>
     </div>
   </div>
+
+<!-- Contentor onde os alertas vão aparecer (pode ficar no fim do body) -->
+<div id="toast-container" class="toast-container"></div>
+
+<!-- Botões de teste para veres a funcionar 
+<div class="actions">
+  <button onclick="showToast('Operação realizada com sucesso!', 'success')">Sucesso</button>
+  <button onclick="showToast('Ocorreu um erro no servidor.', 'error')">Erro</button>
+  <button onclick="showToast('Atenção ao preencher os campos.', 'warning')">Aviso</button>
+  <button onclick="showToast('Atualização disponível.', 'info')">Info</button>
+</div>-->
 	 
   <script type="module" src="firebase.js"></script>
   <script src="app.js"></script>

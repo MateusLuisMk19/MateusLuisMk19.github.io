@@ -201,7 +201,7 @@ front.addEventListener('click', async () => {
     const exists = await window.firebaseTMA.checkUserExists(uid);
 
     if (exists) {
-        alert(`Logado como ${uid}`);
+        showToast(`Logado como ${uid}`);
         confirmarLogin();
     } else {
         const novoRegisto = confirm(`O user "${uid}" não foi encontrado na base de dados.\nDeseja criar um novo registo com este nome?`);
@@ -268,10 +268,10 @@ cp_btn.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.", "error");
     });
 })
 
@@ -287,10 +287,10 @@ cp_transf.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.","error");
     });
 })
 
@@ -308,33 +308,91 @@ cp_email.addEventListener('click', () => {
 
     // Usa a Clipboard API para copiar
     navigator.clipboard.writeText(textoParaCopiar).then(() => {
-        alert("Copiado com sucesso!");
+        showToast("Copiado com sucesso!","success");
     }).catch(err => {
         console.error("Erro ao copiar: ", err);
-        alert("Erro ao copiar para a área de transferência.");
+        showToast("Erro ao copiar para a área de transferência.","error");
     });
 })
 
 saveBtn.addEventListener('click', async () => {
-	// tratamento de dados
-	if(!fr_desc || !fr_analise || !fr_Resol){
-		console.log("sem dados");
-		return
-	}
+	return //disabled
+    // tratamento de dados
+    if(!fr_desc || !fr_analise || !fr_Resol){
+        console.log("sem dados");
+        return;
+    }
 
-	const noteId = await generateUniqueId();
-	const dar = {
-		d: fr_desc.value,
-		a: fr_analise.value,
-		r: fr_Resol.value,
-	};
+    // Valores padrão caso a IA falhe
+    let type = "Outros";
+    let subtype = "Sem sinal";
+    let aiColor = "#dd8833"; // Cor padrão caso falhe
 
-	// IA resuming
-	let type = "Sem tv"; //fr_desc resume
-	let subtype = "Sem sinal"; //fr_desc resume cause
-	
-	if (window.firebaseTMA) window.firebaseTMA.saveNoteFromUI("#33dd88", type, subtype, dar, noteId);
-})
+    // IA resuming (Groq API via CORS Proxy para GitHub Pages)
+    try {
+        const GROQ_API_KEY = "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"; 
+        
+        // URL da API do Groq codificada para passar pelo proxy CORS
+        const targetUrl = "https://api.groq.com/openai/v1/chat/completions";
+        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(targetUrl);
+
+        const response = await fetch(proxyUrl, {
+            method: "POST",
+            headers: {
+                "Authorization": `Bearer ${GROQ_API_KEY}`,
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                model: "llama-3.1-8b-instant", // Usando um modelo suportado e rápido da Groq
+                messages: [
+                    {
+                        role: "system",
+                        content: `És um resumidor de textos para assistente técnico de telecomunicações. 
+							Analisa a descrição e analise da avaria e devolve estritamente um objeto JSON com três chaves: 
+							'type' (resumo curto do problema, ex: 'sem serviços', 'sem tv', 'sem voip', etc.), 
+							'subtype' (diagnóstico curto, ex: 'sem sinal', 'av incorreto', 'n recebe chamadas', etc.) e 
+							'color' em Exadecimal (#dd8833).`
+                    },
+                    {
+                        role: "user",
+                        content: `descrição: ${fr_desc.value}, analise: ${fr_analise.value}`
+                    }
+                ],
+                response_format: { type: "json_object" },
+                temperature: 0.1 
+            })
+        });
+
+        const data = await response.json();
+        console.log("data", data);
+        
+        if (data.choices && data.choices[0]) {
+            const aiResult = JSON.parse(data.choices[0].message.content);
+            type = aiResult.type || type;
+            subtype = aiResult.subtype || subtype;
+            if (aiResult.color) aiColor = aiResult.color;
+        }
+
+    } catch (error) {
+        console.error("Erro ao processar resumo com IA:", error);
+        // Fallback básico caso a API falhe
+        type = "Análise Manual";
+        subtype = "Verificar descrição";
+    }
+
+    const noteId = await generateUniqueId();
+    const dar = {
+        d: fr_desc.value,
+        a: fr_analise.value,
+        r: fr_Resol.value,
+    };
+    
+    if (window.firebaseTMA) {
+        window.firebaseTMA.saveNoteFromUI(aiColor, type, subtype, dar, noteId);
+    }
+
+    loadSaveList(true);
+});
 
 fitBtn.addEventListener('click', () => {
 	// tratamento de dados
@@ -349,24 +407,50 @@ fitBtn.addEventListener('click', () => {
 })
 
 async function loadSaveList(uid){
-	const finalUid = uid ? "all" : "";
-	save_list.innerHTML = "";
+    const finalUid = uid ? "all" : "";
+    save_list.innerHTML = "";
 
-	const notas = await window.firebaseTMA.fetchSaveList(finalUid);
+    const notas = await window.firebaseTMA.fetchSaveList(finalUid);
 
-	console.log("data:", notas)
-	
-	notas.forEach((nota) =>{
-		let card = document.createElement("div");
-		card.classList.add("bridge-item");
-		card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
-		card.setAttribute("data-status", "no-signal");
-		card.innerHTML = `<span class="bridge-title">${nota.type}</span>
-		    		<span class="bridge-desc">${nota.subtype}</span>`;
+    console.log("data:", notas);
+    
+    if (!notas) return;
 
-		
-		save_list.append(card)
-	});
+    notas.forEach((nota) => {
+        let card = document.createElement("div");
+        card.classList.add("bridge-item");
+        
+        card.dataset.id = nota.id;
+        card.value = `D: ${nota.dar.d}\nA: ${nota.dar.a}\nR: ${nota.dar.r}`;
+        card.setAttribute("data-status", "no-signal");
+        
+        card.innerHTML = `
+            <button class="delete-btn" title="Eliminar nota">&times;</button>
+            <span class="bridge-title">${nota.type}</span>
+            <span class="bridge-desc">${nota.subtype}</span>
+        `;
+
+        // Evento para o botão de eliminar (com stopPropagation para não disparar o clique do card)
+        const deleteBtn = card.querySelector(".delete-btn");
+        deleteBtn.addEventListener("click", async (e) => {
+            e.stopPropagation(); // Evita que clique no card ao tentar apagar
+            
+            if (confirm("Tens a certeza que pretendes eliminar esta nota?")) {
+                const sucesso = await window.firebaseTMA.deleteNote(nota.id);
+                if (sucesso) {
+                    card.remove(); // Remove o elemento diretamente do DOM
+                }
+            }
+        });
+
+        // Adicionar o evento de clique principal do card
+        card.addEventListener("click", () => {
+            console.log("clicado no card", nota);
+            // Podes colocar aqui a lógica que tinhas planeada para o clique
+        });
+
+        save_list.append(card);
+    });
 }
 
 /**
@@ -404,7 +488,143 @@ function expandirTexto(texto) {
   return textoFinal;
 }
 
-clearBtn.addEventListener('click', () => {
+/**
+ * Exibe um alerta dinâmico (Toast).
+ * 
+ * @param {string} message - Mensagem a ser exibida.
+ * @param {string} type - Tipo de alerta: 'success', 'error', 'warning', 'info' (Padrão: 'info').
+ * @param {number} duration - Tempo em milissegundos antes de desaparecer (Padrão: 4000ms / 4s).
+ */
+function showToast(message, type = 'info', duration = 4000) {
+  const container = document.getElementById('toast-container');
+  if (!container) return;
+
+  // Cria o elemento do toast
+  const toast = document.createElement('div');
+  toast.classList.add('toast', type);
+
+  // Conteúdo HTML do alerta com botão de fechar (×)
+  toast.innerHTML = `
+    <span class="toast-message">${message}</span>
+    <button class="toast-close" aria-label="Fechar">&times;</button>
+  `;
+
+  // Função interna para fechar com animação
+  const removeToast = () => {
+    if (toast.classList.contains('hide')) return; // Evita correr duas vezes
+    toast.classList.add('hide');
+    
+    // Espera a animação de saída (300ms) terminar antes de remover do DOM
+    toast.addEventListener('animationend', () => {
+      toast.remove();
+    });
+  };
+
+  // Fecha ao clicar no botão 'x'
+  toast.querySelector('.toast-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    removeToast();
+  });
+
+  // Temporizador para fechar automaticamente
+  const autoCloseTimeout = setTimeout(removeToast, duration);
+
+  // Opcional: Pausa o temporizador quando o rato está por cima (hover)
+  toast.addEventListener('mouseenter', () => clearTimeout(autoCloseTimeout));
+  toast.addEventListener('mouseleave', () => {
+    setTimeout(removeToast, duration);
+  });
+
+  // Adiciona o toast ao contentor
+  container.appendChild(toast);
+}
+
+/**
+ * Adiciona o evento de clique com o botão direito (contextmenu) num elemento.
+ * @param {HTMLElement|string} target - Elemento HTML ou seletor CSS (ex: '#meuInput' ou document.querySelector('#meuInput'))
+ */
+function enableRightClickPaste(target) {
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+
+    if (!element) {
+        console.error("Elemento não encontrado.");
+        return;
+    }
+
+    element.addEventListener("contextmenu", async (event) => {
+        // Previne o menu de contexto padrão do navegador (menu que aparece com botão direito)
+        event.preventDefault();
+
+        try {
+            // Lê o texto que está na área de transferência
+            const text = await navigator.clipboard.readText();
+
+            // Se o elemento for um campo de texto (input ou textarea)
+            if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                // Insere o texto no local onde o cursor estiver posicionado
+                const start = element.selectionStart;
+                const end = element.selectionEnd;
+                const currentValue = element.value;
+
+                element.value = currentValue.substring(0, start) + text + currentValue.substring(end);
+
+                // Re-posiciona o cursor após o texto colado
+                element.selectionStart = element.selectionEnd = start + text.length;
+            } else {
+                // Se for outro tipo de elemento (como uma div editável ou texto normal)
+                element.textContent += text;
+            }
+
+            console.log("Conteúdo colado com sucesso!");
+        } catch (err) {
+            console.error("Falha ao ler a área de transferência: ", err);
+        }
+    });
+}
+
+/**
+ * Adiciona um evento de duplo clique para copiar texto para a área de transferência.
+ * @param {HTMLElement|string} target - Elemento HTML ou seletor CSS.
+ * @param {string|Function} [textToCopy] - Texto fixo a copiar, uma função que retorna o texto, ou vazio para copiar o conteúdo do elemento.
+ */
+function enableDoubleClickCopy(target, textToCopy) {
+    const element = typeof target === 'string' ? document.querySelector(target) : target;
+
+    if (!element) {
+        console.error("Elemento não encontrado.");
+        return;
+    }
+
+    element.addEventListener("dblclick", async () => {
+        try {
+            let content = "";
+
+            // Determina o que deve ser copiado
+            if (typeof textToCopy === 'function') {
+                content = textToCopy(element);
+            } else if (typeof textToCopy === 'string') {
+                content = textToCopy;
+            } else if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                content = element.value;
+            } else {
+                content = element.innerText || element.textContent;
+            }
+
+            // Copia para a área de transferência
+            await navigator.clipboard.writeText(content);
+            console.log("Copiado com sucesso:", content);
+            
+            // Opcional: Feedback visual temporário (ex: mudar a cor ou dar um alerta subtil)
+            element.style.outline = "2px solid #4CAF50";
+            setTimeout(() => element.style.outline = "none", 400);
+
+        } catch (err) {
+            console.error("Falha ao copiar para a área de transferência: ", err);
+        }
+    });
+}
+
+clearBtn.addEventListener('click', async () => {
 	// tratamento de dados
 	fr_nserv.value = "";
 	fr_name.value = "";
@@ -413,10 +633,26 @@ clearBtn.addEventListener('click', () => {
 	fr_nif.value = "";
 	fr_analise.value = "";
 	fr_Resol.value = "";
+	await loadSaveList(true);
 })
 
 
 document.addEventListener('DOMContentLoaded', async (event) => {
 	localStorage.removeItem("usercode");
+	enableRightClickPaste(fr_desc);
+	enableRightClickPaste(fr_nserv);
+	enableRightClickPaste(fr_name);
+	enableRightClickPaste(fr_tel);
+	enableRightClickPaste(fr_nif);
+	enableRightClickPaste(fr_analise);
+	enableRightClickPaste(fr_Resol);
+
+	enableDoubleClickCopy(fr_desc);
+	enableDoubleClickCopy(fr_nserv);
+	enableDoubleClickCopy(fr_name);
+	enableDoubleClickCopy(fr_tel);
+	enableDoubleClickCopy(fr_nif);
+	enableDoubleClickCopy(fr_analise);
+	enableDoubleClickCopy(fr_Resol);
 	await loadSaveList(true);
 });
