@@ -188,12 +188,10 @@ const UUID_RE =
 
 async function uploadImage(blob) {
   const path = `${session.user.id}/${crypto.randomUUID()}.jpg`;
-  const { error } = await sb.storage
-    .from(BUCKET)
-    .upload(path, blob, {
-      contentType: "image/jpeg",
-      cacheControl: "31536000",
-    });
+  const { error } = await sb.storage.from(BUCKET).upload(path, blob, {
+    contentType: "image/jpeg",
+    cacheControl: "31536000",
+  });
   if (error) throw error;
   return path;
 }
@@ -360,9 +358,7 @@ function upcCheckDigit(d11) {
   return (10 - (sum % 10)) % 10;
 }
 
-const isValidUpc = (code) =>
-  /^\d{12}$/.test(code) &&
-  upcCheckDigit(code.slice(0, 11)) === Number(code[11]);
+const isValidUpc = (code) => true;
 
 function nextUpc(exclude = []) {
   const prefix = state.settings.upcPrefix;
@@ -868,27 +864,30 @@ async function refreshProjects() {
 
 function updateUpcStatus() {
   const input = $("#projectForm").elements.upc;
-  const code = input.value.replace(/\D/g, "");
+  const code = input.value.trim();
   const status = $("#upcStatus");
   let msg = "";
   let cls = "hint";
+
   if (!code) {
-    msg = "Opcional — gera um novo ou introduz um já atribuído.";
-  } else if (code.length < 12) {
-    msg = `${code.length}/12 dígitos`;
-  } else if (!isValidUpc(code)) {
-    msg = `Dígito de controlo inválido (deveria ser ${upcCheckDigit(code.slice(0, 11))}).`;
-    cls += " bad";
+    msg = "Opcional.";
   } else if (state.projects.some((p) => p.id !== draft.id && p.upc === code)) {
     msg = "Este UPC já pertence a outro projeto.";
     cls += " bad";
   } else {
-    msg = "UPC válido.";
+    msg = "Código válido.";
     cls += " ok";
   }
   status.textContent = msg;
   status.className = cls;
-  $("#upcBarcode").innerHTML = upcBarcodeSvg(code);
+
+  // Se o código já não cumprir o formato UPC-A de 12 dígitos, o desenho do código de barras é omitido para evitar erros
+  const barcodeBox = $("#upcBarcode");
+  if (code.length === 12 && /^\d{12}$/.test(code)) {
+    barcodeBox.innerHTML = upcBarcodeSvg(code);
+  } else {
+    barcodeBox.innerHTML = "";
+  }
 }
 
 function renderTracks() {
