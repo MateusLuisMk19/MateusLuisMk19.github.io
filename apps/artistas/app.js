@@ -118,12 +118,10 @@ const UUID_RE =
 
 async function uploadImage(blob) {
   const path = `${session.user.id}/${crypto.randomUUID()}.jpg`;
-  const { error } = await sb.storage
-    .from(BUCKET)
-    .upload(path, blob, {
-      contentType: "image/jpeg",
-      cacheControl: "31536000",
-    });
+  const { error } = await sb.storage.from(BUCKET).upload(path, blob, {
+    contentType: "image/jpeg",
+    cacheControl: "31536000",
+  });
   if (error) throw error;
   return path;
 }
@@ -290,7 +288,7 @@ function upcCheckDigit(d11) {
   return (10 - (sum % 10)) % 10;
 }
 
-const isValidUpc = (code) => true;
+const isValidUpc = (code) => /^\d+$/.test(code);
 
 function nextUpc(exclude = []) {
   const prefix = state.settings.upcPrefix;
@@ -796,17 +794,16 @@ async function refreshProjects() {
 
 function updateUpcStatus() {
   const input = $("#projectForm").elements.upc;
+  // Remove tudo o que não for número em tempo real
   const code = input.value.replace(/\D/g, "");
+  if (input.value !== code) input.value = code;
+
   const status = $("#upcStatus");
   let msg = "";
   let cls = "hint";
+
   if (!code) {
-    msg = "Opcional — gera um novo ou introduz um já atribuído.";
-  } else if (code.length < 12) {
-    msg = `${code.length}/12 dígitos`;
-  } else if (!isValidUpc(code)) {
-    msg = `Dígito de controlo inválido (deveria ser ${upcCheckDigit(code.slice(0, 11))}).`;
-    cls += " bad";
+    msg = "Opcional.";
   } else if (state.projects.some((p) => p.id !== draft.id && p.upc === code)) {
     msg = "Este UPC já pertence a outro projeto.";
     cls += " bad";
@@ -816,7 +813,14 @@ function updateUpcStatus() {
   }
   status.textContent = msg;
   status.className = cls;
-  $("#upcBarcode").innerHTML = upcBarcodeSvg(code);
+
+  // O código de barras em SVG só é gerado se tiver exatamente 12 dígitos, caso contrário a imagem é ocultada
+  const barcodeBox = $("#upcBarcode");
+  if (code.length >= 12) {
+    barcodeBox.innerHTML = upcBarcodeSvg(code);
+  } else {
+    barcodeBox.innerHTML = "";
+  }
 }
 
 function renderTracks() {
