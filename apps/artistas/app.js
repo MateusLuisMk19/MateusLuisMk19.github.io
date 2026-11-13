@@ -80,76 +80,6 @@ async function saveRow(table, obj, fields, isNew) {
   return res;
 }
 
-/* =========================================================
-   Autenticação e Recuperação de Palavra-passe
-   ========================================================= */
-async function handleAuth(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.elements.email.value.trim();
-  const password = form.elements.password.value;
-  const msg = $("#authMsg");
-  msg.className = "hint";
-  msg.textContent = "";
-
-  await busy(form, async () => {
-    try {
-      const { error } = await sb.auth.signInWithPassword({ email, password });
-      if (error) throw error;
-    } catch (err) {
-      msg.className = "hint bad";
-      msg.textContent = errMsg(err);
-    }
-  });
-}
-
-async function handleRecovery(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.elements.recoveryEmail.value.trim();
-  const msg = $("#recoveryMsg");
-  msg.className = "hint";
-  msg.textContent = "";
-
-  await busy(form, async () => {
-    try {
-      // Envia o email de recuperação utilizando o Supabase Auth
-      const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.href, // Redireciona de volta para a app após o clique no link do email
-      });
-      if (error) throw error;
-      msg.className = "hint ok";
-      msg.textContent =
-        "Email de recuperação enviado! Verifica a tua caixa de entrada.";
-    } catch (err) {
-      msg.className = "hint bad";
-      msg.textContent = errMsg(err);
-    }
-  });
-}
-
-// Na função bindEvents(), acrescentar os seguintes listeners:
-function bindEvents() {
-  $("#authForm").addEventListener("submit", handleAuth);
-  $("#recoveryForm").addEventListener("submit", handleRecovery);
-
-  // Alternância de ecrãs de autenticação / recuperação
-  $("#btnShowRecovery").addEventListener("click", () => {
-    $("#authForm").hidden = true;
-    $("#recoveryForm").hidden = false;
-    $("#recoveryMsg").textContent = "";
-  });
-
-  $("#btnBackToLogin").addEventListener("click", () => {
-    $("#recoveryForm").hidden = true;
-    $("#authForm").hidden = false;
-    $("#authMsg").textContent = "";
-  });
-
-  // Restante código dos eventos existente...
-  // ...
-}
-
 // Lê todas as linhas (o Supabase devolve no máximo 1000 por pedido)
 async function fetchAll(table) {
   const size = 1000;
@@ -188,10 +118,12 @@ const UUID_RE =
 
 async function uploadImage(blob) {
   const path = `${session.user.id}/${crypto.randomUUID()}.jpg`;
-  const { error } = await sb.storage.from(BUCKET).upload(path, blob, {
-    contentType: "image/jpeg",
-    cacheControl: "31536000",
-  });
+  const { error } = await sb.storage
+    .from(BUCKET)
+    .upload(path, blob, {
+      contentType: "image/jpeg",
+      cacheControl: "31536000",
+    });
   if (error) throw error;
   return path;
 }
@@ -864,30 +796,27 @@ async function refreshProjects() {
 
 function updateUpcStatus() {
   const input = $("#projectForm").elements.upc;
-  const code = input.value.trim();
+  const code = input.value.replace(/\D/g, "");
   const status = $("#upcStatus");
   let msg = "";
   let cls = "hint";
-
   if (!code) {
-    msg = "Opcional.";
+    msg = "Opcional — gera um novo ou introduz um já atribuído.";
+  } else if (code.length < 12) {
+    msg = `${code.length}/12 dígitos`;
+  } else if (!isValidUpc(code)) {
+    msg = `Dígito de controlo inválido (deveria ser ${upcCheckDigit(code.slice(0, 11))}).`;
+    cls += " bad";
   } else if (state.projects.some((p) => p.id !== draft.id && p.upc === code)) {
     msg = "Este UPC já pertence a outro projeto.";
     cls += " bad";
   } else {
-    msg = "Código válido.";
+    msg = "UPC válido.";
     cls += " ok";
   }
   status.textContent = msg;
   status.className = cls;
-
-  // Se o código já não cumprir o formato UPC-A de 12 dígitos, o desenho do código de barras é omitido para evitar erros
-  const barcodeBox = $("#upcBarcode");
-  if (code.length === 12 && /^\d{12}$/.test(code)) {
-    barcodeBox.innerHTML = upcBarcodeSvg(code);
-  } else {
-    barcodeBox.innerHTML = "";
-  }
+  $("#upcBarcode").innerHTML = upcBarcodeSvg(code);
 }
 
 function renderTracks() {
@@ -1484,7 +1413,7 @@ function exportCsv() {
 }
 
 /* =========================================================
-   Autenticação e Recuperação de Palavra-passe
+   Autenticação
    ========================================================= */
 async function handleAuth(e) {
   e.preventDefault();
@@ -1496,6 +1425,7 @@ async function handleAuth(e) {
   msg.textContent = "";
 
   await busy(form, async () => {
+    // Registos novos estão desativados no Supabase; as contas são criadas no painel
     try {
       const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
@@ -1504,53 +1434,6 @@ async function handleAuth(e) {
       msg.textContent = errMsg(err);
     }
   });
-}
-
-async function handleRecovery(e) {
-  e.preventDefault();
-  const form = e.target;
-  const email = form.elements.recoveryEmail.value.trim();
-  const msg = $("#recoveryMsg");
-  msg.className = "hint";
-  msg.textContent = "";
-
-  await busy(form, async () => {
-    try {
-      // Envia o email de recuperação utilizando o Supabase Auth
-      const { error } = await sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.href, // Redireciona de volta para a app após o clique no link do email
-      });
-      if (error) throw error;
-      msg.className = "hint ok";
-      msg.textContent =
-        "Email de recuperação enviado! Verifica a tua caixa de entrada.";
-    } catch (err) {
-      msg.className = "hint bad";
-      msg.textContent = errMsg(err);
-    }
-  });
-}
-
-// Na função bindEvents(), acrescentar os seguintes listeners:
-function bindEvents() {
-  $("#authForm").addEventListener("submit", handleAuth);
-  $("#recoveryForm").addEventListener("submit", handleRecovery);
-
-  // Alternância de ecrãs de autenticação / recuperação
-  $("#btnShowRecovery").addEventListener("click", () => {
-    $("#authForm").hidden = true;
-    $("#recoveryForm").hidden = false;
-    $("#recoveryMsg").textContent = "";
-  });
-
-  $("#btnBackToLogin").addEventListener("click", () => {
-    $("#recoveryForm").hidden = true;
-    $("#authForm").hidden = false;
-    $("#authMsg").textContent = "";
-  });
-
-  // Restante código dos eventos existente...
-  // ...
 }
 
 function showApp(loggedIn) {
