@@ -12,18 +12,40 @@ const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 let session = null;
 
 const ARTIST_FIELDS = {
-  name: "name", realName: "real_name", genre: "genre", country: "country", contact: "contact", bio: "bio",
-  spotify: "spotify", instagram: "instagram", youtube: "youtube", website: "website", photoPath: "photo_path",
+  name: "name",
+  realName: "real_name",
+  genre: "genre",
+  country: "country",
+  contact: "contact",
+  bio: "bio",
+  spotify: "spotify",
+  instagram: "instagram",
+  youtube: "youtube",
+  website: "website",
+  photoPath: "photo_path",
 };
 const PROJECT_FIELDS = {
-  artistId: "artist_id", title: "title", type: "type", releaseDate: "release_date", status: "status",
-  label: "label", genre: "genre", upc: "upc", coverPath: "cover_path", tracks: "tracks",
+  artistId: "artist_id",
+  title: "title",
+  type: "type",
+  releaseDate: "release_date",
+  status: "status",
+  label: "label",
+  genre: "genre",
+  upc: "upc",
+  coverPath: "cover_path",
+  tracks: "tracks",
 };
 const SETTINGS_FIELDS = {
-  upcPrefix: "upc_prefix", upcStart: "upc_start", isrcCountry: "isrc_country", isrcRegistrant: "isrc_registrant", isrcStart: "isrc_start",
+  upcPrefix: "upc_prefix",
+  upcStart: "upc_start",
+  isrcCountry: "isrc_country",
+  isrcRegistrant: "isrc_registrant",
+  isrcStart: "isrc_start",
 };
 
-const imageUrl = (path) => (path ? sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl : "");
+const imageUrl = (path) =>
+  path ? sb.storage.from(BUCKET).getPublicUrl(path).data.publicUrl : "";
 
 function fromRow(row, fields) {
   const obj = { id: row.id, updatedAt: row.updated_at || null };
@@ -34,7 +56,8 @@ function fromRow(row, fields) {
 // As colunas de settings são NOT NULL: campos vazios vão como "" (e não null)
 function settingsRow(s) {
   const row = { user_id: session.user.id };
-  for (const [k, col] of Object.entries(SETTINGS_FIELDS)) row[col] = s[k] ?? DEFAULT_SETTINGS[k];
+  for (const [k, col] of Object.entries(SETTINGS_FIELDS))
+    row[col] = s[k] ?? DEFAULT_SETTINGS[k];
   return row;
 }
 
@@ -45,8 +68,86 @@ async function saveRow(table, obj, fields, isNew) {
   let q = sb.from(table).update(row).eq("id", obj.id);
   if (obj.updatedAt) q = q.eq("updated_at", obj.updatedAt);
   const res = await q.select().maybeSingle();
-  if (!res.error && !res.data) return { data: null, error: { code: "STALE", message: "Este registo foi alterado noutro aparelho. Os dados foram recarregados — repete a edição." } };
+  if (!res.error && !res.data)
+    return {
+      data: null,
+      error: {
+        code: "STALE",
+        message:
+          "Este registo foi alterado noutro aparelho. Os dados foram recarregados — repete a edição.",
+      },
+    };
   return res;
+}
+
+/* =========================================================
+   Autenticação e Recuperação de Palavra-passe
+   ========================================================= */
+async function handleAuth(e) {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.elements.email.value.trim();
+  const password = form.elements.password.value;
+  const msg = $("#authMsg");
+  msg.className = "hint";
+  msg.textContent = "";
+
+  await busy(form, async () => {
+    try {
+      const { error } = await sb.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+    } catch (err) {
+      msg.className = "hint bad";
+      msg.textContent = errMsg(err);
+    }
+  });
+}
+
+async function handleRecovery(e) {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.elements.recoveryEmail.value.trim();
+  const msg = $("#recoveryMsg");
+  msg.className = "hint";
+  msg.textContent = "";
+
+  await busy(form, async () => {
+    try {
+      // Envia o email de recuperação utilizando o Supabase Auth
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.href, // Redireciona de volta para a app após o clique no link do email
+      });
+      if (error) throw error;
+      msg.className = "hint ok";
+      msg.textContent =
+        "Email de recuperação enviado! Verifica a tua caixa de entrada.";
+    } catch (err) {
+      msg.className = "hint bad";
+      msg.textContent = errMsg(err);
+    }
+  });
+}
+
+// Na função bindEvents(), acrescentar os seguintes listeners:
+function bindEvents() {
+  $("#authForm").addEventListener("submit", handleAuth);
+  $("#recoveryForm").addEventListener("submit", handleRecovery);
+
+  // Alternância de ecrãs de autenticação / recuperação
+  $("#btnShowRecovery").addEventListener("click", () => {
+    $("#authForm").hidden = true;
+    $("#recoveryForm").hidden = false;
+    $("#recoveryMsg").textContent = "";
+  });
+
+  $("#btnBackToLogin").addEventListener("click", () => {
+    $("#recoveryForm").hidden = true;
+    $("#authForm").hidden = false;
+    $("#authMsg").textContent = "";
+  });
+
+  // Restante código dos eventos existente...
+  // ...
 }
 
 // Lê todas as linhas (o Supabase devolve no máximo 1000 por pedido)
@@ -54,7 +155,11 @@ async function fetchAll(table) {
   const size = 1000;
   const rows = [];
   for (let from = 0; ; from += size) {
-    const { data, error } = await sb.from(table).select("*").order("id").range(from, from + size - 1);
+    const { data, error } = await sb
+      .from(table)
+      .select("*")
+      .order("id")
+      .range(from, from + size - 1);
     if (error) throw error;
     rows.push(...data);
     if (data.length < size) return rows;
@@ -62,7 +167,8 @@ async function fetchAll(table) {
 }
 function toRow(obj, fields) {
   const row = {};
-  for (const [k, col] of Object.entries(fields)) row[col] = obj[k] === "" ? null : obj[k];
+  for (const [k, col] of Object.entries(fields))
+    row[col] = obj[k] === "" ? null : obj[k];
   return row;
 }
 const artistFromRow = (r) => {
@@ -77,11 +183,17 @@ const projectFromRow = (r) => {
   return p;
 };
 
-const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 async function uploadImage(blob) {
   const path = `${session.user.id}/${crypto.randomUUID()}.jpg`;
-  const { error } = await sb.storage.from(BUCKET).upload(path, blob, { contentType: "image/jpeg", cacheControl: "31536000" });
+  const { error } = await sb.storage
+    .from(BUCKET)
+    .upload(path, blob, {
+      contentType: "image/jpeg",
+      cacheControl: "31536000",
+    });
   if (error) throw error;
   return path;
 }
@@ -92,9 +204,12 @@ async function removeImages(paths) {
 }
 
 function errMsg(err) {
-  if (err?.code === "23505") return "Este UPC já está atribuído a outro projeto.";
-  if (/isrc_conflict/.test(err?.message || "")) return "Um dos ISRC já pertence a outra gravação (outro título). Gera um novo ISRC.";
-  if (/isrc_duplicate_in_project/.test(err?.message || "")) return "Há ISRC repetidos neste projeto.";
+  if (err?.code === "23505")
+    return "Este UPC já está atribuído a outro projeto.";
+  if (/isrc_conflict/.test(err?.message || ""))
+    return "Um dos ISRC já pertence a outra gravação (outro título). Gera um novo ISRC.";
+  if (/isrc_duplicate_in_project/.test(err?.message || ""))
+    return "Há ISRC repetidos neste projeto.";
   const map = {
     "Invalid login credentials": "Email ou palavra-passe incorretos.",
     "Email not confirmed": "Confirma primeiro o email que te enviámos.",
@@ -105,7 +220,13 @@ function errMsg(err) {
 /* =========================================================
    Estado e utilitários
    ========================================================= */
-const DEFAULT_SETTINGS = { upcPrefix: "", upcStart: 1, isrcCountry: "PT", isrcRegistrant: "", isrcStart: 1 };
+const DEFAULT_SETTINGS = {
+  upcPrefix: "",
+  upcStart: 1,
+  isrcCountry: "PT",
+  isrcRegistrant: "",
+  isrcStart: 1,
+};
 const TYPES = ["Single", "EP", "Álbum", "Compilação"];
 const STATUSES = ["Rascunho", "Agendado", "Lançado"];
 
@@ -120,18 +241,38 @@ const state = {
 
 const $ = (sel, root = document) => root.querySelector(sel);
 const esc = (v) =>
-  String(v ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
+  String(v ?? "").replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[
+        c
+      ],
+  );
 const initials = (name) =>
-  String(name || "?").split(/\s+/).filter(Boolean).slice(0, 2).map((w) => w[0]).join("").toUpperCase();
+  String(name || "?")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase();
 const yearOf = (date) => (date ? date.slice(0, 4) : "");
 const artistById = (id) => state.artists.find((a) => a.id === id);
-const projectsOf = (artistId) => state.projects.filter((p) => p.artistId === artistId);
+const projectsOf = (artistId) =>
+  state.projects.filter((p) => p.artistId === artistId);
 const sortProjects = (list) =>
-  [...list].sort((a, b) => (b.releaseDate || "").localeCompare(a.releaseDate || "") || a.title.localeCompare(b.title));
+  [...list].sort(
+    (a, b) =>
+      (b.releaseDate || "").localeCompare(a.releaseDate || "") ||
+      a.title.localeCompare(b.title),
+  );
 const safeUrl = (u) => (/^https?:\/\//i.test(u || "") ? u : "");
 const todayIso = () => new Date().toLocaleDateString("sv-SE");
 // "Agendado" passa a "Lançado" quando a data de lançamento chega
-const statusOf = (p) => (p.status === "Agendado" && p.releaseDate && p.releaseDate <= todayIso() ? "Lançado" : p.status);
+const statusOf = (p) =>
+  p.status === "Agendado" && p.releaseDate && p.releaseDate <= todayIso()
+    ? "Lançado"
+    : p.status;
 
 let toastTimer;
 function toast(msg, kind = "") {
@@ -152,8 +293,13 @@ async function copyText(text) {
 }
 
 function download(filename, content, type) {
-  const url = URL.createObjectURL(content instanceof Blob ? content : new Blob([content], { type }));
-  const a = Object.assign(document.createElement("a"), { href: url, download: filename });
+  const url = URL.createObjectURL(
+    content instanceof Blob ? content : new Blob([content], { type }),
+  );
+  const a = Object.assign(document.createElement("a"), {
+    href: url,
+    download: filename,
+  });
   document.body.appendChild(a);
   a.click();
   a.remove();
@@ -174,7 +320,8 @@ async function busy(form, fn) {
 // Redimensiona a imagem antes do envio para poupar espaço e largura de banda
 function readImage(file, max) {
   return new Promise((resolve, reject) => {
-    if (!file || !file.type.startsWith("image/")) return reject(new Error("O ficheiro tem de ser uma imagem."));
+    if (!file || !file.type.startsWith("image/"))
+      return reject(new Error("O ficheiro tem de ser uma imagem."));
     const url = URL.createObjectURL(file);
     const img = new Image();
     img.onload = () => {
@@ -187,7 +334,14 @@ function readImage(file, max) {
       ctx.fillRect(0, 0, c.width, c.height);
       ctx.drawImage(img, 0, 0, c.width, c.height);
       URL.revokeObjectURL(url);
-      c.toBlob((blob) => (blob ? resolve(blob) : reject(new Error("Não foi possível processar a imagem."))), "image/jpeg", 0.88);
+      c.toBlob(
+        (blob) =>
+          blob
+            ? resolve(blob)
+            : reject(new Error("Não foi possível processar a imagem.")),
+        "image/jpeg",
+        0.88,
+      );
     };
     img.onerror = () => {
       URL.revokeObjectURL(url);
@@ -206,23 +360,39 @@ function upcCheckDigit(d11) {
   return (10 - (sum % 10)) % 10;
 }
 
-const isValidUpc = (code) => /^\d{12}$/.test(code) && upcCheckDigit(code.slice(0, 11)) === Number(code[11]);
+const isValidUpc = (code) =>
+  /^\d{12}$/.test(code) &&
+  upcCheckDigit(code.slice(0, 11)) === Number(code[11]);
 
 function nextUpc(exclude = []) {
   const prefix = state.settings.upcPrefix;
-  if (!/^\d{6,10}$/.test(prefix)) throw new Error("Define o prefixo GS1 (6 a 10 dígitos) nas Definições.");
+  if (!/^\d{6,10}$/.test(prefix))
+    throw new Error("Define o prefixo GS1 (6 a 10 dígitos) nas Definições.");
   const refLen = 11 - prefix.length;
   let max = (Number(state.settings.upcStart) || 1) - 1;
   for (const code of [...state.projects.map((p) => p.upc), ...exclude]) {
-    if (code && code.length === 12 && code.startsWith(prefix)) max = Math.max(max, Number(code.slice(prefix.length, 11)));
+    if (code && code.length === 12 && code.startsWith(prefix))
+      max = Math.max(max, Number(code.slice(prefix.length, 11)));
   }
   const ref = String(max + 1);
-  if (ref.length > refLen) throw new Error("Não há mais referências disponíveis para este prefixo.");
+  if (ref.length > refLen)
+    throw new Error("Não há mais referências disponíveis para este prefixo.");
   const d11 = prefix + ref.padStart(refLen, "0");
   return d11 + upcCheckDigit(d11);
 }
 
-const UPC_L = ["0001101", "0011001", "0010011", "0111101", "0100011", "0110001", "0101111", "0111011", "0110111", "0001011"];
+const UPC_L = [
+  "0001101",
+  "0011001",
+  "0010011",
+  "0111101",
+  "0100011",
+  "0110001",
+  "0101111",
+  "0111011",
+  "0110111",
+  "0001011",
+];
 
 function upcBarcodeSvg(code) {
   if (!isValidUpc(code)) return "";
@@ -243,12 +413,15 @@ function upcBarcodeSvg(code) {
 
   let bars = "";
   for (let i = 0; i < 95; i++) {
-    if (bits[i] === "1") bars += `<rect x="${(q + i) * m}" y="${top}" width="${m}" height="${isLong(i) ? h + 10 : h}"/>`;
+    if (bits[i] === "1")
+      bars += `<rect x="${(q + i) * m}" y="${top}" width="${m}" height="${isLong(i) ? h + 10 : h}"/>`;
   }
   const ty = top + h + 16;
   let text = `<text x="${(q - 2) * m}" y="${ty}" text-anchor="end">${code[0]}</text>`;
-  for (let k = 0; k < 5; k++) text += `<text x="${(q + 10 + 7 * k + 3.5) * m}" y="${ty}" text-anchor="middle">${code[k + 1]}</text>`;
-  for (let k = 0; k < 5; k++) text += `<text x="${(q + 50 + 7 * k + 3.5) * m}" y="${ty}" text-anchor="middle">${code[k + 6]}</text>`;
+  for (let k = 0; k < 5; k++)
+    text += `<text x="${(q + 10 + 7 * k + 3.5) * m}" y="${ty}" text-anchor="middle">${code[k + 1]}</text>`;
+  for (let k = 0; k < 5; k++)
+    text += `<text x="${(q + 50 + 7 * k + 3.5) * m}" y="${ty}" text-anchor="middle">${code[k + 6]}</text>`;
   text += `<text x="${(q + 97) * m}" y="${ty}" text-anchor="start">${code[11]}</text>`;
 
   return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><g fill="#000">${bars}</g><g fill="#000" font-family="monospace" font-size="15">${text}</g></svg>`;
@@ -258,24 +431,40 @@ function upcBarcodeSvg(code) {
    ISRC — CC-XXX-AA-NNNNN (guardado sem hífens)
    ========================================================= */
 const ISRC_RE = /^[A-Z]{2}[A-Z0-9]{3}\d{7}$/;
-const normIsrc = (v) => String(v || "").toUpperCase().replace(/[^A-Z0-9]/g, "");
-const fmtIsrc = (c) => (c && c.length === 12 ? `${c.slice(0, 2)}-${c.slice(2, 5)}-${c.slice(5, 7)}-${c.slice(7)}` : c || "");
-const allIsrcs = () => state.projects.flatMap((p) => p.tracks.map((t) => t.isrc)).filter(Boolean);
+const normIsrc = (v) =>
+  String(v || "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "");
+const fmtIsrc = (c) =>
+  c && c.length === 12
+    ? `${c.slice(0, 2)}-${c.slice(2, 5)}-${c.slice(5, 7)}-${c.slice(7)}`
+    : c || "";
+const allIsrcs = () =>
+  state.projects.flatMap((p) => p.tracks.map((t) => t.isrc)).filter(Boolean);
 
 function nextIsrc(exclude = []) {
   const { isrcCountry, isrcRegistrant } = state.settings;
-  if (!/^[A-Z]{2}$/.test(isrcCountry) || !/^[A-Z0-9]{3}$/.test(isrcRegistrant)) {
-    throw new Error("Define o país e o código de registante ISRC nas Definições.");
+  if (
+    !/^[A-Z]{2}$/.test(isrcCountry) ||
+    !/^[A-Z0-9]{3}$/.test(isrcRegistrant)
+  ) {
+    throw new Error(
+      "Define o país e o código de registante ISRC nas Definições.",
+    );
   }
-  const stem = isrcCountry + isrcRegistrant + String(new Date().getFullYear()).slice(-2);
+  const stem =
+    isrcCountry + isrcRegistrant + String(new Date().getFullYear()).slice(-2);
   const codes = [...allIsrcs(), ...exclude].filter(Boolean);
   // A designação inicial só vale para o primeiro ano; em anos novos a sequência recomeça em 1
-  const usedBefore = codes.some((c) => c.startsWith(isrcCountry + isrcRegistrant) && !c.startsWith(stem));
+  const usedBefore = codes.some(
+    (c) => c.startsWith(isrcCountry + isrcRegistrant) && !c.startsWith(stem),
+  );
   let max = usedBefore ? 0 : (Number(state.settings.isrcStart) || 1) - 1;
   for (const code of codes) {
     if (code.startsWith(stem)) max = Math.max(max, Number(code.slice(7)));
   }
-  if (max + 1 > 99999) throw new Error("Atingiste o limite de 99999 ISRC para este ano.");
+  if (max + 1 > 99999)
+    throw new Error("Atingiste o limite de 99999 ISRC para este ano.");
   return stem + String(max + 1).padStart(5, "0");
 }
 
@@ -319,7 +508,11 @@ function renderSidebar() {
    ========================================================= */
 function projectCard(p, showArtist) {
   const artist = artistById(p.artistId);
-  const sub = [showArtist && artist ? artist.name : "", yearOf(p.releaseDate), `${p.tracks.length} ${p.tracks.length === 1 ? "faixa" : "faixas"}`]
+  const sub = [
+    showArtist && artist ? artist.name : "",
+    yearOf(p.releaseDate),
+    `${p.tracks.length} ${p.tracks.length === 1 ? "faixa" : "faixas"}`,
+  ]
     .filter(Boolean)
     .join(" · ");
   return `
@@ -347,14 +540,24 @@ function typeChips(list) {
 }
 
 function gridHtml(list, showArtist, emptyMsg) {
-  const filtered = state.typeFilter ? list.filter((p) => p.type === state.typeFilter) : list;
+  const filtered = state.typeFilter
+    ? list.filter((p) => p.type === state.typeFilter)
+    : list;
   if (!filtered.length) return `<div class="empty"><p>${emptyMsg}</p></div>`;
-  return `<div class="project-grid">${sortProjects(filtered).map((p) => projectCard(p, showArtist)).join("")}</div>`;
+  return `<div class="project-grid">${sortProjects(filtered)
+    .map((p) => projectCard(p, showArtist))
+    .join("")}</div>`;
 }
 
 function matchesQuery(p, q) {
   const artist = artistById(p.artistId);
-  const hay = [p.title, p.upc, p.label, artist?.name, ...p.tracks.flatMap((t) => [t.title, t.feat, t.isrc, fmtIsrc(t.isrc)])]
+  const hay = [
+    p.title,
+    p.upc,
+    p.label,
+    artist?.name,
+    ...p.tracks.flatMap((t) => [t.title, t.feat, t.isrc, fmtIsrc(t.isrc)]),
+  ]
     .join(" ")
     .toLowerCase();
   const compact = q.replace(/-/g, "");
@@ -418,9 +621,15 @@ function renderMain() {
     ["Website", a.website],
   ]
     .filter(([, u]) => safeUrl(u))
-    .map(([label, u]) => `<a href="${esc(u)}" target="_blank" rel="noopener">${label}</a>`)
+    .map(
+      ([label, u]) =>
+        `<a href="${esc(u)}" target="_blank" rel="noopener">${label}</a>`,
+    )
     .join("");
-  const sub = [a.realName, a.genre, a.country, a.contact].filter(Boolean).map(esc).join(" · ");
+  const sub = [a.realName, a.genre, a.country, a.contact]
+    .filter(Boolean)
+    .map(esc)
+    .join(" · ");
 
   main.innerHTML = `
     <div class="artist-header">
@@ -464,10 +673,23 @@ function openArtistForm(artist) {
   artistDraft = artist ? { ...artist } : { id: null, photo: "", photoPath: "" };
   const f = $("#artistForm");
   f.reset();
-  for (const k of ["name", "realName", "genre", "country", "contact", "bio", "spotify", "instagram", "youtube", "website"]) {
+  for (const k of [
+    "name",
+    "realName",
+    "genre",
+    "country",
+    "contact",
+    "bio",
+    "spotify",
+    "instagram",
+    "youtube",
+    "website",
+  ]) {
     f.elements[k].value = artistDraft[k] || "";
   }
-  $("#artistFormTitle").textContent = artist ? "Editar artista" : "Novo artista";
+  $("#artistFormTitle").textContent = artist
+    ? "Editar artista"
+    : "Novo artista";
   setPreview($("#artistPhotoPreview"), artistDraft.photo, "Foto");
   $("#btnRemovePhoto").hidden = !artistDraft.photo;
   $("#artistDialog").dataset.dirty = "";
@@ -476,7 +698,12 @@ function openArtistForm(artist) {
 
 // Dialogs com alterações por guardar pedem confirmação antes de fechar
 function closeDialog(dlg, force = false) {
-  if (!force && dlg.dataset.dirty && !confirm("Descartar as alterações por guardar?")) return;
+  if (
+    !force &&
+    dlg.dataset.dirty &&
+    !confirm("Descartar as alterações por guardar?")
+  )
+    return;
   dlg.dataset.dirty = "";
   dlg.close();
 }
@@ -494,7 +721,18 @@ async function saveArtist(e) {
   e.preventDefault();
   const f = e.target.elements;
   const a = { ...artistDraft };
-  for (const k of ["name", "realName", "genre", "country", "contact", "bio", "spotify", "instagram", "youtube", "website"]) {
+  for (const k of [
+    "name",
+    "realName",
+    "genre",
+    "country",
+    "contact",
+    "bio",
+    "spotify",
+    "instagram",
+    "youtube",
+    "website",
+  ]) {
     a[k] = f[k].value.trim();
   }
   if (!a.name) return toast("O nome artístico é obrigatório.", "error");
@@ -512,7 +750,9 @@ async function saveArtist(e) {
       if (oldPath && a.photoPath !== oldPath) removeImages([oldPath]);
 
       const saved = artistFromRow(data);
-      state.artists = isNew ? [...state.artists, saved] : state.artists.map((x) => (x.id === saved.id ? saved : x));
+      state.artists = isNew
+        ? [...state.artists, saved]
+        : state.artists.map((x) => (x.id === saved.id ? saved : x));
       state.selected = saved.id;
       closeDialog($("#artistDialog"), true);
       render();
@@ -552,27 +792,64 @@ let draft = null;
 const emptyTrack = () => ({ title: "", feat: "", duration: "", isrc: "" });
 
 function fillSelect(sel, options, value) {
-  sel.innerHTML = options.map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`).join("");
+  sel.innerHTML = options
+    .map(([v, label]) => `<option value="${esc(v)}">${esc(label)}</option>`)
+    .join("");
   sel.value = value;
 }
 
 function openProjectForm(project, artistId) {
   draft = project
     ? structuredClone(project)
-    : { id: null, artistId, title: "", type: "Single", releaseDate: "", status: "Rascunho", label: "", genre: "", upc: "", cover: "", coverPath: "", tracks: [emptyTrack()] };
+    : {
+        id: null,
+        artistId,
+        title: "",
+        type: "Single",
+        releaseDate: "",
+        status: "Rascunho",
+        label: "",
+        genre: "",
+        upc: "",
+        cover: "",
+        coverPath: "",
+        tracks: [emptyTrack()],
+      };
   if (!draft.tracks.length) draft.tracks.push(emptyTrack());
 
   const f = $("#projectForm");
   f.reset();
-  const artists = [...state.artists].sort((a, b) => a.name.localeCompare(b.name));
-  fillSelect(f.elements.artistId, artists.map((a) => [a.id, a.name]), draft.artistId);
-  fillSelect(f.elements.type, TYPES.map((t) => [t, t]), draft.type);
-  fillSelect(f.elements.status, STATUSES.map((s) => [s, s]), draft.status);
-  for (const k of ["title", "releaseDate", "label", "genre", "upc"]) f.elements[k].value = draft[k] || "";
-  if (!draft.genre && !project) f.elements.genre.value = artistById(artistId)?.genre || "";
+  const artists = [...state.artists].sort((a, b) =>
+    a.name.localeCompare(b.name),
+  );
+  fillSelect(
+    f.elements.artistId,
+    artists.map((a) => [a.id, a.name]),
+    draft.artistId,
+  );
+  fillSelect(
+    f.elements.type,
+    TYPES.map((t) => [t, t]),
+    draft.type,
+  );
+  fillSelect(
+    f.elements.status,
+    STATUSES.map((s) => [s, s]),
+    draft.status,
+  );
+  for (const k of ["title", "releaseDate", "label", "genre", "upc"])
+    f.elements[k].value = draft[k] || "";
+  if (!draft.genre && !project)
+    f.elements.genre.value = artistById(artistId)?.genre || "";
 
-  $("#projectFormTitle").textContent = project ? "Editar projeto" : "Novo projeto";
-  setPreview($("#coverPreview"), draft.cover, "Capa<br><small>clicar ou arrastar</small>");
+  $("#projectFormTitle").textContent = project
+    ? "Editar projeto"
+    : "Novo projeto";
+  setPreview(
+    $("#coverPreview"),
+    draft.cover,
+    "Capa<br><small>clicar ou arrastar</small>",
+  );
   updateUpcStatus();
   renderTracks();
   $("#btnRemoveCover").hidden = !draft.cover;
@@ -633,7 +910,7 @@ function renderTracks() {
         <button type="button" class="icon-btn" data-action="track-down" data-i="${i}" title="Descer" ${i === n - 1 ? "disabled" : ""}>↓</button>
         <button type="button" class="icon-btn" data-action="track-del" data-i="${i}" title="Remover">✕</button>
       </div>
-    </div>`
+    </div>`,
     )
     .join("");
 }
@@ -642,7 +919,8 @@ function syncTracks() {
   document.querySelectorAll("#trackList .track-row").forEach((row) => {
     const t = draft.tracks[row.dataset.i];
     row.querySelectorAll("[data-k]").forEach((inp) => {
-      t[inp.dataset.k] = inp.dataset.k === "isrc" ? normIsrc(inp.value) : inp.value.trim();
+      t[inp.dataset.k] =
+        inp.dataset.k === "isrc" ? normIsrc(inp.value) : inp.value.trim();
     });
   });
 }
@@ -656,14 +934,22 @@ async function genIsrcFor(indexes) {
     state.projects = saved.filter((p) => p.id !== draft.id);
     try {
       for (const i of indexes) {
-        const others = draft.tracks.filter((_, j) => j !== i).map((t) => t.isrc);
+        const others = draft.tracks
+          .filter((_, j) => j !== i)
+          .map((t) => t.isrc);
         draft.tracks[i].isrc = nextIsrc(others);
       }
     } finally {
       state.projects = saved;
     }
     renderTracks();
-    if (indexes.length) toast(indexes.length === 1 ? `ISRC gerado: ${fmtIsrc(draft.tracks[indexes[0]].isrc)}` : `${indexes.length} ISRC gerados.`, "ok");
+    if (indexes.length)
+      toast(
+        indexes.length === 1
+          ? `ISRC gerado: ${fmtIsrc(draft.tracks[indexes[0]].isrc)}`
+          : `${indexes.length} ISRC gerados.`,
+        "ok",
+      );
     else toast("Todas as faixas já têm ISRC.");
   } catch (err) {
     toast(err.message, "error");
@@ -675,31 +961,54 @@ async function saveProject(e) {
   syncTracks();
   const f = e.target.elements;
   const p = { ...draft };
-  for (const k of ["artistId", "title", "type", "releaseDate", "status", "label", "genre"]) p[k] = f[k].value.trim();
+  for (const k of [
+    "artistId",
+    "title",
+    "type",
+    "releaseDate",
+    "status",
+    "label",
+    "genre",
+  ])
+    p[k] = f[k].value.trim();
   p.upc = f.upc.value.replace(/\D/g, "");
   p.tracks = draft.tracks
     .filter((t) => t.title || t.isrc || t.feat || t.duration)
-    .map(({ title, feat, duration, isrc }) => ({ title, feat, duration, isrc }));
+    .map(({ title, feat, duration, isrc }) => ({
+      title,
+      feat,
+      duration,
+      isrc,
+    }));
 
   if (!p.title) return toast("O título é obrigatório.", "error");
   if (!artistById(p.artistId)) return toast("Escolhe um artista.", "error");
-  if (p.upc && !isValidUpc(p.upc)) return toast("UPC inválido — verifica o dígito de controlo.", "error");
-  const upcOwner = state.projects.find((o) => o.id !== p.id && o.upc && o.upc === p.upc);
-  if (upcOwner) return toast(`Este UPC já está atribuído a "${upcOwner.title}".`, "error");
+  if (p.upc && !isValidUpc(p.upc))
+    return toast("UPC inválido — verifica o dígito de controlo.", "error");
+  const upcOwner = state.projects.find(
+    (o) => o.id !== p.id && o.upc && o.upc === p.upc,
+  );
+  if (upcOwner)
+    return toast(`Este UPC já está atribuído a "${upcOwner.title}".`, "error");
 
   const seen = new Set();
   for (const [i, t] of p.tracks.entries()) {
     if (!t.title) return toast(`A faixa ${i + 1} precisa de título.`, "error");
     if (!t.isrc) continue;
-    if (!ISRC_RE.test(t.isrc)) return toast(`ISRC inválido na faixa ${i + 1}: ${t.isrc}`, "error");
-    if (seen.has(t.isrc)) return toast(`ISRC repetido neste projeto: ${fmtIsrc(t.isrc)}`, "error");
+    if (!ISRC_RE.test(t.isrc))
+      return toast(`ISRC inválido na faixa ${i + 1}: ${t.isrc}`, "error");
+    if (seen.has(t.isrc))
+      return toast(`ISRC repetido neste projeto: ${fmtIsrc(t.isrc)}`, "error");
     seen.add(t.isrc);
     // A mesma gravação pode sair em vários lançamentos (ex.: single e álbum) com o mesmo ISRC
     for (const o of state.projects) {
       if (o.id === p.id) continue;
       const same = o.tracks.find((x) => x.isrc === t.isrc);
       if (same && same.title.toLowerCase() !== t.title.toLowerCase()) {
-        return toast(`O ISRC ${fmtIsrc(t.isrc)} já pertence a "${same.title}" em "${o.title}". Um ISRC identifica uma única gravação.`, "error");
+        return toast(
+          `O ISRC ${fmtIsrc(t.isrc)} já pertence a "${same.title}" em "${o.title}". Um ISRC identifica uma única gravação.`,
+          "error",
+        );
       }
     }
   }
@@ -713,16 +1022,26 @@ async function saveProject(e) {
     try {
       if (p.coverBlob) newPath = p.coverPath = await uploadImage(p.coverBlob);
       else if (p.removeCover) p.coverPath = "";
-      const { data, error } = await saveRow("projects", p, PROJECT_FIELDS, isNew);
+      const { data, error } = await saveRow(
+        "projects",
+        p,
+        PROJECT_FIELDS,
+        isNew,
+      );
       if (error) throw error;
       if (oldPath && p.coverPath !== oldPath) removeImages([oldPath]);
 
       const saved = projectFromRow(data);
-      state.projects = isNew ? [...state.projects, saved] : state.projects.map((x) => (x.id === saved.id ? saved : x));
+      state.projects = isNew
+        ? [...state.projects, saved]
+        : state.projects.map((x) => (x.id === saved.id ? saved : x));
       state.selected = saved.artistId;
       closeDialog($("#projectDialog"), true);
       render();
-      toast(isNew ? "Projeto adicionado à biblioteca." : "Projeto atualizado.", "ok");
+      toast(
+        isNew ? "Projeto adicionado à biblioteca." : "Projeto atualizado.",
+        "ok",
+      );
     } catch (err) {
       if (newPath) removeImages([newPath]);
       toast(errMsg(err), "error");
@@ -742,7 +1061,13 @@ function openProjectView(id) {
   const p = state.projects.find((x) => x.id === id);
   if (!p) return;
   const artist = artistById(p.artistId);
-  const date = p.releaseDate ? new Date(p.releaseDate + "T00:00").toLocaleDateString("pt-PT", { day: "numeric", month: "long", year: "numeric" }) : "—";
+  const date = p.releaseDate
+    ? new Date(p.releaseDate + "T00:00").toLocaleDateString("pt-PT", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : "—";
 
   $("#viewBody").innerHTML = `
     <div class="view">
@@ -760,8 +1085,12 @@ function openProjectView(id) {
           <dt>Género</dt><dd>${esc(p.genre || "—")}</dd>
           <dt>UPC</dt><dd>${p.upc ? codeLine(p.upc) : "—"}</dd>
         </dl>
-        ${p.upc ? `<div class="barcode-box">${upcBarcodeSvg(p.upc)}</div>
-          <button class="btn small ghost" style="margin-top:6px" data-action="download-barcode" data-id="${p.id}">Descarregar código de barras (SVG)</button>` : ""}
+        ${
+          p.upc
+            ? `<div class="barcode-box">${upcBarcodeSvg(p.upc)}</div>
+          <button class="btn small ghost" style="margin-top:6px" data-action="download-barcode" data-id="${p.id}">Descarregar código de barras (SVG)</button>`
+            : ""
+        }
       </div>
     </div>
     ${
@@ -775,7 +1104,7 @@ function openProjectView(id) {
             <td>${esc(t.title)}${t.feat ? ` <small>feat. ${esc(t.feat)}</small>` : ""}</td>
             <td>${esc(t.duration || "—")}</td>
             <td>${t.isrc ? codeLine(t.isrc, fmtIsrc(t.isrc)) : "—"}</td>
-          </tr>`
+          </tr>`,
           )
           .join("")}</tbody>
       </table>`
@@ -818,7 +1147,8 @@ async function downloadCover(p) {
    ========================================================= */
 function openSettings() {
   const f = $("#settingsForm");
-  for (const k of Object.keys(SETTINGS_FIELDS)) f.elements[k].value = state.settings[k] ?? "";
+  for (const k of Object.keys(SETTINGS_FIELDS))
+    f.elements[k].value = state.settings[k] ?? "";
   updateSettingsPreview();
   $("#settingsDialog").showModal();
 }
@@ -829,8 +1159,13 @@ function readSettingsForm() {
     upcPrefix: f.upcPrefix.value.replace(/\D/g, ""),
     upcStart: Math.max(1, parseInt(f.upcStart.value, 10) || 1),
     isrcCountry: f.isrcCountry.value.toUpperCase().replace(/[^A-Z]/g, ""),
-    isrcRegistrant: f.isrcRegistrant.value.toUpperCase().replace(/[^A-Z0-9]/g, ""),
-    isrcStart: Math.min(99999, Math.max(1, parseInt(f.isrcStart.value, 10) || 1)),
+    isrcRegistrant: f.isrcRegistrant.value
+      .toUpperCase()
+      .replace(/[^A-Z0-9]/g, ""),
+    isrcStart: Math.min(
+      99999,
+      Math.max(1, parseInt(f.isrcStart.value, 10) || 1),
+    ),
   };
 }
 
@@ -852,9 +1187,12 @@ function updateSettingsPreview() {
 async function saveSettings(e) {
   e.preventDefault();
   const s = readSettingsForm();
-  if (s.upcPrefix && !/^\d{6,10}$/.test(s.upcPrefix)) return toast("O prefixo GS1 deve ter entre 6 e 10 dígitos.", "error");
-  if (s.isrcCountry && s.isrcCountry.length !== 2) return toast("O país ISRC tem 2 letras (ex.: PT).", "error");
-  if (s.isrcRegistrant && s.isrcRegistrant.length !== 3) return toast("O código de registante tem 3 caracteres.", "error");
+  if (s.upcPrefix && !/^\d{6,10}$/.test(s.upcPrefix))
+    return toast("O prefixo GS1 deve ter entre 6 e 10 dígitos.", "error");
+  if (s.isrcCountry && s.isrcCountry.length !== 2)
+    return toast("O país ISRC tem 2 letras (ex.: PT).", "error");
+  if (s.isrcRegistrant && s.isrcRegistrant.length !== 3)
+    return toast("O código de registante tem 3 caracteres.", "error");
   await busy(e.target, async () => {
     const { error } = await sb.from("settings").upsert(settingsRow(s));
     if (error) return toast(errMsg(error), "error");
@@ -896,17 +1234,42 @@ function toggleMenu(open) {
 // Backup autónomo: inclui as imagens embebidas para não depender do Storage
 async function exportJson() {
   toast("A preparar o backup…");
-  const pick = (obj, fields, skip) => Object.fromEntries(Object.keys(fields).filter((k) => k !== skip).map((k) => [k, obj[k]]));
+  const pick = (obj, fields, skip) =>
+    Object.fromEntries(
+      Object.keys(fields)
+        .filter((k) => k !== skip)
+        .map((k) => [k, obj[k]]),
+    );
   // Descarrega as imagens em lotes pequenos para não saturar a rede
   const mapLimit = async (list, fn, size = 5) => {
     const out = [];
-    for (let i = 0; i < list.length; i += size) out.push(...(await Promise.all(list.slice(i, i + size).map(fn))));
+    for (let i = 0; i < list.length; i += size)
+      out.push(...(await Promise.all(list.slice(i, i + size).map(fn))));
     return out;
   };
-  const artists = await mapLimit(state.artists, async (a) => ({ id: a.id, ...pick(a, ARTIST_FIELDS, "photoPath"), photoData: await imageAsDataUrl(a.photo) }));
-  const projects = await mapLimit(state.projects, async (p) => ({ id: p.id, ...pick(p, PROJECT_FIELDS, "coverPath"), coverData: await imageAsDataUrl(p.cover) }));
-  const data = { app: "catalogo-artistas", version: 2, exportedAt: new Date().toISOString(), settings: state.settings, artists, projects };
-  download(`catalogo-artistas-${new Date().toISOString().slice(0, 10)}.json`, JSON.stringify(data), "application/json");
+  const artists = await mapLimit(state.artists, async (a) => ({
+    id: a.id,
+    ...pick(a, ARTIST_FIELDS, "photoPath"),
+    photoData: await imageAsDataUrl(a.photo),
+  }));
+  const projects = await mapLimit(state.projects, async (p) => ({
+    id: p.id,
+    ...pick(p, PROJECT_FIELDS, "coverPath"),
+    coverData: await imageAsDataUrl(p.cover),
+  }));
+  const data = {
+    app: "catalogo-artistas",
+    version: 2,
+    exportedAt: new Date().toISOString(),
+    settings: state.settings,
+    artists,
+    projects,
+  };
+  download(
+    `catalogo-artistas-${new Date().toISOString().slice(0, 10)}.json`,
+    JSON.stringify(data),
+    "application/json",
+  );
   toast("Backup exportado.", "ok");
 }
 
@@ -929,13 +1292,17 @@ async function importJson(file) {
   } catch {
     return toast("Ficheiro inválido.", "error");
   }
-  if (data?.app !== "catalogo-artistas" || !Array.isArray(data.artists) || !Array.isArray(data.projects)) {
+  if (
+    data?.app !== "catalogo-artistas" ||
+    !Array.isArray(data.artists) ||
+    !Array.isArray(data.projects)
+  ) {
     return toast("Este ficheiro não é um backup do catálogo.", "error");
   }
   const ok = confirm(
     `Importar ${data.artists.length} artistas e ${data.projects.length} projetos?\n` +
       "Os registos com o mesmo ID são atualizados; os restantes dados mantêm-se.\n" +
-      "Fotos e capas já existentes não são substituídas."
+      "Fotos e capas já existentes não são substituídas.",
   );
   if (!ok) return;
 
@@ -943,7 +1310,8 @@ async function importJson(file) {
   menuBtn.disabled = true;
   const idMap = new Map(); // IDs antigos (não-UUID) passam a UUID
   const mapId = (id) => {
-    if (!idMap.has(id)) idMap.set(id, UUID_RE.test(str(id)) ? str(id) : crypto.randomUUID());
+    if (!idMap.has(id))
+      idMap.set(id, UUID_RE.test(str(id)) ? str(id) : crypto.randomUUID());
     return idMap.get(id);
   };
   let done = 0;
@@ -957,7 +1325,9 @@ async function importJson(file) {
     // Definições: só substitui os campos que vêm preenchidos
     if (data.settings) {
       const s = { ...state.settings };
-      for (const k of Object.keys(SETTINGS_FIELDS)) if (data.settings[k] !== undefined && data.settings[k] !== "") s[k] = data.settings[k];
+      for (const k of Object.keys(SETTINGS_FIELDS))
+        if (data.settings[k] !== undefined && data.settings[k] !== "")
+          s[k] = data.settings[k];
       const { error } = await sb.from("settings").upsert(settingsRow(s));
       if (!error) state.settings = s;
     }
@@ -971,16 +1341,22 @@ async function importJson(file) {
         const existing = artistById(a.id);
         a.photoPath = existing?.photoPath || "";
         // Só envia a imagem se o registo ainda não tem uma (evita duplicar ficheiros em cada importação)
-        const blob = a.photoPath ? null : await importedImage(src.photoData || src.photo);
+        const blob = a.photoPath
+          ? null
+          : await importedImage(src.photoData || src.photo);
         if (blob) newPath = a.photoPath = await uploadImage(blob);
-        const { error } = await sb.from("artists").upsert({ id: a.id, ...toRow(a, ARTIST_FIELDS) });
+        const { error } = await sb
+          .from("artists")
+          .upsert({ id: a.id, ...toRow(a, ARTIST_FIELDS) });
         if (error) throw error;
         knownArtists.add(a.id);
         done++;
       } catch (err) {
         if (newPath) removeImages([newPath]);
         console.warn("Artista não importado:", src?.name, err);
-        problems.push(`Artista "${str(src?.name) || "?"}" não importado: ${errMsg(err)}`);
+        problems.push(
+          `Artista "${str(src?.name) || "?"}" não importado: ${errMsg(err)}`,
+        );
         failed++;
       }
       progress();
@@ -989,31 +1365,49 @@ async function importJson(file) {
     for (const src of data.projects) {
       let newPath = null;
       try {
-        const p = { id: mapId(src.id), artistId: idMap.get(src.artistId) || str(src.artistId) };
+        const p = {
+          id: mapId(src.id),
+          artistId: idMap.get(src.artistId) || str(src.artistId),
+        };
         p.title = str(src.title);
         p.type = TYPES.includes(src.type) ? src.type : "Single";
         p.status = STATUSES.includes(src.status) ? src.status : "Rascunho";
-        p.releaseDate = /^\d{4}-\d{2}-\d{2}$/.test(src.releaseDate) ? src.releaseDate : "";
+        p.releaseDate = /^\d{4}-\d{2}-\d{2}$/.test(src.releaseDate)
+          ? src.releaseDate
+          : "";
         p.label = str(src.label);
         p.genre = str(src.genre);
-        if (!knownArtists.has(p.artistId)) throw new Error("o artista do projeto não existe");
+        if (!knownArtists.has(p.artistId))
+          throw new Error("o artista do projeto não existe");
         p.upc = isValidUpc(str(src.upc)) ? str(src.upc) : "";
-        if (str(src.upc) && !p.upc) problems.push(`Projeto "${str(src.title)}": UPC inválido (${str(src.upc)}) foi ignorado.`);
+        if (str(src.upc) && !p.upc)
+          problems.push(
+            `Projeto "${str(src.title)}": UPC inválido (${str(src.upc)}) foi ignorado.`,
+          );
         p.tracks = (Array.isArray(src.tracks) ? src.tracks : []).map((t) => ({
-          title: str(t.title), feat: str(t.feat), duration: str(t.duration), isrc: normIsrc(t.isrc),
+          title: str(t.title),
+          feat: str(t.feat),
+          duration: str(t.duration),
+          isrc: normIsrc(t.isrc),
         }));
         if (!p.title) throw new Error("sem título");
         const existing = state.projects.find((x) => x.id === p.id);
         p.coverPath = existing?.coverPath || "";
-        const blob = p.coverPath ? null : await importedImage(src.coverData || src.cover);
+        const blob = p.coverPath
+          ? null
+          : await importedImage(src.coverData || src.cover);
         if (blob) newPath = p.coverPath = await uploadImage(blob);
-        const { error } = await sb.from("projects").upsert({ id: p.id, ...toRow(p, PROJECT_FIELDS) });
+        const { error } = await sb
+          .from("projects")
+          .upsert({ id: p.id, ...toRow(p, PROJECT_FIELDS) });
         if (error) throw error;
         done++;
       } catch (err) {
         if (newPath) removeImages([newPath]);
         console.warn("Projeto não importado:", src?.title, err);
-        problems.push(`Projeto "${str(src?.title) || "?"}" não importado: ${errMsg(err)}`);
+        problems.push(
+          `Projeto "${str(src?.title) || "?"}" não importado: ${errMsg(err)}`,
+        );
         failed++;
       }
       progress();
@@ -1021,10 +1415,17 @@ async function importJson(file) {
 
     await loadAll();
     render();
-    toast(failed ? `Importados ${done}; ${failed} com erro.` : `Importação concluída: ${done} registos.`, failed ? "error" : "ok");
+    toast(
+      failed
+        ? `Importados ${done}; ${failed} com erro.`
+        : `Importação concluída: ${done} registos.`,
+      failed ? "error" : "ok",
+    );
     if (problems.length) {
       const shown = problems.slice(0, 10).join("\n");
-      alert(`Importação com avisos (${problems.length}):\n\n${shown}${problems.length > 10 ? `\n… e mais ${problems.length - 10} (ver consola)` : ""}`);
+      alert(
+        `Importação com avisos (${problems.length}):\n\n${shown}${problems.length > 10 ? `\n… e mais ${problems.length - 10} (ver consola)` : ""}`,
+      );
       console.warn("Avisos da importação:", problems);
     }
   } catch (err) {
@@ -1041,19 +1442,50 @@ function exportCsv() {
     if (typeof v === "string" && /^[=+\-@\t\r]/.test(s)) s = `'${s}`;
     return `"${s.replace(/"/g, '""')}"`;
   };
-  const rows = [["Artista", "Projeto", "Tipo", "Estado", "Data", "Editora", "Género", "UPC", "Nº", "Faixa", "Participações", "Duração", "ISRC"]];
+  const rows = [
+    [
+      "Artista",
+      "Projeto",
+      "Tipo",
+      "Estado",
+      "Data",
+      "Editora",
+      "Género",
+      "UPC",
+      "Nº",
+      "Faixa",
+      "Participações",
+      "Duração",
+      "ISRC",
+    ],
+  ];
   for (const p of sortProjects(state.projects)) {
     const artist = artistById(p.artistId)?.name || "";
-    const base = [artist, p.title, p.type, statusOf(p), p.releaseDate, p.label, p.genre, p.upc];
+    const base = [
+      artist,
+      p.title,
+      p.type,
+      statusOf(p),
+      p.releaseDate,
+      p.label,
+      p.genre,
+      p.upc,
+    ];
     if (!p.tracks.length) rows.push([...base, "", "", "", "", ""]);
-    p.tracks.forEach((t, i) => rows.push([...base, i + 1, t.title, t.feat, t.duration, fmtIsrc(t.isrc)]));
+    p.tracks.forEach((t, i) =>
+      rows.push([...base, i + 1, t.title, t.feat, t.duration, fmtIsrc(t.isrc)]),
+    );
   }
   // ";" + BOM para abrir corretamente no Excel em português
-  download(`catalogo-${new Date().toISOString().slice(0, 10)}.csv`, "﻿" + rows.map((r) => r.map(cell).join(";")).join("\r\n"), "text/csv;charset=utf-8");
+  download(
+    `catalogo-${new Date().toISOString().slice(0, 10)}.csv`,
+    "﻿" + rows.map((r) => r.map(cell).join(";")).join("\r\n"),
+    "text/csv;charset=utf-8",
+  );
 }
 
 /* =========================================================
-   Autenticação
+   Autenticação e Recuperação de Palavra-passe
    ========================================================= */
 async function handleAuth(e) {
   e.preventDefault();
@@ -1065,7 +1497,6 @@ async function handleAuth(e) {
   msg.textContent = "";
 
   await busy(form, async () => {
-    // Registos novos estão desativados no Supabase; as contas são criadas no painel
     try {
       const { error } = await sb.auth.signInWithPassword({ email, password });
       if (error) throw error;
@@ -1076,10 +1507,59 @@ async function handleAuth(e) {
   });
 }
 
+async function handleRecovery(e) {
+  e.preventDefault();
+  const form = e.target;
+  const email = form.elements.recoveryEmail.value.trim();
+  const msg = $("#recoveryMsg");
+  msg.className = "hint";
+  msg.textContent = "";
+
+  await busy(form, async () => {
+    try {
+      // Envia o email de recuperação utilizando o Supabase Auth
+      const { error } = await sb.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.href, // Redireciona de volta para a app após o clique no link do email
+      });
+      if (error) throw error;
+      msg.className = "hint ok";
+      msg.textContent =
+        "Email de recuperação enviado! Verifica a tua caixa de entrada.";
+    } catch (err) {
+      msg.className = "hint bad";
+      msg.textContent = errMsg(err);
+    }
+  });
+}
+
+// Na função bindEvents(), acrescentar os seguintes listeners:
+function bindEvents() {
+  $("#authForm").addEventListener("submit", handleAuth);
+  $("#recoveryForm").addEventListener("submit", handleRecovery);
+
+  // Alternância de ecrãs de autenticação / recuperação
+  $("#btnShowRecovery").addEventListener("click", () => {
+    $("#authForm").hidden = true;
+    $("#recoveryForm").hidden = false;
+    $("#recoveryMsg").textContent = "";
+  });
+
+  $("#btnBackToLogin").addEventListener("click", () => {
+    $("#recoveryForm").hidden = true;
+    $("#authForm").hidden = false;
+    $("#authMsg").textContent = "";
+  });
+
+  // Restante código dos eventos existente...
+  // ...
+}
+
 function showApp(loggedIn) {
   $("#authScreen").hidden = loggedIn;
   $("#appShell").hidden = !loggedIn;
-  document.querySelectorAll(".app-only").forEach((el) => (el.hidden = !loggedIn));
+  document
+    .querySelectorAll(".app-only")
+    .forEach((el) => (el.hidden = !loggedIn));
   $("#userInfo").textContent = loggedIn ? `Sessão: ${session.user.email}` : "";
 }
 
@@ -1092,22 +1572,33 @@ async function loadAll() {
   if (settings.error) throw settings.error;
   state.artists = artists.map(artistFromRow);
   state.projects = projects.map(projectFromRow);
-  state.settings = settings.data ? fromRow(settings.data, SETTINGS_FIELDS) : { ...DEFAULT_SETTINGS };
+  state.settings = settings.data
+    ? fromRow(settings.data, SETTINGS_FIELDS)
+    : { ...DEFAULT_SETTINGS };
 }
 
 async function onSessionChange() {
   showApp(!!session);
   document.querySelectorAll("dialog[open]").forEach((d) => d.close());
-  Object.assign(state, { artists: [], projects: [], settings: { ...DEFAULT_SETTINGS }, selected: "all", query: "", typeFilter: "" });
+  Object.assign(state, {
+    artists: [],
+    projects: [],
+    settings: { ...DEFAULT_SETTINGS },
+    selected: "all",
+    query: "",
+    typeFilter: "",
+  });
   $("#search").value = "";
   if (!session) return;
   $("#artistList").innerHTML = "";
-  $("#main").innerHTML = `<div class="empty"><p>A carregar o catálogo…</p></div>`;
+  $("#main").innerHTML =
+    `<div class="empty"><p>A carregar o catálogo…</p></div>`;
   try {
     await loadAll();
     render();
   } catch (err) {
-    $("#main").innerHTML = `<div class="empty"><p>Não foi possível carregar os dados.<br>${esc(errMsg(err))}</p></div>`;
+    $("#main").innerHTML =
+      `<div class="empty"><p>Não foi possível carregar os dados.<br>${esc(errMsg(err))}</p></div>`;
   }
 }
 
@@ -1212,7 +1703,11 @@ function bindEvents() {
     const t = e.target;
 
     // Fecha o menu de dados ao clicar fora dele ou numa das opções
-    if (!t.closest("[data-action=toggle-menu]") && !t.closest("#dataMenu label")) toggleMenu(false);
+    if (
+      !t.closest("[data-action=toggle-menu]") &&
+      !t.closest("#dataMenu label")
+    )
+      toggleMenu(false);
 
     if (t.closest("[data-close]")) return closeDialog(t.closest("dialog"));
 
@@ -1282,12 +1777,20 @@ function bindEvents() {
         draft.cover = "";
         draft.removeCover = true;
         $("#btnRemoveCover").hidden = true;
-        return setPreview($("#coverPreview"), "", "Capa<br><small>clicar ou arrastar</small>");
+        return setPreview(
+          $("#coverPreview"),
+          "",
+          "Capa<br><small>clicar ou arrastar</small>",
+        );
       case "gen-isrc":
         return genIsrcFor([i]);
       case "gen-isrc-all":
         syncTracks();
-        return genIsrcFor(draft.tracks.map((tr, j) => (tr.title && !tr.isrc ? j : -1)).filter((j) => j >= 0));
+        return genIsrcFor(
+          draft.tracks
+            .map((tr, j) => (tr.title && !tr.isrc ? j : -1))
+            .filter((j) => j >= 0),
+        );
       case "add-track":
         syncTracks();
         draft.tracks.push(emptyTrack());
@@ -1306,7 +1809,11 @@ function bindEvents() {
         return renderTracks();
       }
       case "download-barcode":
-        return download(`UPC-${p.upc}.svg`, upcBarcodeSvg(p.upc), "image/svg+xml");
+        return download(
+          `UPC-${p.upc}.svg`,
+          upcBarcodeSvg(p.upc),
+          "image/svg+xml",
+        );
       case "download-cover":
         return downloadCover(p);
       case "toggle-menu":
@@ -1323,9 +1830,13 @@ function bindEvents() {
     dlg.addEventListener("mousedown", (e) => {
       if (e.target !== dlg) return;
       const r = dlg.getBoundingClientRect();
-      const outside = e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom;
+      const outside =
+        e.clientX < r.left ||
+        e.clientX > r.right ||
+        e.clientY < r.top ||
+        e.clientY > r.bottom;
       if (outside) closeDialog(dlg);
-    })
+    }),
   );
 }
 

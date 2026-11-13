@@ -386,3 +386,23 @@ table.tracks small { color: var(--muted); }
 }
 
 .photo-col { display: flex; flex-direction: column; align-items: center; gap: 6px; }
+
+/* Adicionar no final do ficheiro style.css */
+.auth-links {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+}
+.btn-link {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+.btn-link:hover {
+  color: #3d6bf0;
+}

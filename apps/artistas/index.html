@@ -1,173 +1,350 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-PT">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Catálogo de Artistas</title>
-  <link rel="stylesheet" href="style.css" />
-</head>
-<body>
-  <header class="topbar">
-    <div class="brand">
-      <a href="../../index.html" class="back" title="Voltar aos projetos">&larr;</a>
-      <h1>CATÁLOGO<span>ARTISTAS</span></h1>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Catálogo de Artistas</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <div class="brand">
+        <a href="../../index.html" class="back" title="Voltar aos projetos"
+          >&larr;</a
+        >
+        <h1>CATÁLOGO<span>ARTISTAS</span></h1>
+      </div>
+      <input
+        id="search"
+        class="app-only"
+        type="search"
+        placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…"
+        autocomplete="off"
+      />
+      <div class="actions app-only">
+        <button id="btnSettings" class="btn ghost" type="button">
+          Definições
+        </button>
+        <div class="menu" id="dataMenu">
+          <button
+            class="btn ghost"
+            type="button"
+            data-action="toggle-menu"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >
+            Dados ▾
+          </button>
+          <div class="menu-list" role="menu" hidden>
+            <button type="button" role="menuitem" data-action="export-csv">
+              Exportar CSV<small>catálogo para Excel / distribuidoras</small>
+            </button>
+            <button type="button" role="menuitem" data-action="export-json">
+              Exportar JSON<small>backup completo com imagens</small>
+            </button>
+            <label role="menuitem"
+              >Importar JSON<small>junta aos dados atuais</small
+              ><input
+                type="file"
+                id="importFile"
+                accept="application/json,.json"
+                hidden
+            /></label>
+          </div>
+        </div>
+        <button id="btnNewArtist" class="btn primary" type="button">
+          + Artista
+        </button>
+        <button
+          id="btnLogout"
+          class="btn ghost"
+          type="button"
+          title="Terminar sessão"
+        >
+          Sair
+        </button>
+      </div>
+    </header>
+
+    <section id="authScreen" class="auth" hidden>
+      <div class="auth-card">
+        <!-- Formulário de Login -->
+        <form id="authForm">
+          <h2>Entrar no catálogo</h2>
+          <p class="hint">
+            Os dados ficam guardados na nuvem e sincronizados entre aparelhos.
+          </p>
+          <label
+            >Email<input
+              name="email"
+              type="email"
+              required
+              autocomplete="email"
+          /></label>
+          <label
+            >Palavra-passe<input
+              name="password"
+              type="password"
+              minlength="6"
+              autocomplete="current-password"
+          /></label>
+          <button type="submit" class="btn primary">Entrar</button>
+          <div class="auth-links">
+            <button type="button" class="btn-link" id="btnShowRecovery">
+              Esqueceste-te da palavra-passe?
+            </button>
+          </div>
+          <p id="authMsg" class="hint"></p>
+        </form>
+
+        <!-- Formulário de Recuperação de Palavra-passe -->
+        <form id="recoveryForm" hidden>
+          <h2>Recuperar palavra-passe</h2>
+          <p class="hint">
+            Introduz o teu email para receberes as instruções de redefinição.
+          </p>
+          <label
+            >Email<input
+              name="recoveryEmail"
+              type="email"
+              required
+              autocomplete="email"
+          /></label>
+          <button type="submit" class="btn primary">
+            Enviar email de recuperação
+          </button>
+          <div class="auth-links">
+            <button type="button" class="btn-link" id="btnBackToLogin">
+              &larr; Voltar ao login
+            </button>
+          </div>
+          <p id="recoveryMsg" class="hint"></p>
+        </form>
+      </div>
+    </section>
+
+    <div id="appShell" class="layout" hidden>
+      <aside id="artistList" class="sidebar" aria-label="Artistas"></aside>
+      <main id="main"></main>
     </div>
-    <input id="search" class="app-only" type="search" placeholder="Procurar artista, projeto, faixa, UPC ou ISRC…" autocomplete="off" />
-    <div class="actions app-only">
-      <button id="btnSettings" class="btn ghost" type="button">Definições</button>
-      <div class="menu" id="dataMenu">
-        <button class="btn ghost" type="button" data-action="toggle-menu" aria-haspopup="menu" aria-expanded="false">Dados ▾</button>
-        <div class="menu-list" role="menu" hidden>
-          <button type="button" role="menuitem" data-action="export-csv">Exportar CSV<small>catálogo para Excel / distribuidoras</small></button>
-          <button type="button" role="menuitem" data-action="export-json">Exportar JSON<small>backup completo com imagens</small></button>
-          <label role="menuitem">Importar JSON<small>junta aos dados atuais</small><input type="file" id="importFile" accept="application/json,.json" hidden /></label>
+
+    <footer class="foot">
+      <span id="userInfo">Dados sincronizados com o Supabase.</span>
+      <span
+        >by
+        <a target="_blank" href="https://github.com/MateusLuisMk19"
+          >Mateus Luis</a
+        ></span
+      >
+    </footer>
+
+    <!-- Artista -->
+    <dialog id="artistDialog">
+      <form id="artistForm" method="dialog">
+        <h2 id="artistFormTitle">Novo artista</h2>
+        <div class="form-top">
+          <div class="photo-col">
+            <label class="photo-drop round" title="Escolher foto">
+              <input type="file" accept="image/*" name="photoFile" hidden />
+              <span class="photo-preview" id="artistPhotoPreview">Foto</span>
+            </label>
+            <button
+              type="button"
+              class="btn small ghost"
+              id="btnRemovePhoto"
+              data-action="remove-photo"
+              hidden
+            >
+              Remover foto
+            </button>
+          </div>
+          <div class="grid2 grow">
+            <label class="span2"
+              >Nome artístico *<input name="name" required maxlength="120"
+            /></label>
+            <label>Nome real<input name="realName" maxlength="120" /></label>
+            <label>Género<input name="genre" maxlength="60" /></label>
+            <label>País<input name="country" maxlength="60" /></label>
+            <label
+              >Email / contacto<input name="contact" maxlength="120"
+            /></label>
+          </div>
         </div>
-      </div>
-      <button id="btnNewArtist" class="btn primary" type="button">+ Artista</button>
-      <button id="btnLogout" class="btn ghost" type="button" title="Terminar sessão">Sair</button>
-    </div>
-  </header>
-
-  <section id="authScreen" class="auth" hidden>
-    <form id="authForm" class="auth-card">
-      <h2>Entrar no catálogo</h2>
-      <p class="hint">Os dados ficam guardados na nuvem e sincronizados entre aparelhos.</p>
-      <label>Email<input name="email" type="email" required autocomplete="email" /></label>
-      <label>Palavra-passe<input name="password" type="password" required minlength="6" autocomplete="current-password" /></label>
-      <button type="submit" class="btn primary">Entrar</button>
-      <p id="authMsg" class="hint"></p>
-    </form>
-  </section>
-
-  <div id="appShell" class="layout" hidden>
-    <aside id="artistList" class="sidebar" aria-label="Artistas"></aside>
-    <main id="main"></main>
-  </div>
-
-  <footer class="foot">
-    <span id="userInfo">Dados sincronizados com o Supabase.</span>
-    <span>by <a target="_blank" href="https://github.com/MateusLuisMk19">Mateus Luis</a></span>
-  </footer>
-
-  <!-- Artista -->
-  <dialog id="artistDialog">
-    <form id="artistForm" method="dialog">
-      <h2 id="artistFormTitle">Novo artista</h2>
-      <div class="form-top">
-        <div class="photo-col">
-          <label class="photo-drop round" title="Escolher foto">
-          <input type="file" accept="image/*" name="photoFile" hidden />
-          <span class="photo-preview" id="artistPhotoPreview">Foto</span>
-        </label>
-          <button type="button" class="btn small ghost" id="btnRemovePhoto" data-action="remove-photo" hidden>Remover foto</button>
-        </div>
-        <div class="grid2 grow">
-          <label class="span2">Nome artístico *<input name="name" required maxlength="120" /></label>
-          <label>Nome real<input name="realName" maxlength="120" /></label>
-          <label>Género<input name="genre" maxlength="60" /></label>
-          <label>País<input name="country" maxlength="60" /></label>
-          <label>Email / contacto<input name="contact" maxlength="120" /></label>
-        </div>
-      </div>
-      <label>Biografia<textarea name="bio" rows="3"></textarea></label>
-      <div class="grid2">
-        <label>Spotify<input name="spotify" type="url" placeholder="https://" /></label>
-        <label>Instagram<input name="instagram" type="url" placeholder="https://" /></label>
-        <label>YouTube<input name="youtube" type="url" placeholder="https://" /></label>
-        <label>Website<input name="website" type="url" placeholder="https://" /></label>
-      </div>
-      <div class="dialog-actions">
-        <button type="button" class="btn ghost" data-close>Cancelar</button>
-        <button type="submit" class="btn primary">Guardar</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Projeto (edição) -->
-  <dialog id="projectDialog" class="wide">
-    <form id="projectForm" method="dialog">
-      <h2 id="projectFormTitle">Novo projeto</h2>
-      <div class="form-top">
-        <div class="photo-col">
-          <label class="photo-drop cover" title="Escolher capa (ou arrastar imagem)">
-          <input type="file" accept="image/*" name="coverFile" hidden />
-          <span class="photo-preview" id="coverPreview">Capa<br /><small>clicar ou arrastar</small></span>
-        </label>
-          <button type="button" class="btn small ghost" id="btnRemoveCover" data-action="remove-cover" hidden>Remover capa</button>
-        </div>
-        <div class="grid2 grow">
-          <label class="span2">Título *<input name="title" required maxlength="160" /></label>
-          <label>Artista *<select name="artistId" required></select></label>
-          <label>Tipo<select name="type"></select></label>
-          <label>Data de lançamento<input name="releaseDate" type="date" /></label>
-          <label>Estado<select name="status"></select></label>
-          <label>Editora<input name="label" maxlength="120" /></label>
-          <label>Género<input name="genre" maxlength="60" /></label>
-          <label class="span2">UPC
-            <div class="code-input">
-              <input name="upc" class="mono" inputmode="numeric" maxlength="12" placeholder="12 dígitos" />
-              <button type="button" class="btn small" data-action="gen-upc">Gerar</button>
-            </div>
-            <small id="upcStatus" class="hint"></small>
-          </label>
-        </div>
-      </div>
-      <div id="upcBarcode" class="barcode-box"></div>
-
-      <div class="tracks-head">
-        <h3>Faixas</h3>
-        <div>
-          <button type="button" class="btn small ghost" data-action="gen-isrc-all">Gerar ISRC em falta</button>
-          <button type="button" class="btn small" data-action="add-track">+ Faixa</button>
-        </div>
-      </div>
-      <div id="trackList" class="track-list"></div>
-
-      <div class="dialog-actions">
-        <button type="button" class="btn ghost" data-close>Cancelar</button>
-        <button type="submit" class="btn primary">Guardar projeto</button>
-      </div>
-    </form>
-  </dialog>
-
-  <!-- Projeto (detalhe) -->
-  <dialog id="viewDialog" class="wide">
-    <div id="viewBody"></div>
-  </dialog>
-
-  <!-- Definições -->
-  <dialog id="settingsDialog">
-    <form id="settingsForm" method="dialog">
-      <h2>Definições de códigos</h2>
-      <fieldset>
-        <legend>UPC (código de barras do lançamento)</legend>
-        <p class="hint">Usa o prefixo de empresa atribuído pela GS1 (6 a 10 dígitos). O gerador acrescenta a referência sequencial e o dígito de controlo.</p>
+        <label>Biografia<textarea name="bio" rows="3"></textarea></label>
         <div class="grid2">
-          <label>Prefixo GS1<input name="upcPrefix" class="mono" inputmode="numeric" maxlength="10" placeholder="ex.: 0123456" /></label>
-          <label>Referência inicial<input name="upcStart" type="number" min="1" /></label>
+          <label
+            >Spotify<input name="spotify" type="url" placeholder="https://"
+          /></label>
+          <label
+            >Instagram<input name="instagram" type="url" placeholder="https://"
+          /></label>
+          <label
+            >YouTube<input name="youtube" type="url" placeholder="https://"
+          /></label>
+          <label
+            >Website<input name="website" type="url" placeholder="https://"
+          /></label>
         </div>
-        <p class="hint">Próximo: <code id="upcNextPreview">—</code></p>
-      </fieldset>
-      <fieldset>
-        <legend>ISRC (código de cada gravação)</legend>
-        <p class="hint">Formato <code>PT-XXX-AA-NNNNN</code>: país, código de registante (atribuído pela agência nacional — em Portugal a AUDIOGEST), ano e número de designação.</p>
-        <div class="grid2">
-          <label>País<input name="isrcCountry" class="mono" maxlength="2" placeholder="PT" /></label>
-          <label>Registante<input name="isrcRegistrant" class="mono" maxlength="3" placeholder="ABC" /></label>
-          <label>Designação inicial<input name="isrcStart" type="number" min="1" max="99999" /></label>
+        <div class="dialog-actions">
+          <button type="button" class="btn ghost" data-close>Cancelar</button>
+          <button type="submit" class="btn primary">Guardar</button>
         </div>
-        <p class="hint">Próximo: <code id="isrcNextPreview">—</code></p>
-      </fieldset>
-      <div class="dialog-actions">
-        <button type="button" class="btn ghost" data-close>Cancelar</button>
-        <button type="submit" class="btn primary">Guardar</button>
-      </div>
-    </form>
-  </dialog>
+      </form>
+    </dialog>
 
-  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <!-- Projeto (edição) -->
+    <dialog id="projectDialog" class="wide">
+      <form id="projectForm" method="dialog">
+        <h2 id="projectFormTitle">Novo projeto</h2>
+        <div class="form-top">
+          <div class="photo-col">
+            <label
+              class="photo-drop cover"
+              title="Escolher capa (ou arrastar imagem)"
+            >
+              <input type="file" accept="image/*" name="coverFile" hidden />
+              <span class="photo-preview" id="coverPreview"
+                >Capa<br /><small>clicar ou arrastar</small></span
+              >
+            </label>
+            <button
+              type="button"
+              class="btn small ghost"
+              id="btnRemoveCover"
+              data-action="remove-cover"
+              hidden
+            >
+              Remover capa
+            </button>
+          </div>
+          <div class="grid2 grow">
+            <label class="span2"
+              >Título *<input name="title" required maxlength="160"
+            /></label>
+            <label>Artista *<select name="artistId" required></select></label>
+            <label>Tipo<select name="type"></select></label>
+            <label
+              >Data de lançamento<input name="releaseDate" type="date"
+            /></label>
+            <label>Estado<select name="status"></select></label>
+            <label>Editora<input name="label" maxlength="120" /></label>
+            <label>Género<input name="genre" maxlength="60" /></label>
+            <label class="span2"
+              >UPC
+              <div class="code-input">
+                <input
+                  name="upc"
+                  class="mono"
+                  inputmode="numeric"
+                  maxlength="12"
+                  placeholder="12 dígitos"
+                />
+                <button type="button" class="btn small" data-action="gen-upc">
+                  Gerar
+                </button>
+              </div>
+              <small id="upcStatus" class="hint"></small>
+            </label>
+          </div>
+        </div>
+        <div id="upcBarcode" class="barcode-box"></div>
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
-  <script src="app.js"></script>
-</body>
+        <div class="tracks-head">
+          <h3>Faixas</h3>
+          <div>
+            <button
+              type="button"
+              class="btn small ghost"
+              data-action="gen-isrc-all"
+            >
+              Gerar ISRC em falta
+            </button>
+            <button type="button" class="btn small" data-action="add-track">
+              + Faixa
+            </button>
+          </div>
+        </div>
+        <div id="trackList" class="track-list"></div>
+
+        <div class="dialog-actions">
+          <button type="button" class="btn ghost" data-close>Cancelar</button>
+          <button type="submit" class="btn primary">Guardar projeto</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Projeto (detalhe) -->
+    <dialog id="viewDialog" class="wide">
+      <div id="viewBody"></div>
+    </dialog>
+
+    <!-- Definições -->
+    <dialog id="settingsDialog">
+      <form id="settingsForm" method="dialog">
+        <h2>Definições de códigos</h2>
+        <fieldset>
+          <legend>UPC (código de barras do lançamento)</legend>
+          <p class="hint">
+            Usa o prefixo de empresa atribuído pela GS1 (6 a 10 dígitos). O
+            gerador acrescenta a referência sequencial e o dígito de controlo.
+          </p>
+          <div class="grid2">
+            <label
+              >Prefixo GS1<input
+                name="upcPrefix"
+                class="mono"
+                inputmode="numeric"
+                maxlength="10"
+                placeholder="ex.: 0123456"
+            /></label>
+            <label
+              >Referência inicial<input name="upcStart" type="number" min="1"
+            /></label>
+          </div>
+          <p class="hint">Próximo: <code id="upcNextPreview">—</code></p>
+        </fieldset>
+        <fieldset>
+          <legend>ISRC (código de cada gravação)</legend>
+          <p class="hint">
+            Formato <code>PT-XXX-AA-NNNNN</code>: país, código de registante
+            (atribuído pela agência nacional — em Portugal a AUDIOGEST), ano e
+            número de designação.
+          </p>
+          <div class="grid2">
+            <label
+              >País<input
+                name="isrcCountry"
+                class="mono"
+                maxlength="2"
+                placeholder="PT"
+            /></label>
+            <label
+              >Registante<input
+                name="isrcRegistrant"
+                class="mono"
+                maxlength="3"
+                placeholder="ABC"
+            /></label>
+            <label
+              >Designação inicial<input
+                name="isrcStart"
+                type="number"
+                min="1"
+                max="99999"
+            /></label>
+          </div>
+          <p class="hint">Próximo: <code id="isrcNextPreview">—</code></p>
+        </fieldset>
+        <div class="dialog-actions">
+          <button type="button" class="btn ghost" data-close>Cancelar</button>
+          <button type="submit" class="btn primary">Guardar</button>
+        </div>
+      </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.57.4/dist/umd/supabase.js"></script>
+    <script src="app.js"></script>
+  </body>
 </html>
